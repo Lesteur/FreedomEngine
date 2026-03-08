@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FreedomEngine/FreedomEngine.csproj" />
+  <Project Path="MyGame/MyGame.csproj" />
+</Solution>
