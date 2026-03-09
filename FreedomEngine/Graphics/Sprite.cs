@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
     public class Sprite
     {
-        protected Texture _texture;
+        protected Texture2D _texture;
 
         protected UInt16 _frameCount;
 
@@ -23,7 +23,7 @@ namespace FreedomEngine.Graphics
 
         protected UInt16 _yMarging;
 
-        public Texture Texture => _texture;
+        public Texture2D Texture => _texture;
 
         public UInt16 FrameCount => _frameCount;
 
@@ -40,7 +40,7 @@ namespace FreedomEngine.Graphics
         public UInt16 YMarging => _yMarging;
 
 
-        public Sprite(Texture texture)
+        public Sprite(Texture2D texture)
         {
             ArgumentNullException.ThrowIfNull(texture);
 
@@ -50,8 +50,8 @@ namespace FreedomEngine.Graphics
             _texture = texture;
             _frameCount = 1;
 
-            _frameWidth = texture.Width;
-            _frameHeight = texture.Height;
+            _frameWidth = (UInt16) texture.Width;
+            _frameHeight = (UInt16)texture.Height;
 
             _xOrigin = 0;
             _yOrigin = 0;
@@ -60,7 +60,7 @@ namespace FreedomEngine.Graphics
             _yMarging = 0;
         }
 
-        public Sprite(Texture texture, UInt16 frameCount, UInt16 frameWidth, UInt16 frameHeight, UInt16 xOrigin = 0, UInt16 yOrigin = 0, UInt16 xMarging = 0, UInt16 yMarging = 0)
+        public Sprite(Texture2D texture, UInt16 frameCount, UInt16 frameWidth, UInt16 frameHeight, UInt16 xOrigin = 0, UInt16 yOrigin = 0, UInt16 xMarging = 0, UInt16 yMarging = 0)
         {
             ArgumentNullException.ThrowIfNull(texture);
 
@@ -84,7 +84,7 @@ namespace FreedomEngine.Graphics
         }
 
 
-        public Rectangle GetSourceRectangle(int frameNumber)
+        public Rectangle GetSourceRectangle(UInt16 frameNumber)
         {
             // Wrap frame number to prevent out-of-bounds access
             frameNumber %= _frameCount;

@@ -9,7 +9,11 @@ namespace FreedomEngine.Components
 {
     public class Entity
     {
-        private Sprite _sprite;
+        private TimeSpan _elapsed = TimeSpan.Zero;
+
+        protected Animation _sprite;
+
+        protected int _currentFrame = 0;
 
         protected int _x = 0;
 
@@ -30,10 +34,16 @@ namespace FreedomEngine.Components
         protected bool _visible = true;
 
 
-        public Sprite Sprite
+        public Animation Sprite
         {
             get => _sprite;
             set => _sprite = value;
+        }
+
+        public int CurrentFrame
+        {
+            get => _currentFrame;
+            set => _currentFrame = value;
         }
 
         public int X
@@ -91,7 +101,7 @@ namespace FreedomEngine.Components
         }
 
 
-        public Entity(Sprite sprite, int x = 0, int y = 0)
+        public Entity(Animation sprite, int x = 0, int y = 0)
         {
             Sprite = sprite;
             X = x;
@@ -99,18 +109,37 @@ namespace FreedomEngine.Components
         }
 
 
+        public virtual void Update(GameTime gameTime)
+        {
+            if (_sprite == null)
+                return;
+
+            _elapsed += gameTime.ElapsedGameTime;
+
+            if (_elapsed >= _sprite.Delay)
+            {
+                _elapsed -= _sprite.Delay;
+                _currentFrame++;
+
+                if (_currentFrame >= _sprite.Frames.Count)
+                {
+                    _currentFrame = 0;
+                }
+            }
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (_sprite == null)
                 return;
 
             spriteBatch.Draw(
-                _sprite.Texture.NativeTexture,
+                _sprite.Frames[_currentFrame].Texture,
                 new Vector2(_x, _y),
-                _sprite.GetSourceRectangle(0),
+                _sprite.Frames[_currentFrame].SourceRectangle,
                 _color,
                 MathHelper.ToRadians(_rotation),
-                new Vector2(_sprite.XOrigin, _sprite.YOrigin),
+                new Vector2(0, 0),
                 new Vector2(_scaleX, _scaleY),
                 _spriteEffects,
                 _layerDepth
