@@ -1,100 +1,109 @@
 ﻿using System;
+using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
     public class Sprite
     {
-        protected Texture2D _texture;
+        /// <summary>
+        /// The texture regions that make up the frames of this animation. The order of the regions within the collection
+        /// are the order that the frames should be displayed in.
+        /// </summary>
+        private readonly List<TextureRegion> _frames;
 
-        protected UInt16 _frameCount;
+        /// <summary>
+        /// The amount of time to delay between each frame before moving to the next frame for this animation.
+        /// </summary>
+        private readonly TimeSpan _delay;
 
-        protected UInt16 _frameWidth;
+        /// <summary>
+        /// The x-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// </summary>
+        private readonly UInt16 _xOrigin;
 
-        protected UInt16 _frameHeight;
+        /// <summary>
+        /// The y-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// </summary>
+        private readonly UInt16 _yOrigin;
 
-        protected UInt16 _xOrigin;
 
-        protected UInt16 _yOrigin;
+        /// <summary>
+        /// Gets the amount of time to delay between each frame before moving to the next frame for this animation.
+        /// </summary>
+        public List<TextureRegion> Frames => _frames;
 
-        protected UInt16 _xMarging;
+        /// <summary>
+        /// Gets the amount of time to delay between each frame before moving to the next frame for this animation.
+        /// </summary>
+        public TimeSpan Delay => _delay;
 
-        protected UInt16 _yMarging;
-
-        public Texture2D Texture => _texture;
-
-        public UInt16 FrameCount => _frameCount;
-
-        public UInt16 FrameWidth => _frameWidth;
-
-        public UInt16 FrameHeight => _frameHeight;
-
+        /// <summary>
+        /// Gets the x-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// </summary>
         public UInt16 XOrigin => _xOrigin;
 
+        /// <summary>
+        /// Gets the y-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// </summary>
         public UInt16 YOrigin => _yOrigin;
 
-        public UInt16 XMarging => _xMarging;
 
-        public UInt16 YMarging => _yMarging;
-
-
-        public Sprite(Texture2D texture)
+        public Sprite(Texture2D texture, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
-            ArgumentNullException.ThrowIfNull(texture);
+            TextureRegion region = new(texture, 0, 0, (UInt16) texture.Width, (UInt16) texture.Height);
 
-            //if (frameCount <= 0)
-            //    throw new ArgumentException("Frame count must be greater than zero.", nameof(frameCount));
+            _frames = [];
+            _frames.Add(region);
 
-            _texture = texture;
-            _frameCount = 1;
-
-            _frameWidth = (UInt16) texture.Width;
-            _frameHeight = (UInt16)texture.Height;
-
-            _xOrigin = 0;
-            _yOrigin = 0;
-
-            _xMarging = 0;
-            _yMarging = 0;
+            _delay = TimeSpan.Zero;
+            _xOrigin = xOrigin;
+            _yOrigin = yOrigin;
         }
 
-        public Sprite(Texture2D texture, UInt16 frameCount, UInt16 frameWidth, UInt16 frameHeight, UInt16 xOrigin = 0, UInt16 yOrigin = 0, UInt16 xMarging = 0, UInt16 yMarging = 0)
+        /// <summary>
+        /// Creates a new animation with the specified frames and delay.
+        /// </summary>
+        /// <param name="frames">An ordered collection of the frames for this animation.</param>
+        /// <param name="delay">The amount of time to delay between each frame of this animation.</param>
+        public Sprite(List<TextureRegion> frames, TimeSpan delay, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
-            ArgumentNullException.ThrowIfNull(texture);
+            if (frames == null || frames.Count == 0)
+                throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
+            if (delay <= TimeSpan.Zero)
+                throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 
-            if (frameCount <= 0)
-                throw new ArgumentException("Frame count must be greater than zero.", nameof(frameCount));
-
-            if (frameWidth <= 0 || frameHeight <= 0 || frameWidth > texture.Width || frameHeight > texture.Height)
-                throw new ArgumentException("Frame width and height must be greater than zero and less than or equal to the texture dimensions.", nameof(frameWidth));
-
-            _texture = texture;
-            _frameCount = frameCount;
-
-            _frameWidth = frameWidth;
-            _frameHeight = frameHeight;
+            _frames = frames;
+            _delay = delay;
 
             _xOrigin = xOrigin;
             _yOrigin = yOrigin;
-
-            _xMarging = xMarging;
-            _yMarging = yMarging;
         }
 
-
-        public Rectangle GetSourceRectangle(UInt16 frameNumber)
+        public Sprite(Texture2D texture2D, UInt16 frameCount, TimeSpan delay, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
-            // Wrap frame number to prevent out-of-bounds access
-            frameNumber %= _frameCount;
+            if (texture2D == null)
+                throw new ArgumentNullException(nameof(texture2D), "Texture cannot be null.");
+            if (frameCount <= 0)
+                throw new ArgumentException("Frame count must be greater than zero.", nameof(frameCount));
+            if (delay <= TimeSpan.Zero)
+                throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 
-            return new Rectangle(
-                frameNumber * _frameWidth + _xMarging,
-                _yMarging,
-                _frameWidth,
-                _frameHeight
-            );
+            _frames = [];
+            UInt16 frameWidth = (UInt16) (texture2D.Width / frameCount);
+            UInt16 frameHeight = (UInt16) texture2D.Height;
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                TextureRegion region = new(texture2D, i * frameWidth, 0, frameWidth, frameHeight);
+                _frames.Add(region);
+            }
+
+            _delay = delay;
+
+            _xOrigin = xOrigin;
+            _yOrigin = yOrigin;
         }
     }
 }

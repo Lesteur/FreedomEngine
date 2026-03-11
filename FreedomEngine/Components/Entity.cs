@@ -11,7 +11,7 @@ namespace FreedomEngine.Components
     {
         private TimeSpan _elapsed = TimeSpan.Zero;
 
-        protected Animation _sprite;
+        protected Sprite _sprite;
 
         protected int _currentFrame = 0;
 
@@ -34,7 +34,7 @@ namespace FreedomEngine.Components
         protected bool _visible = true;
 
 
-        public Animation Sprite
+        public Sprite Sprite
         {
             get => _sprite;
             set => _sprite = value;
@@ -101,7 +101,7 @@ namespace FreedomEngine.Components
         }
 
 
-        public Entity(Animation sprite, int x = 0, int y = 0)
+        public Entity(Sprite sprite, int x = 0, int y = 0)
         {
             Sprite = sprite;
             X = x;
@@ -133,13 +133,12 @@ namespace FreedomEngine.Components
             if (_sprite == null)
                 return;
 
-            spriteBatch.Draw(
-                _sprite.Frames[_currentFrame].Texture,
-                new Vector2(_x, _y),
-                _sprite.Frames[_currentFrame].SourceRectangle,
+            _sprite.Frames[_currentFrame].Draw(
+                spriteBatch,
+                new Vector2(_x + _sprite.XOrigin, _y + _sprite.YOrigin),
                 _color,
                 MathHelper.ToRadians(_rotation),
-                new Vector2(0, 0),
+                new Vector2(_sprite.XOrigin, _sprite.YOrigin),
                 new Vector2(_scaleX, _scaleY),
                 _spriteEffects,
                 _layerDepth

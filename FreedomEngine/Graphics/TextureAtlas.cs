@@ -15,7 +15,7 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Stores the mapping of animation names to their corresponding Animation objects.
         /// </summary>
-        private Dictionary<string, Animation> _animations;
+        private readonly Dictionary<string, Sprite> _animations;
 
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="animationName">The name of the animation to add.</param>
         /// <param name="animation">The animation to add.</param>
-        public void AddAnimation(string animationName, Animation animation)
+        public void AddAnimation(string animationName, Sprite animation)
         {
             _animations.Add(animationName, animation);
         }
@@ -94,7 +94,7 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="animationName">The name of the animation to retrieve.</param>
         /// <returns>The animation with the specified name.</returns>
-        public Animation GetAnimation(string animationName)
+        public Sprite GetAnimation(string animationName)
         {
             return _animations[animationName];
         }
