@@ -1,106 +1,81 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 using FreedomEngine.Graphics;
 
 namespace FreedomEngine.Components
 {
+    /// <summary>
+    /// Represents a base entity in the game.
+    /// </summary>
     public class Entity
     {
+        /// <summary>
+        /// Represents the elapsed time since the last frame update, used for animation timing.
+        /// </summary>
         private TimeSpan _elapsed = TimeSpan.Zero;
 
-        protected Sprite _sprite;
+        /// <summary>
+        /// Gets or Sets the sprite of the entity.
+        /// </summary>
+        public Sprite Sprite { get; set; }
 
-        protected int _currentFrame = 0;
+        /// <summary>
+        /// Gets or Sets the current animation frame index.
+        /// </summary>
+        public int CurrentFrame { get; set; } = 0;
 
-        protected int _x = 0;
+        /// <summary>
+        /// Gets or Sets the X position of the entity.
+        /// </summary>
+        public int X { get; set; } = 0;
 
-        protected int _y = 0;
+        /// <summary>
+        /// Gets or Sets the Y position of the entity.
+        /// </summary>
+        public int Y { get; set; } = 0;
 
-        protected int _rotation = 0;
+        /// <summary>
+        /// Gets or Sets the rotation of the entity in degrees.
+        /// </summary>
+        public int Rotation { get; set; } = 0;
 
-        protected float _scaleX = 1f;
+        /// <summary>
+        /// Gets or Sets the horizontal scale.
+        /// </summary>
+        public float ScaleX { get; set; } = 1f;
 
-        protected float _scaleY = 1f;
+        /// <summary>
+        /// Gets or Sets the vertical scale.
+        /// </summary>
+        public float ScaleY { get; set; } = 1f;
 
-        protected SpriteEffects _spriteEffects = SpriteEffects.None;
+        /// <summary>
+        /// Gets or Sets the effects applied to the sprite rendering.
+        /// </summary>
+        public SpriteEffects SpriteEffects { get; set; } = SpriteEffects.None;
 
-        protected float _layerDepth = 0f;
+        /// <summary>
+        /// Gets or Sets the draw depth of the entity.
+        /// </summary>
+        public float LayerDepth { get; set; } = 0f;
 
-        protected Color _color = Color.White;
+        /// <summary>
+        /// Gets or Sets the tint color of the sprite.
+        /// </summary>
+        public Color Color { get; set; } = Color.White;
 
-        protected bool _visible = true;
+        /// <summary>
+        /// Gets or Sets a value indicating whether the entity should be drawn.
+        /// </summary>
+        public bool Visible { get; set; } = true;
 
-
-        public Sprite Sprite
-        {
-            get => _sprite;
-            set => _sprite = value;
-        }
-
-        public int CurrentFrame
-        {
-            get => _currentFrame;
-            set => _currentFrame = value;
-        }
-
-        public int X
-        {
-            get => _x;
-            set => _x = value;
-        }
-
-        public int Y
-        {
-            get => _y;
-            set => _y = value;
-        }
-
-        public int Rotation
-        {
-            get => _rotation;
-            set => _rotation = value;
-        }
-
-        public float ScaleX
-        {
-            get => _scaleX;
-            set => _scaleX = value;
-        }
-
-        public float ScaleY
-        {
-            get => _scaleY;
-            set => _scaleY = value;
-        }
-
-        public SpriteEffects SpriteEffects
-        {
-            get => _spriteEffects;
-            set => _spriteEffects = value;
-        }
-
-        public float LayerDepth
-        {
-            get => _layerDepth;
-            set => _layerDepth = value;
-        }
-
-        public Color Color
-        {
-            get => _color;
-            set => _color = value;
-        }
-
-        public bool Visible
-        {
-            get => _visible;
-            set => _visible = value;
-        }
-
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Entity"/> class.
+        /// </summary>
+        /// <param name="sprite">The sprite associated with the entity.</param>
+        /// <param name="x">The starting X position.</param>
+        /// <param name="y">The starting Y position.</param>
         public Entity(Sprite sprite, int x = 0, int y = 0)
         {
             Sprite = sprite;
@@ -108,40 +83,50 @@ namespace FreedomEngine.Components
             Y = y;
         }
 
-
+        /// <summary>
+        /// Updates the entity's state and animation.
+        /// </summary>
+        /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (_sprite == null)
+            if (Sprite?.Frames == null || Sprite.Frames.Count == 0)
                 return;
 
             _elapsed += gameTime.ElapsedGameTime;
 
-            if (_elapsed >= _sprite.Delay)
+            if (_elapsed >= Sprite.Delay)
             {
-                _elapsed -= _sprite.Delay;
-                _currentFrame++;
-
-                if (_currentFrame >= _sprite.Frames.Count)
-                {
-                    _currentFrame = 0;
-                }
+                _elapsed -= Sprite.Delay;
+                
+                // Modulo allows naturally looping back to the start of the animation
+                CurrentFrame = (CurrentFrame + 1) % Sprite.Frames.Count;
             }
         }
 
+        /// <summary>
+        /// Draws the entity using the SpriteBatch.
+        /// </summary>
+        /// <param name="spriteBatch">The rendering context.</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (_sprite == null)
+            if (!Visible || Sprite?.Frames == null || CurrentFrame >= Sprite.Frames.Count)
                 return;
 
-            _sprite.Frames[_currentFrame].Draw(
+            // Factorize recurring calculations
+            var origin = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
+            var position = new Vector2(X + origin.X, Y + origin.Y);
+            var scale = new Vector2(ScaleX, ScaleY);
+            float rotationRadians = MathHelper.ToRadians(Rotation);
+
+            Sprite.Frames[CurrentFrame].Draw(
                 spriteBatch,
-                new Vector2(_x + _sprite.XOrigin, _y + _sprite.YOrigin),
-                _color,
-                MathHelper.ToRadians(_rotation),
-                new Vector2(_sprite.XOrigin, _sprite.YOrigin),
-                new Vector2(_scaleX, _scaleY),
-                _spriteEffects,
-                _layerDepth
+                position,
+                Color,
+                rotationRadians,
+                origin,
+                scale,
+                SpriteEffects,
+                LayerDepth
             );
         }
     }

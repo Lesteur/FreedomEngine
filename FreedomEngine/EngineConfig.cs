@@ -11,15 +11,11 @@
 
         /// <summary>
         /// The internal virtual width used for rendering, in pixels.
-        /// All game content is rendered at this resolution and then scaled to the window size.
-        /// This allows for resolution-independent game development.
         /// </summary>
         public const int VirtualWidth = 640;
 
         /// <summary>
         /// The internal virtual height used for rendering, in pixels.
-        /// All game content is rendered at this resolution and then scaled to the window size.
-        /// This allows for resolution-independent game development.
         /// </summary>
         public const int VirtualHeight = 360;
 
@@ -29,13 +25,11 @@
 
         /// <summary>
         /// The width of the game window, in pixels.
-        /// The virtual resolution is scaled to fit within this dimension while maintaining aspect ratio.
         /// </summary>
         public const int WindowWidth = 1280;
 
         /// <summary>
         /// The height of the game window, in pixels.
-        /// The virtual resolution is scaled to fit within this dimension while maintaining aspect ratio.
         /// </summary>
         public const int WindowHeight = 720;
 

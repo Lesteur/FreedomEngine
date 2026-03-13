@@ -1,75 +1,51 @@
-﻿using FreedomEngine.Graphics;
+﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+
+using FreedomEngine.Graphics;
 
 namespace FreedomEngine.Components
 {
+    /// <summary>
+    /// Represents a grid of tiles for rendering in a 2D space.
+    /// </summary>
     public class Tilemap
     {
+        /// <summary>
+        /// Represents the collection of tiles used for rendering by this instance.
+        /// </summary>
         private readonly Tileset _tileset;
 
+        /// <summary>
+        /// Represents the elapsed time since the start of the operation.
+        /// </summary>
         private TimeSpan _elapsed;
 
+        /// <summary>
+        /// The array of tileset ids for each tile in this tilemap.
+        /// </summary>
         private readonly UInt16[] _tiles;
-
-        private readonly UInt16 _rows;
-
-        private readonly UInt16 _columns;
-
-        private readonly UInt16 _count;
-
-        private float _scaleX;
-
-        private float _scaleY;
-
-        private bool _isAnimated;
 
         /// <summary>
         /// Gets the total number of rows in this tilemap.
         /// </summary>
-        public UInt16 Rows => _rows;
+        public UInt16 Rows { get; }
 
         /// <summary>
         /// Gets the total number of columns in this tilemap.
         /// </summary>
-        public UInt16 Columns => _columns;
+        public UInt16 Columns { get; }
 
         /// <summary>
         /// Gets the total number of tiles in this tilemap.
         /// </summary>
-        public UInt16 Count => _count;
-
-        /// <summary>
-        /// Gets or Sets the scale factor to draw each tile at along the x-axis.
-        /// </summary>
-        public float ScaleX
-        {
-            get => _scaleX;
-            set => _scaleX = value;
-        }
-
-        /// <summary>
-        /// Gets or Sets the scale factor to draw each tile at along the y-axis.
-        /// </summary>
-        public float ScaleY
-        {
-            get => _scaleY;
-            set => _scaleY = value;
-        }
+        public UInt16 Count { get; }
 
         /// <summary>
         /// Gets or Sets the scale factor to draw each tile at.
         /// </summary>
-        public Vector2 Scale
-        {
-            get => new(_scaleX, _scaleY);
-            set
-            {
-                _scaleX = value.X;
-                _scaleY = value.Y;
-            }
-        }
+        public Vector2 Scale { get; }
 
         /// <summary>
         /// Gets the width, in pixels, each tile is drawn at.
@@ -80,6 +56,11 @@ namespace FreedomEngine.Components
         /// Gets the height, in pixels, each tile is drawn at.
         /// </summary>
         public float TileHeight => _tileset.TileHeight * Scale.Y;
+
+        /// <summary>
+        /// Gets or Sets a value indicating whether this tilemap contains any animated tiles.
+        /// </summary>
+        bool IsAnimated { get; set; }
 
 
         /// <summary>
@@ -93,15 +74,13 @@ namespace FreedomEngine.Components
             _tileset = tileset;
             _elapsed = TimeSpan.Zero;
 
-            _rows = rows;
-            _columns = columns;
-
-            _count = (UInt16) (_columns * _rows);
-
+            Rows = rows;
+            Columns = columns;
+            Count = (UInt16) (Columns * Rows);
             Scale = Vector2.One;
+            IsAnimated = (_tileset.Animations.Count > 0);
 
             _tiles = new UInt16[Count];
-            _isAnimated = (_tileset.Animations.Count > 0);
         }
 
 
@@ -154,7 +133,7 @@ namespace FreedomEngine.Components
 
         public void Update(GameTime gameTime)
         {
-            if (!_isAnimated)
+            if (!IsAnimated)
                 return;
 
             _elapsed += gameTime.ElapsedGameTime;

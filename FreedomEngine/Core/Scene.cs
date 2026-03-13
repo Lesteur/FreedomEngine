@@ -1,44 +1,59 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+
+using FreedomEngine.Components;
 
 namespace FreedomEngine.Core
 {
+    /// <summary>
+    /// Represents a base scene or game state within the engine.
+    /// Handles updates, rendering of the world and UI, and manages cameras.
+    /// </summary>
     public abstract class Scene : IDisposable
     {
-        protected ContentManager _content;
-
-        protected bool _disposed;
-
-        protected Camera _worldCamera;
-
-        protected Camera _uiCamera;
-
+        protected int _width;
+        protected int _height;
+        protected Entity _following;
         private Matrix _scalingMatrix;
 
+        /// <summary>
+        /// Gets the content manager specifically associated with this scene.
+        /// </summary>
+        public ContentManager Content { get; protected set; }
 
-        public ContentManager Content => _content;
+        /// <summary>
+        /// Gets the world camera for rendering entities and backgrounds.
+        /// </summary>
+        public Camera WorldCamera { get; protected set; }
 
-        public bool IsDisposed => _disposed;
+        /// <summary>
+        /// Gets the UI camera for rendering menus, HUD elements.
+        /// </summary>
+        public Camera UICamera { get; protected set; }
 
-        public Camera WorldCamera => _worldCamera;
+        /// <summary>
+        /// Indicates whether this scene instance has been disposed.
+        /// </summary>
+        public bool IsDisposed { get; protected set; }
 
-        public Camera UICamera => _uiCamera;
-
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Scene"/> class.
+        /// Computes base scaling and sets up internal cameras.
+        /// </summary>
         public Scene()
         {
             // Create a content manager for the scene
-            _content = new ContentManager(Application.Content.ServiceProvider);
+            Content = new ContentManager(Application.Content.ServiceProvider);
 
             // Set the root directory for content to the same as the root directory
             // for the game's content.
             Content.RootDirectory = Application.Content.RootDirectory;
 
-
             // World camera centered at origin
-            _worldCamera = new Camera(
+            WorldCamera = new Camera(
                 0,
                 0,
                 EngineConfig.VirtualWidth,
@@ -47,41 +62,68 @@ namespace FreedomEngine.Core
 
             // UI camera positioned at center of virtual screen
             // This ensures (0, 0) in UI space is at the top-left corner
-            _uiCamera = new Camera(
+            UICamera = new Camera(
                 EngineConfig.VirtualWidth / 2,
                 EngineConfig.VirtualHeight / 2,
                 EngineConfig.VirtualWidth,
                 EngineConfig.VirtualHeight
             );
 
-            float scaleX = (float) EngineConfig.WindowWidth / EngineConfig.VirtualWidth;
-            float scaleY = (float) EngineConfig.WindowHeight / EngineConfig.VirtualHeight;
+            float scaleX = (float)EngineConfig.WindowWidth / EngineConfig.VirtualWidth;
+            float scaleY = (float)EngineConfig.WindowHeight / EngineConfig.VirtualHeight;
 
             // Use the smaller scale to maintain aspect ratio (letterbox mode)
-            float scale = MathHelper.Min(scaleX, scaleY);
-
+            var scale = MathHelper.Min(scaleX, scaleY);
             _scalingMatrix = Matrix.CreateScale(scale, scale, 1f);
+
+            _width = EngineConfig.VirtualWidth * 2;
+            _height = EngineConfig.VirtualHeight * 2;
         }
 
-
+        /// <summary>
+        /// Initializes the scene's core resources.
+        /// </summary>
         public virtual void Initialize()
         {
             LoadContent();
         }
 
+        /// <summary>
+        /// Called to load all assets and elements required by the scene.
+        /// </summary>
         public virtual void LoadContent()
         {
         }
 
+        /// <summary>
+        /// Called to unload all specific resources for this scene.
+        /// </summary>
         public virtual void UnloadContent()
         {
             Content.Unload();
         }
 
+        /// <summary>
+        /// Updates logic, positional updates of the world camera, moving entities, etc.
+        /// </summary>
+        /// <param name="gameTime">A snapshot of the current engine timing values.</param>
         public virtual void Update(GameTime gameTime)
         {
+            if (_following != null)
+            {
+                float halfViewportWidth = WorldCamera.ViewportWidth / 2f;
+                float halfViewportHeight = WorldCamera.ViewportHeight / 2f;
+
+                var x = Math.Clamp(_following.X, halfViewportWidth, _width - halfViewportWidth);
+                var y = Math.Clamp(_following.Y, halfViewportHeight, _height - halfViewportHeight);
+                WorldCamera.Position = new Vector2(x, y);
+            }
         }
 
+        /// <summary>
+        /// Core rendering loop. First draws the world via WorldCamera, then the UI via UICamera.
+        /// </summary>
+        /// <param name="gameTime">Time passed since the last call to Draw.</param>
         public virtual void Draw(GameTime gameTime)
         {
             Application.SpriteBatch.Begin(
@@ -91,7 +133,7 @@ namespace FreedomEngine.Core
                 depthStencilState: null,
                 rasterizerState: null,
                 effect: null,
-                transformMatrix: _worldCamera.TransformMatrix * _scalingMatrix
+                transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
             );
 
             DrawWorld(gameTime);
@@ -105,7 +147,7 @@ namespace FreedomEngine.Core
                 depthStencilState: null,
                 rasterizerState: null,
                 effect: null,
-                transformMatrix: _uiCamera.TransformMatrix * _scalingMatrix
+                transformMatrix: UICamera.TransformMatrix * _scalingMatrix
             );
 
             DrawUI(gameTime);
@@ -113,22 +155,35 @@ namespace FreedomEngine.Core
             Application.SpriteBatch.End();
         }
 
+        /// <summary>
+        /// Override this to render all components composing your background and world entities.
+        /// </summary>
+        /// <param name="gameTime">Rendering time context.</param>
         public virtual void DrawWorld(GameTime gameTime)
         {
         }
 
+        /// <summary>
+        /// Override this to render all canvas screens, HUD data, or purely screen-based UI coordinates.
+        /// </summary>
+        /// <param name="gameTime">Rendering time context.</param>
         public virtual void DrawUI(GameTime gameTime)
         {
         }
 
-
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-
+        /// <summary>
+        /// Protected implementation of the Dispose pattern.
+        /// </summary>
+        /// <param name="disposing">True to release both managed and unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed)
@@ -142,7 +197,7 @@ namespace FreedomEngine.Core
                 Content.Dispose();
             }
 
-            _disposed = true;
+            IsDisposed = true;
         }
     }
 }

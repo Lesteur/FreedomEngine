@@ -5,6 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
+    /// <summary>
+    /// Represents a collection of named texture regions and sprites, enabling efficient organization and retrieval of
+    /// graphical assets from a single source texture.
+    /// </summary>
     public class TextureAtlas
     {
         /// <summary>
@@ -13,9 +17,9 @@ namespace FreedomEngine.Graphics
         private readonly Dictionary<string, TextureRegion> _regions;
 
         /// <summary>
-        /// Stores the mapping of animation names to their corresponding Animation objects.
+        /// Stores the mapping of sprite names to their corresponding Sprite objects.
         /// </summary>
-        private readonly Dictionary<string, Sprite> _animations;
+        private readonly Dictionary<string, Sprite> _sprites;
 
 
         /// <summary>
@@ -30,7 +34,7 @@ namespace FreedomEngine.Graphics
         public TextureAtlas()
         {
             _regions = [];
-            _animations = [];
+            _sprites = [];
         }
 
         /// <summary>
@@ -41,7 +45,7 @@ namespace FreedomEngine.Graphics
         {
             Texture = texture;
             _regions = [];
-            _animations = [];
+            _sprites = [];
         }
 
 
@@ -73,48 +77,49 @@ namespace FreedomEngine.Graphics
         /// Removes the region from this texture atlas with the specified name.
         /// </summary>
         /// <param name="name">The name of the region to remove.</param>
-        /// <returns></returns>
+        /// <returns>true if the region was successfully removed; otherwise, false.</returns>
         public bool RemoveRegion(string name)
         {
             return _regions.Remove(name);
         }
 
         /// <summary>
-        /// Adds the given animation to this texture atlas with the specified name.
+        /// Adds the given sprite definition to this texture atlas mapped by the specified name.
         /// </summary>
-        /// <param name="animationName">The name of the animation to add.</param>
-        /// <param name="animation">The animation to add.</param>
-        public void AddAnimation(string animationName, Sprite animation)
+        /// <param name="spriteName">The name to index the sprite under.</param>
+        /// <param name="sprite">The sprite instance containing frame details.</param>
+        public void AddSprite(string spriteName, Sprite sprite)
         {
-            _animations.Add(animationName, animation);
+            _sprites.Add(spriteName, sprite);
         }
 
         /// <summary>
-        /// Gets the animation from this texture atlas with the specified name.
+        /// Retrieves a recognized sprite sequence mapped within this texture atlas by name.
         /// </summary>
-        /// <param name="animationName">The name of the animation to retrieve.</param>
-        /// <returns>The animation with the specified name.</returns>
-        public Sprite GetAnimation(string animationName)
+        /// <param name="spriteName">The key name of the Sprite object.</param>
+        /// <returns>The Sprite mapped to the specified name.</returns>
+        public Sprite GetSprite(string spriteName)
         {
-            return _animations[animationName];
+            return _sprites[spriteName];
         }
 
         /// <summary>
-        /// Removes the animation with the specified name from this texture atlas.
+        /// Removes the sprite object bound to the specified name from this texture atlas.
         /// </summary>
-        /// <param name="animationName">The name of the animation to remove.</param>
-        /// <returns>true if the animation is removed successfully; otherwise, false.</returns>
-        public bool RemoveAnimation(string animationName)
+        /// <param name="spriteName">The name indicating the target sprite mapping within the atlas.</param>
+        /// <returns>true if the bounding mapping is removed successfully; otherwise, false.</returns>
+        public bool RemoveSprite(string spriteName)
         {
-            return _animations.Remove(animationName);
+            return _sprites.Remove(spriteName);
         }
 
         /// <summary>
-        /// Removes all regions from this texture atlas.
+        /// Removes all texture regions and sprites from this texture atlas.
         /// </summary>
         public void Clear()
         {
             _regions.Clear();
+            _sprites.Clear();
         }
     }
 }

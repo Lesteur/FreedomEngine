@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 using FreedomEngine.Components;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
-using System.Collections.Generic;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -27,7 +28,9 @@ namespace MyGame.Scripts.Scenes
             base.Initialize();
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Entity(_animation, 20, 20);
+            _entity = new Entity(_animation, 0, 0);
+
+            _following = _entity;
 
             var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
 
@@ -56,16 +59,39 @@ namespace MyGame.Scripts.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            _tilemap.Update(gameTime);
+            if (Core.Input.Keyboard.IsKeyDown(Keys.Left))
+            {
+                _entity.X -= 1;
+            }
+            else if (Core.Input.Keyboard.IsKeyDown(Keys.Right))
+            {
+                _entity.X += 1;
+            }
 
+            if (Core.Input.Keyboard.IsKeyDown(Keys.Down))
+            {
+                _entity.Y += 1;
+            }
+            else if (Core.Input.Keyboard.IsKeyDown(Keys.Up))
+            {
+                _entity.Y -= 1;
+            }
+
+            _tilemap.Update(gameTime);
             _entity.Update(gameTime);
+
+            base.Update(gameTime);
         }
 
         public override void DrawWorld(GameTime gameTime)
         {
             _tilemap.Draw(Application.SpriteBatch);
-
             _entity.Draw(Application.SpriteBatch);
+        }
+
+        public override void DrawUI(GameTime gameTime)
+        {
+            //_entity.Draw(Application.SpriteBatch);
         }
     }
 }

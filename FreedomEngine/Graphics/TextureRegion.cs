@@ -11,35 +11,24 @@ namespace FreedomEngine.Graphics
     public class TextureRegion
     {
         /// <summary>
-        /// Texture that this region is part of.
-        /// </summary>
-        private readonly Texture2D _texture;
-
-        /// <summary>
-        /// Source rectangle boundary of this region within the source texture.
-        /// </summary>
-        private Rectangle _sourceRectangle;
-
-        /// <summary>
         /// Gets the source texture this texture region is part of.
         /// </summary>
-        public Texture2D Texture => _texture;
+        public Texture2D Texture { get; }
 
         /// <summary>
         /// Gets the source rectangle boundary of this texture region within the source texture.
         /// </summary>
-        public Rectangle SourceRectangle => _sourceRectangle;
+        public Rectangle SourceRectangle { get; }
 
         /// <summary>
         /// Gets the width, in pixels, of this texture region.
         /// </summary>
-        public int Width => _sourceRectangle.Width;
+        public int Width => SourceRectangle.Width;
 
         /// <summary>
         /// Gets the height, in pixels, of this texture region.
         /// </summary>
-        public int Height => _sourceRectangle.Height;
-
+        public int Height => SourceRectangle.Height;
 
         /// <summary>
         /// Creates a new texture region using the specified source texture.
@@ -58,10 +47,9 @@ namespace FreedomEngine.Graphics
             if (x < 0 || y < 0 || x + width > texture.Width || y + height > texture.Height)
                 throw new ArgumentException("The source rectangle must be within the bounds of the source texture.");
 
-            _texture = texture;
-            _sourceRectangle = new Rectangle(x, y, width, height);
+            Texture = texture;
+            SourceRectangle = new Rectangle(x, y, width, height);
         }
-
 
         /// <summary>
         /// Submit this texture region for drawing in the current batch.
@@ -82,7 +70,7 @@ namespace FreedomEngine.Graphics
         /// <param name="color">The color mask to apply when drawing this texture region on screen.</param>
         /// <param name="rotation">The amount of rotation, in radians, to apply when drawing this texture region on screen.</param>
         /// <param name="origin">The center of rotation, scaling, and position when drawing this texture region on screen.</param>
-        /// <param name="scale">The scale factor to apply when drawing this texture region on screen.</param>
+        /// <param name="scale">The scale factor to apply when drawing this texture region on the screen.</param>
         /// <param name="effects">Specifies if this texture region should be flipped horizontally, vertically, or both when drawing on screen.</param>
         /// <param name="layerDepth">The depth of the layer to use when drawing this texture region on screen.</param>
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
@@ -113,9 +101,9 @@ namespace FreedomEngine.Graphics
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
         {
             spriteBatch.Draw(
-                _texture,
+                Texture,
                 position,
-                _sourceRectangle,
+                SourceRectangle,
                 color,
                 rotation,
                 origin,

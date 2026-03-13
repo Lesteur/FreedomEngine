@@ -1,31 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FreedomEngine.Core
 {
+    /// <summary>
+    /// Represents a 2D camera used to transform the view of the game world.
+    /// </summary>
     public class Camera
     {
         private int _x;
-
         private int _y;
-
         private float _rotation;
-
         private float _scale;
-
         private int _viewportWidth;
-
         private int _viewportHeight;
-
         private Matrix _transformMatrix = Matrix.Identity;
+        private bool _dirty;
 
-        private bool _dirty = false;
-
-
+        /// <summary>
+        /// Gets or sets the X coordinate of the camera's position.
+        /// </summary>
         public int X
         {
             get => _x;
@@ -36,6 +29,9 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets or sets the Y coordinate of the camera's position.
+        /// </summary>
         public int Y
         {
             get => _y;
@@ -46,6 +42,23 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets or sets the 2D position vector of the camera.
+        /// </summary>
+        public Vector2 Position
+        {
+            get => new Vector2(_x, _y);
+            set
+            {
+                _x = (int)value.X;
+                _y = (int)value.Y;
+                _dirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the rotation of the camera in radians.
+        /// </summary>
         public float Rotation
         {
             get => _rotation;
@@ -56,6 +69,9 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets or sets the zoom scale of the camera.
+        /// </summary>
         public float Scale
         {
             get => _scale;
@@ -66,6 +82,9 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets or sets the width of the viewport.
+        /// </summary>
         public int ViewportWidth
         {
             get => _viewportWidth;
@@ -76,6 +95,9 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets or sets the height of the viewport.
+        /// </summary>
         public int ViewportHeight
         {
             get => _viewportHeight;
@@ -86,6 +108,10 @@ namespace FreedomEngine.Core
             }
         }
 
+        /// <summary>
+        /// Gets the transformation matrix used for rendering operations.
+        /// Recalculates only when the camera properties have changed.
+        /// </summary>
         public Matrix TransformMatrix
         {
             get
@@ -97,7 +123,13 @@ namespace FreedomEngine.Core
             }
         }
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        /// <param name="x">The initial X position.</param>
+        /// <param name="y">The initial Y position.</param>
+        /// <param name="viewportWidth">The width of the viewport.</param>
+        /// <param name="viewportHeight">The height of the viewport.</param>
         public Camera(int x, int y, int viewportWidth, int viewportHeight)
         {
             _x = x;
@@ -106,9 +138,12 @@ namespace FreedomEngine.Core
             _scale = 1f;
             _viewportWidth = viewportWidth;
             _viewportHeight = viewportHeight;
+            _dirty = true;
         }
 
-
+        /// <summary>
+        /// Recalculates the internal transformation matrix based on current position, rotation, and scale.
+        /// </summary>
         private void RecalculateTransformMatrix()
         {
             _transformMatrix =

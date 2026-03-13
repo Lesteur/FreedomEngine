@@ -5,68 +5,55 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
+    /// <summary>
+    /// Represents a 2D sprite, which can be either a static image or an animated sequence of frames.
+    /// </summary>
     public class Sprite
     {
         /// <summary>
-        /// The texture regions that make up the frames of this animation. The order of the regions within the collection
-        /// are the order that the frames should be displayed in.
+        /// Gets the collection of texture regions that make up the frames of this sprite.
         /// </summary>
-        private readonly List<TextureRegion> _frames;
+        public List<TextureRegion> Frames { get; }
 
         /// <summary>
-        /// The amount of time to delay between each frame before moving to the next frame for this animation.
+        /// Gets the amount of time to delay before moving to the next frame.
         /// </summary>
-        private readonly TimeSpan _delay;
+        public TimeSpan Delay { get; }
 
         /// <summary>
-        /// The x-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// Gets the local X offset indicating drawing origin center.
         /// </summary>
-        private readonly UInt16 _xOrigin;
+        public UInt16 XOrigin { get; }
 
         /// <summary>
-        /// The y-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
+        /// Gets the local Y offset indicating drawing origin center.
         /// </summary>
-        private readonly UInt16 _yOrigin;
-
+        public UInt16 YOrigin { get; }
 
         /// <summary>
-        /// Gets the amount of time to delay between each frame before moving to the next frame for this animation.
+        /// Creates a static single-frame Sprite constructed entirely around a source texture region.
         /// </summary>
-        public List<TextureRegion> Frames => _frames;
-
-        /// <summary>
-        /// Gets the amount of time to delay between each frame before moving to the next frame for this animation.
-        /// </summary>
-        public TimeSpan Delay => _delay;
-
-        /// <summary>
-        /// Gets the x-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
-        /// </summary>
-        public UInt16 XOrigin => _xOrigin;
-
-        /// <summary>
-        /// Gets the y-coordinate position of the upper-left corner of this sprite relative to the upper-left corner of the sprite.
-        /// </summary>
-        public UInt16 YOrigin => _yOrigin;
-
-
+        /// <param name="texture">The base source texture applied initially to form this Sprite.</param>
+        /// <param name="xOrigin">X starting origin of rendering operations on this sprite bounds.</param>
+        /// <param name="yOrigin">Y starting origin of rendering operations on this sprite bounds.</param>
         public Sprite(Texture2D texture, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
             TextureRegion region = new(texture, 0, 0, (UInt16) texture.Width, (UInt16) texture.Height);
 
-            _frames = [];
-            _frames.Add(region);
+            Frames = [region];
 
-            _delay = TimeSpan.Zero;
-            _xOrigin = xOrigin;
-            _yOrigin = yOrigin;
+            Delay = TimeSpan.Zero;
+            XOrigin = xOrigin;
+            YOrigin = yOrigin;
         }
 
         /// <summary>
-        /// Creates a new animation with the specified frames and delay.
+        /// Creates a dynamically mapped animation comprising the listed texture regions.
         /// </summary>
-        /// <param name="frames">An ordered collection of the frames for this animation.</param>
-        /// <param name="delay">The amount of time to delay between each frame of this animation.</param>
+        /// <param name="frames">Ordered segment regions functioning sequentially as animation frames.</param>
+        /// <param name="delay">Configured structural playback speed timing value applied across frames globally.</param>
+        /// <param name="xOrigin">The offset applied during frame calculation along X plane relative natively to origin offset constraints.</param>
+        /// <param name="yOrigin">The offset applied during frame calculation along Y plane relative natively to origin offset constraints.</param>
         public Sprite(List<TextureRegion> frames, TimeSpan delay, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
             if (frames == null || frames.Count == 0)
@@ -74,13 +61,21 @@ namespace FreedomEngine.Graphics
             if (delay <= TimeSpan.Zero)
                 throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 
-            _frames = frames;
-            _delay = delay;
+            Frames = frames;
+            Delay = delay;
 
-            _xOrigin = xOrigin;
-            _yOrigin = yOrigin;
+            XOrigin = xOrigin;
+            YOrigin = yOrigin;
         }
 
+        /// <summary>
+        /// Splits a single source sheet into a linear array of uniformly sized regions mapped sequentially into a new animation instance.
+        /// </summary>
+        /// <param name="texture2D">Source layout sheet holding structured frame cells across length linearly.</param>
+        /// <param name="frameCount">Defines total valid contiguous split iterations mapping sequential valid region definitions initially across given texture axis horizontally.</param>
+        /// <param name="delay">Length definition representing the internal frame offset rate timing constraints uniformly across animation scope lifetime iterations internally natively dynamically initially.</param>
+        /// <param name="xOrigin">Start offset local X-constraint axis offset mappings.</param>
+        /// <param name="yOrigin">Start offset local Y-constraint axis offset mappings.</param>
         public Sprite(Texture2D texture2D, UInt16 frameCount, TimeSpan delay, UInt16 xOrigin = 0, UInt16 yOrigin = 0)
         {
             if (texture2D == null)
@@ -90,20 +85,20 @@ namespace FreedomEngine.Graphics
             if (delay <= TimeSpan.Zero)
                 throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 
-            _frames = [];
+            Frames = [];
             UInt16 frameWidth = (UInt16) (texture2D.Width / frameCount);
             UInt16 frameHeight = (UInt16) texture2D.Height;
 
             for (int i = 0; i < frameCount; i++)
             {
                 TextureRegion region = new(texture2D, i * frameWidth, 0, frameWidth, frameHeight);
-                _frames.Add(region);
+                Frames.Add(region);
             }
 
-            _delay = delay;
+            Delay = delay;
 
-            _xOrigin = xOrigin;
-            _yOrigin = yOrigin;
+            XOrigin = xOrigin;
+            YOrigin = yOrigin;
         }
     }
 }
