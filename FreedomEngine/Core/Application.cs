@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using FreedomEngine.Audio;
 using FreedomEngine.Input;
 
 namespace FreedomEngine.Core
@@ -49,6 +50,11 @@ namespace FreedomEngine.Core
         /// Indicates if hitting the escape key terminates the application execution instance.
         /// </summary>
         public static bool ExitOnEscape { get; private set; }
+
+        /// <summary>
+        /// Gets a reference to the audio control system.
+        /// </summary>
+        public static AudioController Audio { get; private set; }
 
         /// <summary>
         /// Gets the currently executing Scene.
@@ -109,6 +115,9 @@ namespace FreedomEngine.Core
 
             // Create a new input manager.
             Input = new InputManager();
+
+            // Create a new audio controller.
+            Audio = new AudioController();
         }
 
         /// <summary>
@@ -116,6 +125,9 @@ namespace FreedomEngine.Core
         /// </summary>
         protected override void UnloadContent()
         {
+            // Dispose of the audio controller.
+            Audio.Dispose();
+
             base.UnloadContent();
         }
 
@@ -127,6 +139,7 @@ namespace FreedomEngine.Core
         protected override void Update(GameTime gameTime)
         {
             Input.Update(gameTime);
+            Audio.Update();
 
             if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
                 Exit();

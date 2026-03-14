@@ -7,14 +7,53 @@ namespace FreedomEngine.Core
     /// </summary>
     public class Camera
     {
+        /// <summary>
+        /// X coordinate of the camera's position in world space.
+        /// </summary>
         private int _x;
+
+        /// <summary>
+        /// Y coordinate of the camera's position in world space.
+        /// </summary>
         private int _y;
+
+        /// <summary>
+        /// Rotation of the camera in radians, applied around the center of the viewport.
+        /// </summary>
         private float _rotation;
+
+        /// <summary>
+        /// Zoom scale of the camera, where 1.0f is normal size, less
+        /// than 1.0f is zoomed out, and greater than 1.0f is zoomed in.
+        /// </summary>
         private float _scale;
+
+        /// <summary>
+        /// Width of the viewport in pixels, used to calculate the center point for transformations.
+        /// </summary>
         private int _viewportWidth;
+
+        /// <summary>
+        /// Height of the viewport in pixels, used to calculate the center point for transformations.
+        /// </summary>
         private int _viewportHeight;
+
+        /// <summary>
+        /// Internal transformation matrix that combines translation,
+        /// rotation, and scaling based on the camera's properties.
+        /// Recalculated only when necessary to optimize performance.
+        /// </summary>
         private Matrix _transformMatrix = Matrix.Identity;
+
+        /// <summary>
+        /// Value indicating whether the current state has been modified.
+        /// </summary>
+        /// <remarks>This property is used to track changes to the state of
+        /// the object. It is typically set to <see langword="true"/> when
+        /// modifications occur and can be checked to determine if the state
+        /// needs to be saved or processed further.</remarks>
         private bool _dirty;
+
 
         /// <summary>
         /// Gets or sets the X coordinate of the camera's position.
