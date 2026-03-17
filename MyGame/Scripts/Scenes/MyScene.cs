@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 using FreedomEngine.Components;
 using FreedomEngine.Core;
@@ -15,6 +16,7 @@ namespace MyGame.Scripts.Scenes
     {
         private Texture2D _texture;
         private Texture2D _textureTileset;
+        private SoundEffect _soundEffect;
 
         private Sprite _animation;
         private Tileset _tileset;
@@ -55,6 +57,7 @@ namespace MyGame.Scripts.Scenes
         {
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
+            _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
         }
 
         public override void Update(GameTime gameTime)
@@ -75,6 +78,21 @@ namespace MyGame.Scripts.Scenes
             else if (Core.Input.Keyboard.IsKeyDown(Keys.Up))
             {
                 _entity.Y -= 1;
+            }
+
+            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
+            {
+                Core.Audio.PlaySoundEffect(_soundEffect);
+            }
+
+            if (Core.Input.Keyboard.IsKeyDown(Keys.A))
+            {
+                WorldCamera.Rotation += MathHelper.ToRadians(1);
+            }
+
+            if (Core.Input.Keyboard.IsKeyDown(Keys.Z))
+            {
+                WorldCamera.Rotation += MathHelper.ToRadians(-1);
             }
 
             _tilemap.Update(gameTime);
