@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="FreedomEngine.Content.Pipeline/FreedomEngine.Content.Pipeline.csproj" Id="79a65d87-a80d-4188-a96b-3c08789e1b63" />
+  <Project Path="FreedomEngine.Content.Pipeline/FreedomEngine.Content.Pipeline.csproj" Id="1e1a8bb6-509e-4d84-9b42-a72e92f62528" />
   <Project Path="FreedomEngine/FreedomEngine.csproj" />
   <Project Path="MyGame/MyGame.csproj" />
 </Solution>

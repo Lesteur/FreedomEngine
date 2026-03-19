@@ -10,6 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:FreedomEngine.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -18,6 +19,23 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Assets/Audio/sfx_chest.wav;Assets/Audio/sfx_chest
+
+#begin Assets/Fonts/Pixeloid_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Fonts/Pixeloid_0.png;Assets/Fonts/Pixeloid_0
+
+#begin Assets/Fonts/Pixeloid.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:Assets/Fonts/Pixeloid.fnt;Assets/Fonts/Pixeloid
 
 #begin Assets/Textures/spr_jonathan.png
 /importer:TextureImporter

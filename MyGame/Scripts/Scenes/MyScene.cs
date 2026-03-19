@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Audio;
-
 using FreedomEngine.Components;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -23,6 +23,8 @@ namespace MyGame.Scripts.Scenes
 
         private Entity _entity;
         private Tilemap _tilemap;
+
+        private BitmapFont _font;
 
         public override void Initialize()
         {
@@ -58,6 +60,7 @@ namespace MyGame.Scripts.Scenes
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
+            _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
         }
 
         public override void Update(GameTime gameTime)
@@ -105,11 +108,22 @@ namespace MyGame.Scripts.Scenes
         {
             _tilemap.Draw(Application.SpriteBatch);
             _entity.Draw(Application.SpriteBatch);
+
+            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
         }
 
         public override void DrawUI(GameTime gameTime)
         {
             //_entity.Draw(Application.SpriteBatch);
+
+            /*
+            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Hello, World!", new Vector2(10, 10), Color.White);
+
+            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
+
+            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Je suis un élève à l'école de... euh... ÂÊ", new Vector2(10, 30), Color.White);
+            //BitmapFontExtensions.DrawString(Application.SpriteBatch, _font, "H", new Vector2(10, 10), Color.White);
+            */
         }
     }
 }
