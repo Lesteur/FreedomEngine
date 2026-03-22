@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using FreedomEngine.Components;
-using FreedomEngine.Core;
-using FreedomEngine.Graphics;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using FreedomEngine.Components;
+using FreedomEngine;
+using FreedomEngine.Core;
+using FreedomEngine.Graphics;
+using FreedomEngine.Graphics.BitmapFonts;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -25,6 +27,9 @@ namespace MyGame.Scripts.Scenes
         private Tilemap _tilemap;
 
         private BitmapFont _font;
+
+        private BitmapText _text1;
+        private BitmapText _text2;
 
         public override void Initialize()
         {
@@ -53,6 +58,14 @@ namespace MyGame.Scripts.Scenes
                 else
                     _tilemap.SetTile(i, 5);
             }
+
+            _text1 = new BitmapText(_font, "Hello [scale 2][color red]world[\\color][\\scale], [shake 0.5]everyone[\\shake] !!", 0, 0);
+            //_text1.MaxWidth = 400;
+            //_text1.VerticalAlignment = TextVerticalAlignment.Bottom;
+
+            _text2 = new BitmapText(_font, "Le mot suivant se [shake 1]secoue[\\shake]", 20, 20);
+            //_text2.MaxWidth = 400;
+            //_text2.HorizontalAlignment = TextHorizontalAlignment.Right;
         }
 
         public override void LoadContent()
@@ -101,29 +114,28 @@ namespace MyGame.Scripts.Scenes
             _tilemap.Update(gameTime);
             _entity.Update(gameTime);
 
+            _text1.Update(gameTime);
+            _text2.Update(gameTime);
+
             base.Update(gameTime);
         }
 
         public override void DrawWorld(GameTime gameTime)
         {
-            _tilemap.Draw(Application.SpriteBatch);
+            //_tilemap.Draw(Application.SpriteBatch);
             _entity.Draw(Application.SpriteBatch);
-
-            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
         }
 
         public override void DrawUI(GameTime gameTime)
         {
+            _text1.Draw(Application.SpriteBatch);
+            _text2.Draw(Application.SpriteBatch);
+
             //_entity.Draw(Application.SpriteBatch);
 
-            /*
-            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Hello, World!", new Vector2(10, 10), Color.White);
-
-            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
-
-            BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Je suis un élève à l'école de... euh... ÂÊ", new Vector2(10, 30), Color.White);
-            //BitmapFontExtensions.DrawString(Application.SpriteBatch, _font, "H", new Vector2(10, 10), Color.White);
-            */
+            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Hello, World! Ê", new Vector2(0, 0), Color.White);
+            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
+            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Je suis un élève à l'école de... euh... ÂÊ", new Vector2(10, 30), Color.White);
         }
     }
 }

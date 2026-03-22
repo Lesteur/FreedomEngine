@@ -58,6 +58,7 @@ namespace FreedomEngine.Graphics
         {
             if (frames == null || frames.Count == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
+
             if (delay <= TimeSpan.Zero)
                 throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 
@@ -80,8 +81,10 @@ namespace FreedomEngine.Graphics
         {
             if (texture2D == null)
                 throw new ArgumentNullException(nameof(texture2D), "Texture cannot be null.");
+
             if (frameCount <= 0)
                 throw new ArgumentException("Frame count must be greater than zero.", nameof(frameCount));
+
             if (delay <= TimeSpan.Zero)
                 throw new ArgumentException("Delay must be greater than zero.", nameof(delay));
 

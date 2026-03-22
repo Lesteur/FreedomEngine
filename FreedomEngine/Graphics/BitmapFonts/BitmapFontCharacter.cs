@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FreedomEngine.Graphics
+namespace FreedomEngine.Graphics.BitmapFonts
 {
     /// <summary>
     /// Represents a character in a bitmap font. This class cannot be inherited.
@@ -52,7 +52,7 @@ namespace FreedomEngine.Graphics
             XOffset = xOffset;
             YOffset = yOffset;
             XAdvance = xAdvance;
-            Kernings = new Dictionary<int, int>();
+            Kernings = [];
         }
     }
 }
