@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace FreedomEngine.Core
+namespace FreedomEngine
 {
     /// <summary>
     /// Provides static methods for logging informational, warning, and error messages to the debug output.

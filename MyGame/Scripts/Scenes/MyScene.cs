@@ -6,10 +6,9 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using FreedomEngine.Components;
-using FreedomEngine;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
+using FreedomEngine.Components;
 using FreedomEngine.Graphics.BitmapFonts;
 
 namespace MyGame.Scripts.Scenes
@@ -27,9 +26,10 @@ namespace MyGame.Scripts.Scenes
         private Tilemap _tilemap;
 
         private BitmapFont _font;
-
-        private BitmapText _text1;
-        private BitmapText _text2;
+        private BitmapText _bitmapText1;
+        private BitmapText _bitmapText2;
+        private BitmapText _bitmapText3;
+        private BitmapText _bitmapText4;
 
         public override void Initialize()
         {
@@ -59,13 +59,19 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
-            _text1 = new BitmapText(_font, "Hello [scale 2][color red]world[\\color][\\scale], [shake 0.5]everyone[\\shake] !!", 0, 0);
-            //_text1.MaxWidth = 400;
-            //_text1.VerticalAlignment = TextVerticalAlignment.Bottom;
+            _bitmapText1 = new BitmapText(_font, "Hello, [scale 2]World[\\scale]! ç Êê j[scale 0.5]Ê[\\scale] Salut salut salut salut salut salut salut salut hé !!!", 300, 150);
+            //_bitmapText1.DefaultColor = Color.Red;
+            _bitmapText1.VerticalAlignment = TextVerticalAlignment.Top;
+            _bitmapText1.HorizontalAlignment = TextHorizontalAlignment.Right;
+            _bitmapText1.MaxWidth = 200;
+            _bitmapText1.JumpHeight = 20;
 
-            _text2 = new BitmapText(_font, "Le mot suivant se [shake 1]secoue[\\shake]", 20, 20);
-            //_text2.MaxWidth = 400;
-            //_text2.HorizontalAlignment = TextHorizontalAlignment.Right;
+            _bitmapText2 = new BitmapText(_font, "Hello, [scale 2]World[\\scale]! ç Êê j[scale 0.5]Ê[\\scale] Salut salut salut salut salut salut salut salut hé !!!", 300, 150);
+            //_bitmapText1.DefaultColor = Color.Red;
+            _bitmapText2.VerticalAlignment = TextVerticalAlignment.Top;
+            _bitmapText2.HorizontalAlignment = TextHorizontalAlignment.Left;
+            _bitmapText2.MaxWidth = 200;
+            _bitmapText2.JumpHeight = 20;
         }
 
         public override void LoadContent()
@@ -73,7 +79,7 @@ namespace MyGame.Scripts.Scenes
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
-            _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
+            _font = Content.Load<BitmapFont>("Assets/Fonts/Determination");
         }
 
         public override void Update(GameTime gameTime)
@@ -114,28 +120,22 @@ namespace MyGame.Scripts.Scenes
             _tilemap.Update(gameTime);
             _entity.Update(gameTime);
 
-            _text1.Update(gameTime);
-            _text2.Update(gameTime);
+            _bitmapText1.Update(gameTime);
+            // _bitmapText1.Rotation += MathHelper.ToRadians(1);
 
             base.Update(gameTime);
         }
 
         public override void DrawWorld(GameTime gameTime)
         {
-            //_tilemap.Draw(Application.SpriteBatch);
+            _tilemap.Draw(Application.SpriteBatch);
             _entity.Draw(Application.SpriteBatch);
         }
 
         public override void DrawUI(GameTime gameTime)
         {
-            _text1.Draw(Application.SpriteBatch);
-            _text2.Draw(Application.SpriteBatch);
-
-            //_entity.Draw(Application.SpriteBatch);
-
-            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Hello, World! Ê", new Vector2(0, 0), Color.White);
-            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Salut, tout le monde !! Est-ce que tout ça baigne ?", new Vector2(10, 20), Color.White);
-            //BitmapFontRenderer.DrawString(Application.SpriteBatch, _font, "Je suis un élève à l'école de... euh... ÂÊ", new Vector2(10, 30), Color.White);
+            _bitmapText1.Draw(Application.SpriteBatch);
+            _bitmapText2.Draw(Application.SpriteBatch);
         }
     }
 }

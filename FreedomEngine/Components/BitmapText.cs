@@ -5,12 +5,11 @@ using System.Text;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
 using FreedomEngine.Graphics.BitmapFonts;
 
 using RectangleF = System.Drawing.RectangleF;
 
-namespace FreedomEngine.Graphics
+namespace FreedomEngine.Components
 {
     public enum TextHorizontalAlignment
     {
@@ -58,7 +57,6 @@ namespace FreedomEngine.Graphics
             public Color Color;
             public Vector2 Scale;
             public float ShakeAmplitude;
-            public float ShakeSeed;
         }
 
         private readonly List<TextRun> _runs = new List<TextRun>(32);
@@ -70,11 +68,14 @@ namespace FreedomEngine.Graphics
         private int _fontRevision = -1;
         private RectangleF _layoutBounds = RectangleF.Empty;
         private float _time;
-        private Random _random = new Random();
+        private readonly Random _random = new();
 
         private Color _defaultColor = Color.White;
         private Vector2 _defaultScale = Vector2.One;
         private BitmapFont _font;
+
+        private int _maxWidth = int.MaxValue;
+        private int _jumpHeight = 20;
 
         public BitmapFont Font
         {
@@ -186,6 +187,77 @@ namespace FreedomEngine.Graphics
             }
         }
 
+        private TextHorizontalAlignment _horizontalAlignment = TextHorizontalAlignment.Left;
+        private TextVerticalAlignment _verticalAlignment = TextVerticalAlignment.Top;
+
+        /// <summary>
+        /// Gets or sets the horizontal alignment of the text block.
+        /// Changing this property invalidates the layout.
+        /// </summary>
+        public TextHorizontalAlignment HorizontalAlignment
+        {
+            get => _horizontalAlignment;
+            set
+            {
+                if (_horizontalAlignment == value)
+                    return;
+
+                _horizontalAlignment = value;
+                _layoutDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the vertical alignment of the text block.
+        /// Changing this property invalidates the layout.
+        /// </summary>
+        public TextVerticalAlignment VerticalAlignment
+        {
+            get => _verticalAlignment;
+            set
+            {
+                if (_verticalAlignment == value)
+                    return;
+
+                _verticalAlignment = value;
+                _layoutDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum line width before wrapping text to a new line.
+        /// Changing this property invalidates the layout.
+        /// </summary>
+        public int MaxWidth
+        {
+            get => _maxWidth;
+            set
+            {
+                if (_maxWidth == value)
+                    return;
+
+                _maxWidth = value;
+                _layoutDirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the vertical block distance added for each new line.
+        /// Changing this property invalidates the layout.
+        /// </summary>
+        public int JumpHeight
+        {
+            get => _jumpHeight;
+            set
+            {
+                if (_jumpHeight == value)
+                    return;
+
+                _jumpHeight = value;
+                _layoutDirty = true;
+            }
+        }
+
         public BitmapText(BitmapFont font, string text)
             : this(font, text, Vector2.Zero)
         {
@@ -247,7 +319,7 @@ namespace FreedomEngine.Graphics
                     drawPosition,
                     glyph.Character.TextureRegion.SourceRectangle,
                     glyph.Color,
-                    0f,
+                    Rotation, //0f,
                     Vector2.Zero,
                     glyph.Scale,
                     SpriteEffects.None,
@@ -346,7 +418,7 @@ namespace FreedomEngine.Graphics
             _layoutDirty = true;
         }
 
-        private bool TryConsumeMarkupTag(string tag, Stack<StyleFrame> stack, out TextStyleState currentStyle)
+        private static bool TryConsumeMarkupTag(string tag, Stack<StyleFrame> stack, out TextStyleState currentStyle)
         {
             currentStyle = stack.Peek().Style;
 
@@ -397,7 +469,7 @@ namespace FreedomEngine.Graphics
             switch (name.ToLowerInvariant())
             {
                 case "color":
-                    if (parts.Length < 2 || !TryParseColor(parts[1], out Color color))
+                    if (parts.Length < 2 || !Parsing.TryParseColor(parts[1], out Color color))
                         return false;
 
                     next.Color = color;
@@ -406,7 +478,7 @@ namespace FreedomEngine.Graphics
                     return true;
 
                 case "scale":
-                    if (!TryParseScale(parts, out Vector2 scale))
+                    if (!Parsing.TryParseScale(parts, out Vector2 scale))
                         return false;
 
                     next.Scale *= scale;
@@ -415,7 +487,7 @@ namespace FreedomEngine.Graphics
                     return true;
 
                 case "shake":
-                    if (!TryParseShake(parts, out float amplitude))
+                    if (!Parsing.TryParseShake(parts, out float amplitude))
                         return false;
 
                     next.ShakeAmplitude = amplitude;
@@ -426,107 +498,6 @@ namespace FreedomEngine.Graphics
                 default:
                     return false;
             }
-        }
-
-        private static bool TryParseColor(string token, out Color color)
-        {
-            color = Color.White;
-
-            if (string.IsNullOrWhiteSpace(token))
-                return false;
-
-            token = token.Trim();
-
-            switch (token.ToLowerInvariant())
-            {
-                case "white": color = Color.White; return true;
-                case "black": color = Color.Black; return true;
-                case "red": color = Color.Red; return true;
-                case "green": color = Color.Green; return true;
-                case "blue": color = Color.Blue; return true;
-                case "yellow": color = Color.Yellow; return true;
-                case "orange": color = Color.Orange; return true;
-                case "purple": color = Color.Purple; return true;
-                case "cyan": color = Color.Cyan; return true;
-                case "magenta": color = Color.Magenta; return true;
-                case "gray":
-                case "grey": color = Color.Gray; return true;
-            }
-
-            if (token[0] == '#')
-                token = token.Substring(1);
-
-            try
-            {
-                if (token.Length == 6)
-                {
-                    byte r = byte.Parse(token.AsSpan(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    byte g = byte.Parse(token.AsSpan(2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    byte b = byte.Parse(token.AsSpan(4, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    color = new Color(r, g, b, (byte)255);
-                    return true;
-                }
-
-                if (token.Length == 8)
-                {
-                    byte a = byte.Parse(token.AsSpan(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    byte r = byte.Parse(token.AsSpan(2, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    byte g = byte.Parse(token.AsSpan(4, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    byte b = byte.Parse(token.AsSpan(6, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                    color = new Color(r, g, b, a);
-                    return true;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
-            return false;
-        }
-
-        private static bool TryParseScale(string[] parts, out Vector2 scale)
-        {
-            scale = Vector2.One;
-
-            if (parts.Length < 2)
-                return false;
-
-            if (parts.Length == 2)
-            {
-                if (!TryParseFloat(parts[1], out float uniform))
-                    return false;
-
-                scale = new Vector2(uniform, uniform);
-                return true;
-            }
-
-            if (!TryParseFloat(parts[1], out float x))
-                return false;
-
-            if (!TryParseFloat(parts[2], out float y))
-                return false;
-
-            scale = new Vector2(x, y);
-            return true;
-        }
-
-        private static bool TryParseShake(string[] parts, out float amplitude)
-        {
-            amplitude = 0f;
-
-            if (parts.Length < 1)
-                return false;
-
-            if (!TryParseFloat(parts[1], out amplitude))
-                return false;
-
-            return true;
-        }
-
-        private static bool TryParseFloat(string token, out float value)
-        {
-            return float.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
         }
 
         private void BuildLayout()
@@ -542,27 +513,26 @@ namespace FreedomEngine.Graphics
 
             float penX = 0f;
             float penY = 0f;
-            float lineStartX = 0f;
+            
+            // The baseline represents the ground on which our letters rest.
+            float currentLineBaseline = penY + Font.Baseline * _defaultScale.Y;
 
-            float minX = float.MaxValue;
-            float minY = float.MaxValue;
-            float maxX = float.MinValue;
-            float maxY = float.MinValue;
+            // Variables for word-wrapping logic.
+            int wordStartIndex = 0;
+            float wordStartPenX = 0f;
 
-            bool hasGlyph = false;
             BitmapFontCharacter previousCharacter = null;
-            //int glyphIndex = 0;
-            float currentLineScaleY = _defaultScale.Y;
 
+            // 1. Generate text and handle word-wrapping block per block
             for (int runIndex = 0; runIndex < _runs.Count; runIndex++)
             {
                 TextRun run = _runs[runIndex];
                 TextStyleState style = run.Style;
                 float scaleX = style.Scale.X;
                 float scaleY = style.Scale.Y;
-                currentLineScaleY = scaleY;
-
+                
                 int end = run.Start + run.Length;
+                
                 for (int i = run.Start; i < end; i++)
                 {
                     char ch = _text[i];
@@ -570,16 +540,17 @@ namespace FreedomEngine.Graphics
                     if (ch == '\r')
                         continue;
 
+                    // Manual line-break
                     if (ch == '\n')
                     {
-                        penX = lineStartX;
-                        penY += (Font.LineHeight + Font.LineSpacing) * scaleY;
+                        penX = 0f;
+                        penY += _jumpHeight * _defaultScale.Y;
+                        currentLineBaseline = penY + Font.Baseline * _defaultScale.Y;
                         previousCharacter = null;
-
-                        float lineBottom = penY + Font.LineHeight * scaleY;
-                        if (lineBottom > maxY)
-                            maxY = lineBottom;
-
+                        
+                        // Restart word tracking for the new line
+                        wordStartIndex = _glyphs.Count;
+                        wordStartPenX = penX;
                         continue;
                     }
 
@@ -593,33 +564,43 @@ namespace FreedomEngine.Graphics
                     if (!Font.TryGetCharacter(codePoint, out BitmapFontCharacter character) || character == null)
                         continue;
 
+                    bool isWhitespace = char.IsWhiteSpace(ch);
+
                     if (Font.UseKernings && previousCharacter != null && previousCharacter.Kernings.TryGetValue(codePoint, out int kern))
                         penX += kern * scaleX;
 
                     float x = penX + character.XOffset * scaleX;
-                    float y = penY + character.YOffset * scaleY;
+                    float glyphBaselineOffset = Font.Baseline - character.YOffset;
+                    float y = currentLineBaseline - glyphBaselineOffset * scaleY;
+                    
                     float width = character.TextureRegion.Width * scaleX;
-                    float height = character.TextureRegion.Height * scaleY;
 
-                    float left = Math.Min(x, x + width);
-                    float top = Math.Min(y, y + height);
-                    float right = Math.Max(x, x + width);
-                    float bottom = Math.Max(y, y + height);
+                    // Word Wrapping Check
+                    // If a continuous word exceeds MaxWidth, shift its already parsed characters to a new line.
+                    if (!isWhitespace && x + width > _maxWidth && wordStartPenX > 0f)
+                    {
+                        float shiftX = wordStartPenX;
+                        float shiftY = _jumpHeight * _defaultScale.Y;
 
-                    if (!hasGlyph)
-                    {
-                        minX = left;
-                        minY = top;
-                        maxX = right;
-                        maxY = bottom;
-                        hasGlyph = true;
-                    }
-                    else
-                    {
-                        if (left < minX) minX = left;
-                        if (top < minY) minY = top;
-                        if (right > maxX) maxX = right;
-                        if (bottom > maxY) maxY = bottom;
+                        penY += shiftY;
+                        currentLineBaseline = penY + Font.Baseline * _defaultScale.Y;
+
+                        // Shift previously added glyphs belonging to this specific word
+                        for (int j = wordStartIndex; j < _glyphs.Count; j++)
+                        {
+                            GlyphRenderData g = _glyphs[j];
+                            g.Position.X -= shiftX;
+                            g.Position.Y += shiftY;
+                            _glyphs[j] = g;
+                        }
+
+                        // Align the current character to its new starting origin
+                        penX -= shiftX;
+                        x -= shiftX;
+                        y += shiftY;
+
+                        // Make sure we can't wrap again on this newly created line
+                        wordStartPenX = 0f; 
                     }
 
                     _glyphs.Add(new GlyphRenderData
@@ -633,17 +614,87 @@ namespace FreedomEngine.Graphics
 
                     penX += (character.XAdvance + Font.LetterSpacing) * scaleX;
                     previousCharacter = character;
+
+                    // Spaces mark the boundary of words. When one is found, next characters belong to a new word.
+                    if (isWhitespace)
+                    {
+                        wordStartIndex = _glyphs.Count;
+                        wordStartPenX = penX; // The next word begins after this space
+                    }
                 }
             }
 
-            if (!hasGlyph)
+            if (_glyphs.Count == 0)
             {
                 _layoutBounds = RectangleF.Empty;
                 _layoutDirty = false;
                 return;
             }
 
-            maxY = Math.Max(maxY, penY + Font.LineHeight * currentLineScaleY);
+            // 2. Measure overall bounding box of the text using final positions post-wrapping
+            float minX = float.MaxValue;
+            float minY = float.MaxValue;
+            float maxX = float.MinValue;
+            float maxY = float.MinValue;
+
+            for (int i = 0; i < _glyphs.Count; i++)
+            {
+                GlyphRenderData g = _glyphs[i];
+                float left = g.Position.X;
+                float top = g.Position.Y;
+                float right = left + g.Character.TextureRegion.Width * g.Scale.X;
+                float bottom = top + g.Character.TextureRegion.Height * g.Scale.Y;
+
+                if (left < minX) minX = left;
+                if (top < minY) minY = top;
+                if (right > maxX) maxX = right;
+                if (bottom > maxY) maxY = bottom;
+            }
+
+            // 3. Compute Alignments Offset
+            float alignOffsetX = 0f;
+            float alignOffsetY = 0f;
+
+            switch (HorizontalAlignment)
+            {
+                case TextHorizontalAlignment.Center:
+                    alignOffsetX = minX + (maxX - minX) * 0.5f;
+                    break;
+                case TextHorizontalAlignment.Right:
+                    alignOffsetX = maxX;
+                    break;
+            }
+
+            // The exact baseline of our entire block uses the last penY calculation
+            float blockBaseline = penY + Font.Baseline * _defaultScale.Y;
+
+            switch (VerticalAlignment)
+            {
+                case TextVerticalAlignment.Middle:
+                    alignOffsetY = minY + (maxY - minY) * 0.5f;
+                    break;
+                case TextVerticalAlignment.Bottom:
+                    alignOffsetY = blockBaseline;
+                    break;
+            }
+
+            // 4. Transform all glyphs locally to match the pivot/origin requirements
+            if (alignOffsetX != 0f || alignOffsetY != 0f)
+            {
+                for (int i = 0; i < _glyphs.Count; i++)
+                {
+                    GlyphRenderData g = _glyphs[i];
+                    g.Position.X -= alignOffsetX;
+                    g.Position.Y -= alignOffsetY;
+                    _glyphs[i] = g;
+                }
+
+                minX -= alignOffsetX;
+                maxX -= alignOffsetX;
+                minY -= alignOffsetY;
+                maxY -= alignOffsetY;
+            }
+
             _layoutBounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
             _layoutDirty = false;
         }
