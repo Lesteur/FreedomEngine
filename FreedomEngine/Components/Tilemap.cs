@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FreedomEngine.Graphics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using FreedomEngine.Graphics;
+using System;
 
 namespace FreedomEngine.Components
 {
@@ -12,40 +12,103 @@ namespace FreedomEngine.Components
     /// </summary>
     public class Tilemap
     {
+        #region Fields
+
         /// <summary>
-        /// Represents the collection of tiles used for rendering by this instance.
+        /// Represents the tileset associated with this instance.
         /// </summary>
         private readonly Tileset _tileset;
 
         /// <summary>
-        /// Represents the elapsed time since the start of the operation.
+        /// Stores the tile IDs for each position in the tilemap grid. Each ID corresponds to an index in the tileset.
         /// </summary>
-        private TimeSpan _elapsed;
+        private readonly ushort[] _tiles;
 
         /// <summary>
-        /// The array of tileset ids for each tile in this tilemap.
+        /// A lookup table that maps original tile IDs to their current animation frame IDs.
         /// </summary>
-        private readonly UInt16[] _tiles;
+        private readonly ushort[] _animationRemap;
+
+        private TimeSpan _elapsed;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="Tilemap"/> class with the specified tileset and dimensions.
+        /// </summary>
+        /// <param name="tileset">The tileset used by this tilemap.</param>
+        /// <param name="columns">The total number of columns in this tilemap.</param>
+        /// <param name="rows">The total number of rows in this tilemap.</param>
+        public Tilemap(Tileset tileset, ushort columns, ushort rows)
+        {
+            _tileset = tileset;
+            _elapsed = TimeSpan.Zero;
+
+            Rows = rows;
+            Columns = columns;
+            Count = (ushort)(Columns * Rows);
+            Scale = Vector2.One;
+            IsAnimated = _tileset.Animations.Count > 0;
+
+            _tiles = new ushort[Count];
+
+            // Initialize the remap array with the size of the tileset.
+            _animationRemap = new ushort[_tileset.Count];
+
+            // Default state: each tile points to itself.
+            ResetAnimationRemap();
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the X coordinate value.
+        /// </summary>
+        public int X { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the Y-coordinate value.
+        /// </summary>
+        public int Y { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the position represented by the X and Y coordinates as a two-dimensional vector.
+        /// </summary>
+        /// <remarks>Setting this property updates both the X and Y components to match the specified
+        /// vector. The values are cast to integers when assigned.</remarks>
+        public Vector2 Position
+        {
+            get => new(X, Y);
+            set
+            {
+                X = (int)value.X;
+                Y = (int)value.Y;
+            }
+        }
 
         /// <summary>
         /// Gets the total number of rows in this tilemap.
         /// </summary>
-        public UInt16 Rows { get; }
+        public ushort Rows { get; }
 
         /// <summary>
         /// Gets the total number of columns in this tilemap.
         /// </summary>
-        public UInt16 Columns { get; }
+        public ushort Columns { get; }
 
         /// <summary>
         /// Gets the total number of tiles in this tilemap.
         /// </summary>
-        public UInt16 Count { get; }
+        public ushort Count { get; }
 
         /// <summary>
-        /// Gets or Sets the scale factor to draw each tile at.
+        /// Gets the scale factor to draw each tile at.
         /// </summary>
-        public Vector2 Scale { get; }
+        public Vector2 Scale { get; init; }
 
         /// <summary>
         /// Gets the width, in pixels, each tile is drawn at.
@@ -60,102 +123,103 @@ namespace FreedomEngine.Components
         /// <summary>
         /// Gets or Sets a value indicating whether this tilemap contains any animated tiles.
         /// </summary>
-        bool IsAnimated { get; set; }
+        public bool IsAnimated { get; set; }
 
+        #endregion
 
-        /// <summary>
-        /// Creates a new tilemap.
-        /// </summary>
-        /// <param name="tileset">The tileset used by this tilemap.</param>
-        /// <param name="columns">The total number of columns in this tilemap.</param>
-        /// <param name="rows">The total number of rows in this tilemap.</param>
-        public Tilemap(Tileset tileset, UInt16 columns, UInt16 rows)
-        {
-            _tileset = tileset;
-            _elapsed = TimeSpan.Zero;
-
-            Rows = rows;
-            Columns = columns;
-            Count = (UInt16) (Columns * Rows);
-            Scale = Vector2.One;
-            IsAnimated = (_tileset.Animations.Count > 0);
-
-            _tiles = new UInt16[Count];
-        }
-
+        #region Lifecycle Methods
 
         /// <summary>
-        /// Sets the tile at the given index in this tilemap to use the tile from
-        /// the tileset at the specified tileset id.
+        /// Updates the animation timer and pre-calculates the frame remap table.
         /// </summary>
-        /// <param name="index">The index of the tile in this tilemap.</param>
-        /// <param name="tilesetID">The tileset id of the tile from the tileset to use.</param>
-        public void SetTile(UInt16 index, UInt16 tilesetID)
-        {
-            _tiles[index] = tilesetID;
-        }
-
-        /// <summary>
-        /// Sets the tile at the given column and row in this tilemap to use the tile
-        /// from the tileset at the specified tileset id.
-        /// </summary>
-        /// <param name="column">The column of the tile in this tilemap.</param>
-        /// <param name="row">The row of the tile in this tilemap.</param>
-        /// <param name="tilesetID">The tileset id of the tile from the tileset to use.</param>
-        public void SetTile(UInt16 column, UInt16 row, UInt16 tilesetID)
-        {
-            UInt16 index = (UInt16) (row * Columns + column);
-            SetTile(index, tilesetID);
-        }
-
-        /// <summary>
-        /// Gets the texture region of the tile from this tilemap at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the tile in this tilemap.</param>
-        /// <returns>The texture region of the tile from this tilemap at the specified index.</returns>
-        public TextureRegion GetTile(UInt16 index)
-        {
-            return _tileset.GetTile(_tiles[index]);
-        }
-
-        /// <summary>
-        /// Gets the texture region of the tile from this tilemap at the specified
-        /// column and row.
-        /// </summary>
-        /// <param name="column">The column of the tile in this tilemap.</param>
-        /// <param name="row">The row of the tile in this tilemap.</param>
-        /// <returns>The texture region of the tile from this tilemap at the specified column and row.</returns>
-        public TextureRegion GetTile(UInt16 column, UInt16 row)
-        {
-            UInt16 index = (UInt16) (row * Columns + column);
-            return GetTile(index);
-        }
-
         public void Update(GameTime gameTime)
         {
             if (!IsAnimated)
                 return;
 
             _elapsed += gameTime.ElapsedGameTime;
+
+            // PRE-CALCULATION: Update the remap table once per frame.
+            // We only iterate over the tiles that actually HAVE animations.
+            foreach (var animation in _tileset.Animations)
+            {
+                ushort originalID = animation.Key;
+                _animationRemap[originalID] = _tileset.TryGetAnimation(originalID, _elapsed);
+            }
         }
 
         /// <summary>
         /// Draws this tilemap using the given sprite batch.
         /// </summary>
-        /// <param name="spriteBatch">The sprite batch used to draw this tilemap.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
             for (int i = 0; i < Count; i++)
             {
-                UInt16 tileIndex = _tiles[i];
-                TextureRegion tile = _tileset.GetTile(_tileset.TryGetAnimation(tileIndex, _elapsed)); //_tileset.GetTile(tilesetIndex);
+                // Accessing the tileset index from our pre-calculated remap table.
+                // This is a direct array access (O(1)), much faster than dictionary lookups in a loop.
+                ushort tilesetIndex = _animationRemap[_tiles[i]];
+                TextureRegion tile = _tileset.GetTile(tilesetIndex);
 
-                int x = i % Columns;
-                int y = i / Columns;
+                int column = i % Columns;
+                int row = i / Columns;
 
-                Vector2 position = new(x * TileWidth, y * TileHeight);
+                Vector2 position = new(X + column * TileWidth, Y + row * TileHeight);
+
                 tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
             }
         }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Sets the tileset identifier for the tile at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the tile to update. Must be within the valid range of tile indices.</param>
+        /// <param name="tilesetID">The identifier of the tileset to assign to the specified tile.</param>
+        public void SetTile(ushort index, ushort tilesetID)
+        {
+            _tiles[index] = tilesetID;
+        }
+
+        /// <summary>
+        /// Sets the tile at the specified column and row to use the given tileset identifier.
+        /// </summary>
+        /// <param name="column">The zero-based column index of the tile to set. Must be less than the total number of columns.</param>
+        /// <param name="row">The zero-based row index of the tile to set. Must be less than the total number of rows.</param>
+        /// <param name="tilesetID">The identifier of the tileset to assign to the specified tile.</param>
+        public void SetTile(ushort column, ushort row, ushort tilesetID)
+        {
+            int index = row * Columns + column;
+            SetTile((ushort)index, tilesetID);
+        }
+
+        /// <summary>
+        /// Retrieves the texture region associated with the specified tile index.
+        /// </summary>
+        /// <param name="index">The index of the tile to retrieve. Must be a valid index within the tile collection.</param>
+        /// <returns>The texture region corresponding to the specified tile index.</returns>
+        public TextureRegion GetTile(ushort index)
+        {
+            return _tileset.GetTile(_tiles[index]);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Fills the remap table with identity values (index 0 points to tile 0, etc.).
+        /// </summary>
+        private void ResetAnimationRemap()
+        {
+            for (ushort i = 0; i < _animationRemap.Length; i++)
+            {
+                _animationRemap[i] = i;
+            }
+        }
+
+        #endregion
     }
 }

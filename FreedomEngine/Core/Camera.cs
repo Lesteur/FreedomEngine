@@ -7,6 +7,8 @@ namespace FreedomEngine.Core
     /// </summary>
     public class Camera
     {
+        #region Fields
+
         /// <summary>
         /// X coordinate of the camera's position in world space.
         /// </summary>
@@ -48,12 +50,33 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Value indicating whether the current state has been modified.
         /// </summary>
-        /// <remarks>This property is used to track changes to the state of
-        /// the object. It is typically set to <see langword="true"/> when
-        /// modifications occur and can be checked to determine if the state
-        /// needs to be saved or processed further.</remarks>
         private bool _dirty;
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        /// <param name="x">The initial X position.</param>
+        /// <param name="y">The initial Y position.</param>
+        /// <param name="viewportWidth">The width of the viewport.</param>
+        /// <param name="viewportHeight">The height of the viewport.</param>
+        public Camera(int x, int y, int viewportWidth, int viewportHeight)
+        {
+            _x = x;
+            _y = y;
+            _rotation = 0f;
+            _scale = 1f;
+            _viewportWidth = viewportWidth;
+            _viewportHeight = viewportHeight;
+            _dirty = true;
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets or sets the X coordinate of the camera's position.
@@ -86,7 +109,7 @@ namespace FreedomEngine.Core
         /// </summary>
         public Vector2 Position
         {
-            get => new Vector2(_x, _y);
+            get => new(_x, _y);
             set
             {
                 _x = (int)value.X;
@@ -162,23 +185,9 @@ namespace FreedomEngine.Core
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Camera"/> class.
-        /// </summary>
-        /// <param name="x">The initial X position.</param>
-        /// <param name="y">The initial Y position.</param>
-        /// <param name="viewportWidth">The width of the viewport.</param>
-        /// <param name="viewportHeight">The height of the viewport.</param>
-        public Camera(int x, int y, int viewportWidth, int viewportHeight)
-        {
-            _x = x;
-            _y = y;
-            _rotation = 0f;
-            _scale = 1f;
-            _viewportWidth = viewportWidth;
-            _viewportHeight = viewportHeight;
-            _dirty = true;
-        }
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Recalculates the internal transformation matrix based on current position, rotation, and scale.
@@ -193,5 +202,7 @@ namespace FreedomEngine.Core
 
             _dirty = false;
         }
+
+        #endregion
     }
 }

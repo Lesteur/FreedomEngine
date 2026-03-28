@@ -11,11 +11,31 @@ namespace FreedomEngine.Input
     /// </summary>
     public class GamePadInfo
     {
+        #region Fields
+
         /// <summary>
         /// The amount of time remaining for the current vibration effect on this gamepad.
         /// </summary>
         private TimeSpan _vibrationTimeRemaining = TimeSpan.Zero;
 
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="GamePadInfo"/> class for the specified player index.
+        /// </summary>
+        /// <param name="playerIndex">The index of the player for this gamepad.</param>
+        public GamePadInfo(PlayerIndex playerIndex)
+        {
+            PlayerIndex = playerIndex;
+            PreviousState = new GamePadState();
+            CurrentState = GamePad.GetState(playerIndex);
+        }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets the index of the player this gamepad is for.
@@ -57,17 +77,9 @@ namespace FreedomEngine.Input
         /// </summary>
         public float RightTrigger => CurrentState.Triggers.Right;
 
+        #endregion
 
-        /// <summary>
-        /// Creates a new GamePadInfo for the gamepad connected at the specified player index.
-        /// </summary>
-        /// <param name="playerIndex">The index of the player for this gamepad.</param>
-        public GamePadInfo(PlayerIndex playerIndex)
-        {
-            PlayerIndex = playerIndex;
-            PreviousState = new GamePadState();
-            CurrentState = GamePad.GetState(playerIndex);
-        }
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates the state information for this gamepad input.
@@ -88,6 +100,10 @@ namespace FreedomEngine.Input
                 }
             }
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Returns a value that indicates whether the specified gamepad button is current down.
@@ -147,5 +163,7 @@ namespace FreedomEngine.Input
         {
             GamePad.SetVibration(PlayerIndex, 0.0f, 0.0f);
         }
+
+        #endregion
     }
 }

@@ -9,6 +9,21 @@ namespace FreedomEngine.Input
     /// </summary>
     public class MouseInfo
     {
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="MouseInfo"/> class, initializing the previous and current mouse states.
+        /// </summary>
+        public MouseInfo()
+        {
+            PreviousState = new MouseState();
+            CurrentState = Mouse.GetState();
+        }
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// The state of mouse input during the previous update cycle.
         /// </summary>
@@ -76,16 +91,9 @@ namespace FreedomEngine.Input
         /// </summary>
         public int ScrollWheelDelta => CurrentState.ScrollWheelValue - PreviousState.ScrollWheelValue;
 
+        #endregion
 
-        /// <summary>
-        /// Creates a new MouseInfo.
-        /// </summary>
-        public MouseInfo()
-        {
-            PreviousState = new MouseState();
-            CurrentState = Mouse.GetState();
-        }
-
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates the state information about mouse input.
@@ -95,6 +103,10 @@ namespace FreedomEngine.Input
             PreviousState = CurrentState;
             CurrentState = Mouse.GetState();
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Returns a value that indicates whether the specified mouse button is currently down.
@@ -211,5 +223,7 @@ namespace FreedomEngine.Input
                 CurrentState.XButton2
             );
         }
+
+        #endregion
     }
 }

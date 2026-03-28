@@ -11,6 +11,21 @@ namespace FreedomEngine.Input
     /// </summary>
     public class KeyboardInfo
     {
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="KeyboardInfo"/> class, initializing the previous and current keyboard states.
+        /// </summary>
+        public KeyboardInfo()
+        {
+            PreviousState = new KeyboardState();
+            CurrentState = Keyboard.GetState();
+        }
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// Gets the state of keyboard input during the previous update cycle.
         /// </summary>
@@ -21,16 +36,9 @@ namespace FreedomEngine.Input
         /// </summary>
         public KeyboardState CurrentState { get; private set; }
 
+        #endregion
 
-        /// <summary>
-        /// Creates a new KeyboardInfo. 
-        /// </summary>
-        public KeyboardInfo()
-        {
-            PreviousState = new KeyboardState();
-            CurrentState = Keyboard.GetState();
-        }
-
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates the state information about keyboard input.
@@ -40,6 +48,10 @@ namespace FreedomEngine.Input
             PreviousState = CurrentState;
             CurrentState = Keyboard.GetState();
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Returns a value that indicates if the specified key is currently down.
@@ -80,5 +92,7 @@ namespace FreedomEngine.Input
         {
             return CurrentState.IsKeyUp(key) && PreviousState.IsKeyDown(key);
         }
+
+        #endregion
     }
 }

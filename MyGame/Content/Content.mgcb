@@ -30,12 +30,12 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Fonts/Determination_0.png
+/build:Assets/Fonts/Determination_0.png;Assets/Fonts/Determination_0
 
 #begin Assets/Fonts/Determination.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
-/build:Assets/Fonts/Determination.fnt
+/build:Assets/Fonts/Determination.fnt;Assets/Fonts/Determination
 
 #begin Assets/Fonts/Pixeloid_0.png
 /importer:TextureImporter
@@ -53,6 +53,23 @@
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
 /build:Assets/Fonts/Pixeloid.fnt;Assets/Fonts/Pixeloid
+
+#begin Assets/Fonts/ZeldaFont_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Fonts/ZeldaFont_0.png;Assets/Fonts/ZeldaFont_0
+
+#begin Assets/Fonts/ZeldaFont.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:Assets/Fonts/ZeldaFont.fnt;Assets/Fonts/ZeldaFont
 
 #begin Assets/Textures/spr_jonathan.png
 /importer:TextureImporter

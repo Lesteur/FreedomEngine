@@ -10,6 +10,7 @@ using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Components;
 using FreedomEngine.Graphics.BitmapFonts;
+using FreedomEngine;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -26,10 +27,7 @@ namespace MyGame.Scripts.Scenes
         private Tilemap _tilemap;
 
         private BitmapFont _font;
-        private BitmapText _bitmapText1;
-        private BitmapText _bitmapText2;
-        private BitmapText _bitmapText3;
-        private BitmapText _bitmapText4;
+        private Text _bitmapText1;
 
         public override void Initialize()
         {
@@ -49,7 +47,9 @@ namespace MyGame.Scripts.Scenes
             _tileset.AddAnimation(0, _list1);
             _tileset.AddAnimation(5, _list2);
 
-            _tilemap = new Tilemap(_tileset, 10, 10);
+            _tilemap = new Tilemap(_tileset, 15, 15);
+            _tilemap.X = 100;
+            _tilemap.Y = 50;
 
             for (UInt16 i = 0; i < _tilemap.Count; i++)
             {
@@ -59,19 +59,12 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
-            _bitmapText1 = new BitmapText(_font, "Hello, [scale 2]World[\\scale]! ç Êê j[scale 0.5]Ê[\\scale] Salut salut salut salut salut salut salut salut hé !!!", 300, 150);
-            //_bitmapText1.DefaultColor = Color.Red;
+            _bitmapText1 = new Text(_font, "Salut, [shake 0.5]tout le monde[\\shake] ! Je suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. " +
+                "Je pense également que les chats sont de merveilleuses créatures mais les chiens sont également des êtres fabuleux !", 100, 50);
             _bitmapText1.VerticalAlignment = TextVerticalAlignment.Top;
-            _bitmapText1.HorizontalAlignment = TextHorizontalAlignment.Right;
-            _bitmapText1.MaxWidth = 200;
-            _bitmapText1.JumpHeight = 20;
-
-            _bitmapText2 = new BitmapText(_font, "Hello, [scale 2]World[\\scale]! ç Êê j[scale 0.5]Ê[\\scale] Salut salut salut salut salut salut salut salut hé !!!", 300, 150);
-            //_bitmapText1.DefaultColor = Color.Red;
-            _bitmapText2.VerticalAlignment = TextVerticalAlignment.Top;
-            _bitmapText2.HorizontalAlignment = TextHorizontalAlignment.Left;
-            _bitmapText2.MaxWidth = 200;
-            _bitmapText2.JumpHeight = 20;
+            _bitmapText1.HorizontalAlignment = TextHorizontalAlignment.Left;
+            _bitmapText1.MaxWidth = 400;
+            _bitmapText1.JumpHeight = 25;
         }
 
         public override void LoadContent()
@@ -79,7 +72,7 @@ namespace MyGame.Scripts.Scenes
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
-            _font = Content.Load<BitmapFont>("Assets/Fonts/Determination");
+            _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
         }
 
         public override void Update(GameTime gameTime)
@@ -121,7 +114,10 @@ namespace MyGame.Scripts.Scenes
             _entity.Update(gameTime);
 
             _bitmapText1.Update(gameTime);
-            // _bitmapText1.Rotation += MathHelper.ToRadians(1);
+
+            //_bitmapText1.Rotation += MathHelper.ToRadians(1);
+            var _pos = _bitmapText1.LengthSeeing;
+            _bitmapText1.LengthSeeing = (_pos + 1) % (_bitmapText1.LengthWithoutMarkup + 1);
 
             base.Update(gameTime);
         }
@@ -135,7 +131,6 @@ namespace MyGame.Scripts.Scenes
         public override void DrawUI(GameTime gameTime)
         {
             _bitmapText1.Draw(Application.SpriteBatch);
-            _bitmapText2.Draw(Application.SpriteBatch);
         }
     }
 }

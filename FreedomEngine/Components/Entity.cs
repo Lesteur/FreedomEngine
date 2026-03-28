@@ -71,7 +71,7 @@ namespace FreedomEngine.Components
         public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Entity"/> class.
+        /// Creates a new instance of the <see cref="Entity"/> class with the specified sprite and initial position.
         /// </summary>
         /// <param name="sprite">The sprite associated with the entity.</param>
         /// <param name="x">The starting X position.</param>
@@ -89,7 +89,7 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (Sprite?.Frames == null || Sprite.Frames.Count == 0)
+            if (Sprite?.Frames == null || Sprite.Frames.Length == 0 || Sprite.Delay == TimeSpan.Zero)
                 return;
 
             _elapsed += gameTime.ElapsedGameTime;
@@ -99,7 +99,7 @@ namespace FreedomEngine.Components
                 _elapsed -= Sprite.Delay;
                 
                 // Modulo allows naturally looping back to the start of the animation
-                CurrentFrame = (CurrentFrame + 1) % Sprite.Frames.Count;
+                CurrentFrame = (CurrentFrame + 1) % Sprite.Frames.Length;
             }
         }
 
@@ -109,7 +109,7 @@ namespace FreedomEngine.Components
         /// <param name="spriteBatch">The rendering context.</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible || Sprite?.Frames == null || CurrentFrame >= Sprite.Frames.Count)
+            if (!Visible || Sprite?.Frames == null || CurrentFrame >= Sprite.Frames.Length)
                 return;
 
             // Factorize recurring calculations

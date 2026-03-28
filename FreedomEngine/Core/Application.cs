@@ -1,21 +1,23 @@
-﻿using System;
+﻿using FreedomEngine.Audio;
+using FreedomEngine.Input;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using FreedomEngine.Audio;
-using FreedomEngine.Input;
+using System;
 
 namespace FreedomEngine.Core
 {
     /// <summary>
-    /// Core engine class that sits atop the main framework game loop, handling the global state 
-    /// properties, inputs, and active scenes over execution time.
+    /// Core engine class that sits atop the main framework game loop, handling
+    /// the global state properties, inputs, and active scenes over execution time.
     /// </summary>
     public class Application : Game
     {
+        #region Properties
+
         /// <summary>
         /// Gets the singleton instance of the executing application core.
         /// </summary>
@@ -57,7 +59,7 @@ namespace FreedomEngine.Core
         public static AudioController Audio { get; private set; }
 
         /// <summary>
-        /// Gets the currently executing Scene.
+        /// Gets the currently executing scene.
         /// </summary>
         public static Scene CurrentScene { get; private set; }
 
@@ -66,9 +68,12 @@ namespace FreedomEngine.Core
         /// </summary>
         public static Scene NextScene { get; private set; }
 
+        #endregion
+
+        #region Constructors
+
         /// <summary>
-        /// Initializes a new instance of the global application setup, pre-configuring critical 
-        /// components like the GraphicsDeviceManager to base states.
+        /// Creates a new instance of the <see cref="Application"/> class, initializing core properties and configurations.
         /// </summary>
         public Application()
         {
@@ -79,63 +84,28 @@ namespace FreedomEngine.Core
 
             Content = base.Content;
             Content.RootDirectory = "Content";
-            
+
             IsMouseVisible = true;
             ExitOnEscape = true;
             CurrentScene = null;
             NextScene = null;
         }
 
-        /// <summary>
-        /// Validates core graphics definitions bound to screen size constraints from settings.
-        /// </summary>
-        private void ConfigureGraphics()
-        {
-            Graphics.PreferredBackBufferWidth = EngineConfig.WindowWidth;
-            Graphics.PreferredBackBufferHeight = EngineConfig.WindowHeight;
-            Graphics.SynchronizeWithVerticalRetrace = EngineConfig.VSync;
+        #endregion
 
-            IsFixedTimeStep = EngineConfig.IsFixedTimeStep;
-            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / EngineConfig.TargetFPS);
-        }
+        #region Lifecycle Methods
 
-        /// <summary>
-        /// Bootstraps custom internal components initializing rendering configurations 
-        /// right before beginning main loops.
-        /// </summary>
+        /// <inheritdoc/>
         protected override void Initialize()
         {
             base.Initialize();
-
-            // Set the core's graphics device to a reference of the base Game's graphics device.
             GraphicsDevice = base.GraphicsDevice;
-
-            // Create the sprite batch instance.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // Create a new input manager.
             Input = new InputManager();
-
-            // Create a new audio controller.
             Audio = new AudioController();
         }
 
-        /// <summary>
-        /// Automatically disposes cached memory properties internally mapping rendering loops.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // Dispose of the audio controller.
-            Audio.Dispose();
-
-            base.UnloadContent();
-        }
-
-        /// <summary>
-        /// Main application execution ticker evaluating controls, managing 
-        /// requested transitions, and piping frames logically to active scenes.
-        /// </summary>
-        /// <param name="gameTime">Contains metrics about global running time scales.</param>
+        /// <inheritdoc/>
         protected override void Update(GameTime gameTime)
         {
             Input.Update(gameTime);
@@ -152,30 +122,49 @@ namespace FreedomEngine.Core
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// Paints the background environment invoking specialized layer calls 
-        /// into the active scene environment natively.
-        /// </summary>
-        /// <param name="gameTime">Contains metrics reflecting timeframes tied to execution intervals.</param>
+        /// <inheritdoc/>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
             CurrentScene?.Draw(gameTime);
-
             base.Draw(gameTime);
         }
+
+        /// <inheritdoc/>
+        protected override void UnloadContent()
+        {
+            Audio.Dispose();
+            base.UnloadContent();
+        }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Prepares the engine for a level/scene switching over upon hitting the next consecutive logic tick.
         /// </summary>
-        /// <param name="next">The incoming Scene instance ready to be switched dynamically over the execution state.</param>
         public static void ChangeScene(Scene next)
         {
-            // Only set the next scene value if it is not the same
-            // instance as the currently active scene.
             if (NextScene != next)
                 NextScene = next;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Validates core graphics definitions bound to screen size constraints from settings.
+        /// </summary>
+        private void ConfigureGraphics()
+        {
+            Graphics.PreferredBackBufferWidth = EngineConfig.WindowWidth;
+            Graphics.PreferredBackBufferHeight = EngineConfig.WindowHeight;
+            Graphics.SynchronizeWithVerticalRetrace = EngineConfig.VSync;
+
+            IsFixedTimeStep = EngineConfig.IsFixedTimeStep;
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / EngineConfig.TargetFPS);
         }
 
         /// <summary>
@@ -184,22 +173,15 @@ namespace FreedomEngine.Core
         /// </summary>
         private static void TransitionScene()
         {
-            // If there is an active scene, dispose of it.
             CurrentScene?.Dispose();
 
-            // Force the garbage collector to collect to ensure memory is cleared.
-            GC.Collect();
+            // GC.Collect(); // Recommended: Avoid manual GC calls unless profiling proves it necessary.
 
-            // Change the currently active scene to the new scene.
             CurrentScene = NextScene;
-
-            // Null out the next scene value so it does not trigger a change over and over.
             NextScene = null;
-
-            // If the active scene now is not null, initialize it.
-            // Remember, just like with Game, the Initialize call also calls the
-            // Scene.LoadContent
             CurrentScene?.Initialize();
         }
+
+        #endregion
     }
 }
