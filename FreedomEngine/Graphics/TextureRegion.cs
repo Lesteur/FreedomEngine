@@ -8,7 +8,7 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents a rectangular region within a texture.
     /// </summary>
-    public class TextureRegion
+    public sealed class TextureRegion
     {
         #region Constructors
 

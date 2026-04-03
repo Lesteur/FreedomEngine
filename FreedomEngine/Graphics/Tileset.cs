@@ -6,7 +6,7 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents a collection of tiles, including their textures and animations, used for rendering in a grid layout.
     /// </summary>
-    public class Tileset
+    public sealed class Tileset
     {
         #region Constructors
 

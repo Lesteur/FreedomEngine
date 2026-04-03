@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Globalization;
-
 using Microsoft.Xna.Framework;
 
-namespace FreedomEngine
+namespace FreedomEngine.Collections
 {
     /// <summary>
     /// Provides utility methods for parsing various types of data from strings, such as colors and scales.

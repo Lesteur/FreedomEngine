@@ -48,8 +48,8 @@ namespace MyGame.Scripts.Scenes
             _tileset.AddAnimation(5, _list2);
 
             _tilemap = new Tilemap(_tileset, 15, 15);
-            _tilemap.X = 100;
-            _tilemap.Y = 50;
+            _tilemap.X = 400;
+            _tilemap.Y = 150;
 
             for (UInt16 i = 0; i < _tilemap.Count; i++)
             {
@@ -59,12 +59,14 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
-            _bitmapText1 = new Text(_font, "Salut, [shake 0.5]tout le monde[\\shake] ! Je suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. " +
-                "Je pense également que les chats sont de merveilleuses créatures mais les chiens sont également des êtres fabuleux !", 100, 50);
-            _bitmapText1.VerticalAlignment = TextVerticalAlignment.Top;
-            _bitmapText1.HorizontalAlignment = TextHorizontalAlignment.Left;
-            _bitmapText1.MaxWidth = 400;
-            _bitmapText1.JumpHeight = 25;
+            _bitmapText1 = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
+                "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", 400, 150)
+            {
+                VerticalAlignment = TextVerticalAlignment.Middle,
+                HorizontalAlignment = TextHorizontalAlignment.Center,
+                MaxWidth = 400,
+                JumpHeight = 25
+            };
         }
 
         public override void LoadContent()
@@ -116,8 +118,8 @@ namespace MyGame.Scripts.Scenes
             _bitmapText1.Update(gameTime);
 
             //_bitmapText1.Rotation += MathHelper.ToRadians(1);
-            var _pos = _bitmapText1.LengthSeeing;
-            _bitmapText1.LengthSeeing = (_pos + 1) % (_bitmapText1.LengthWithoutMarkup + 1);
+            //var _pos = _bitmapText1.LengthSeeing;
+            //_bitmapText1.LengthSeeing = (_pos + 1) % (_bitmapText1.LengthWithoutMarkup + 1);
 
             base.Update(gameTime);
         }

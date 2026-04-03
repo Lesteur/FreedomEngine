@@ -8,7 +8,7 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents a collection of named texture regions and sprites.
     /// </summary>
-    public class TextureAtlas
+    public sealed class TextureAtlas
     {
         #region Fields
 

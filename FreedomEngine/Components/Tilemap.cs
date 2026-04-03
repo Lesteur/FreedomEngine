@@ -29,6 +29,9 @@ namespace FreedomEngine.Components
         /// </summary>
         private readonly ushort[] _animationRemap;
 
+        /// <summary>
+        /// Tracks the total elapsed time since the last animation frame update. This is used to determine when to advance animations.
+        /// </summary>
         private TimeSpan _elapsed;
 
         #endregion
@@ -66,12 +69,12 @@ namespace FreedomEngine.Components
         #region Properties
 
         /// <summary>
-        /// Gets or sets the X coordinate value.
+        /// Gets or Sets the X coordinate value.
         /// </summary>
         public int X { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the Y-coordinate value.
+        /// Gets or Sets the Y-coordinate value.
         /// </summary>
         public int Y { get; set; } = 0;
 

@@ -1,4 +1,5 @@
 ﻿using FreedomEngine.Audio;
+using FreedomEngine.Collections;
 using FreedomEngine.Input;
 
 using Microsoft.Xna.Framework;

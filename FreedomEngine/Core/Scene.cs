@@ -1,4 +1,5 @@
-﻿using FreedomEngine.Components;
+﻿using FreedomEngine.Collections;
+using FreedomEngine.Components;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;

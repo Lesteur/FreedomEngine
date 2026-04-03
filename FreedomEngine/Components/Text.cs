@@ -1,4 +1,5 @@
 ﻿using FreedomEngine.Graphics.BitmapFonts;
+using FreedomEngine.Collections;
 
 using System;
 using System.Collections.Generic;
@@ -95,6 +96,16 @@ namespace FreedomEngine.Components
             /// The amplitude of the shake effect for the text.
             /// </summary>
             public float ShakeAmplitude;
+
+            /// <summary>
+            /// The amplitude of the wave effect for the text.
+            /// </summary>
+            public float WaveAmplitude;
+
+            /// <summary>
+            /// Gets a value indicating whether the rainbow effect is enabled.
+            /// </summary>
+            public bool Rainbow;
         }
 
         /// <summary>
@@ -147,6 +158,22 @@ namespace FreedomEngine.Components
             /// The amplitude of the shake effect applied to this specific glyph.
             /// </summary>
             public float ShakeAmplitude;
+
+            /// <summary>
+            /// The amplitude of the wave effect applied to this specific glyph.
+            /// </summary>
+            public float WaveAmplitude;
+
+            /// <summary>
+            /// The flag indicating whether the rainbow effect is applied to this specific glyph.
+            /// </summary>
+            public bool Rainbow;
+
+            /// <summary>
+            /// Flag indicating whether this glyph represents a whitespace character.
+            /// Empty spaces are skipped during bounded layout computing to prevent incorrect alignment offsets.
+            /// </summary>
+            public bool IsWhitespace;
         }
 
         #endregion
@@ -279,7 +306,7 @@ namespace FreedomEngine.Components
         #region Properties
 
         /// <summary>
-        /// Gets or sets the font used by the text instance. Changing this invalidates the layout.
+        /// Gets or Sets the font used by the text instance. Changing this invalidates the layout.
         /// </summary>
         public BitmapFont Font
         {
@@ -295,7 +322,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the raw text content. Changing this property invalidates parsed markup and cached layout.
+        /// Gets or Sets the raw text content. Changing this property invalidates parsed markup and cached layout.
         /// </summary>
         public string TextString
         {
@@ -313,22 +340,22 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the global position of the text block.
+        /// Gets or Sets the global position of the text block.
         /// </summary>
         public Vector2 Position { get; set; }
 
         /// <summary>
-        /// Gets or sets the rotation applied to the full text block, in radians.
+        /// Gets or Sets the rotation applied to the full text block, in radians.
         /// </summary>
         public float Rotation { get; set; } = 0f;
 
         /// <summary>
-        /// Gets or sets the origin used by rotation, expressed in local text layout space.
+        /// Gets or Sets the origin used by rotation, expressed in local text layout space.
         /// </summary>
         public Vector2 Origin { get; set; } = Vector2.Zero;
 
         /// <summary>
-        /// Gets or sets the maximum amount of characters to be rendered, supporting typewriter-style animations.
+        /// Gets or Sets the maximum amount of characters to be rendered, supporting typewriter-style animations.
         /// </summary>
         public int LengthSeeing { get; set; } = int.MaxValue;
 
@@ -353,7 +380,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the default base color of the text. Changing this invalidates markup style data.
+        /// Gets or Sets the default base color of the text. Changing this invalidates markup style data.
         /// </summary>
         public Color DefaultColor
         {
@@ -370,7 +397,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the default base scale of the text. Changing this invalidates markup style data.
+        /// Gets or Sets the default base scale of the text. Changing this invalidates markup style data.
         /// </summary>
         public Vector2 DefaultScale
         {
@@ -423,7 +450,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the horizontal alignment of the text block.
+        /// Gets or Sets the horizontal alignment of the text block.
         /// Changing this property invalidates the layout.
         /// </summary>
         public TextHorizontalAlignment HorizontalAlignment
@@ -440,7 +467,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the vertical alignment of the text block.
+        /// Gets or Sets the vertical alignment of the text block.
         /// Changing this property invalidates the layout.
         /// </summary>
         public TextVerticalAlignment VerticalAlignment
@@ -457,7 +484,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the maximum line width before wrapping text into a new line.
+        /// Gets or Sets the maximum line width before wrapping text into a new line.
         /// Changing this property invalidates the layout.
         /// </summary>
         public int MaxWidth
@@ -474,7 +501,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or sets the vertical block distance added for each new line break.
+        /// Gets or Sets the vertical block distance added for each new line break.
         /// Changing this property invalidates the layout.
         /// </summary>
         public int JumpHeight
@@ -519,16 +546,35 @@ namespace FreedomEngine.Components
             Matrix rotationMatrix = Rotation != 0f ? Matrix.CreateRotationZ(Rotation) : Matrix.Identity;
 
             float shakeTime = _time * 25f;
+            float waveTime = _time * 10f;
 
             for (int i = 0; i < Math.Min(_glyphs.Count, LengthSeeing); i++)
             {
                 GlyphRenderData glyph = _glyphs[i];
+                if (glyph.IsWhitespace) continue;
+
                 Vector2 localPosition = glyph.Position;
+                Color localColor = glyph.Color;
 
                 if (glyph.ShakeAmplitude > 0f)
                 {
                     localPosition.X += (float)Math.Sin(shakeTime + i) * glyph.ShakeAmplitude;
-                    localPosition.Y += (float)Math.Cos(shakeTime * 1.2f + i) * glyph.ShakeAmplitude;
+                    localPosition.Y += (float)Math.Cos(shakeTime + i) * glyph.ShakeAmplitude;
+                }
+
+                if (glyph.WaveAmplitude > 0f)
+                {
+                    localPosition.Y += (float)Math.Sin(waveTime + i) * glyph.WaveAmplitude;
+                }
+
+                if (glyph.Rainbow)
+                {
+                    // Set a color from HSV
+                    localColor = Color.FromNonPremultiplied(
+                    (int)(128 + 127 * Math.Sin(_time * 5f + i)),
+                    (int)(128 + 127 * Math.Sin(_time * 5f + i + 2)),
+                    (int)(128 + 127 * Math.Sin(_time * 5f + i + 4)),
+                    localColor.A);
                 }
 
                 if (Rotation != 0f)
@@ -538,7 +584,7 @@ namespace FreedomEngine.Components
                     glyph.Character.TextureRegion.Texture,
                     Position + localPosition,
                     glyph.Character.TextureRegion.SourceRectangle,
-                    glyph.Color,
+                    localColor,
                     Rotation,
                     Vector2.Zero,
                     glyph.Scale,
@@ -599,7 +645,9 @@ namespace FreedomEngine.Components
                 {
                     Color = _defaultColor,
                     Scale = _defaultScale,
-                    ShakeAmplitude = 0f
+                    ShakeAmplitude = 0f,
+                    WaveAmplitude = 0f,
+                    Rainbow = false
                 }
             });
 
@@ -735,6 +783,21 @@ namespace FreedomEngine.Components
                     currentStyle = next;
                     return true;
 
+                case "wave":
+                    if (!Parsing.TryParseFloat(parts[0], out float waveAmplitude))
+                        return false;
+
+                    next.WaveAmplitude = waveAmplitude;
+                    stack.Push(new StyleFrame { Name = name, Style = next });
+                    currentStyle = next;
+                    return true;
+
+                case "rainbow":
+                    next.Rainbow = true;
+                    stack.Push(new StyleFrame { Name = name, Style = next });
+                    currentStyle = next;
+                    return true;
+
                 default:
                     return false;
             }
@@ -860,6 +923,9 @@ namespace FreedomEngine.Components
                         Color = style.Color,
                         Scale = style.Scale,
                         ShakeAmplitude = style.ShakeAmplitude,
+                        WaveAmplitude = style.WaveAmplitude,
+                        Rainbow = style.Rainbow,
+                        IsWhitespace = isWhitespace
                     });
 
                     penX += (character.XAdvance + Font.LetterSpacing) * scaleX;
@@ -886,14 +952,24 @@ namespace FreedomEngine.Components
             // 2. Calculate the global vertical offset (concerning the entire text block)
             float globalMinY = float.MaxValue;
             float globalMaxY = float.MinValue;
+            bool hasVisibleGlyphs = false;
 
             for (int i = 0; i < _glyphs.Count; i++)
             {
+                if (_glyphs[i].IsWhitespace) continue;
+                hasVisibleGlyphs = true;
+
                 float top = _glyphs[i].Position.Y;
                 float bottom = top + _glyphs[i].Character.TextureRegion.Height * _glyphs[i].Scale.Y;
 
                 if (top < globalMinY) globalMinY = top;
                 if (bottom > globalMaxY) globalMaxY = bottom;
+            }
+
+            if (!hasVisibleGlyphs)
+            {
+                globalMinY = 0f;
+                globalMaxY = Font.Baseline * _defaultScale.Y;
             }
 
             float blockBaseline = penY + Font.Baseline * _defaultScale.Y;
@@ -926,15 +1002,25 @@ namespace FreedomEngine.Components
                 // Calculate the exact dimensions of the CURRENT LINE
                 float lineMinX = float.MaxValue;
                 float lineMaxX = float.MinValue;
+                bool lineHasVisibleGlyphs = false;
 
                 for (int i = start; i < end; i++)
                 {
                     GlyphRenderData g = _glyphs[i];
+                    if (g.IsWhitespace) continue;
+                    lineHasVisibleGlyphs = true;
+
                     float left = g.Position.X;
                     float right = left + g.Character.TextureRegion.Width * g.Scale.X;
 
                     if (left < lineMinX) lineMinX = left;
                     if (right > lineMaxX) lineMaxX = right;
+                }
+
+                if (!lineHasVisibleGlyphs)
+                {
+                    lineMinX = 0f;
+                    lineMaxX = 0f;
                 }
 
                 // Determine how much to offset this line
@@ -960,6 +1046,8 @@ namespace FreedomEngine.Components
                     g.Position.Y -= alignOffsetY;
                     _glyphs[i] = g;
 
+                    if (g.IsWhitespace) continue;
+
                     float left = g.Position.X;
                     float top = g.Position.Y;
                     float right = left + g.Character.TextureRegion.Width * g.Scale.X;
@@ -973,7 +1061,15 @@ namespace FreedomEngine.Components
             }
 
             // Faithfully update the Bounding Box
-            _layoutBounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+            if (minX == float.MaxValue)
+            {
+                _layoutBounds = RectangleF.Empty;
+            }
+            else
+            {
+                _layoutBounds = new RectangleF(minX, minY, maxX - minX, maxY - minY);
+            }
+            
             _layoutDirty = false;
         }
 

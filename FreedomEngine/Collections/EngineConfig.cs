@@ -1,4 +1,4 @@
-﻿namespace FreedomEngine
+﻿namespace FreedomEngine.Collections
 {
     /// <summary>
     /// Defines global configuration constants for the game engine.
