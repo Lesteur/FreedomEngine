@@ -1,5 +1,6 @@
 ﻿using FreedomEngine.Audio;
 using FreedomEngine.Collections;
+using FreedomEngine.Collections.Coroutines;
 using FreedomEngine.Input;
 
 using Microsoft.Xna.Framework;
@@ -45,19 +46,24 @@ namespace FreedomEngine.Core
         public static new ContentManager Content { get; private set; }
 
         /// <summary>
-        /// Gets the input handler globally orchestrating physical events mapped into the engine.
-        /// </summary>
-        public static InputManager Input { get; private set; }
-
-        /// <summary>
         /// Indicates if hitting the escape key terminates the application execution instance.
         /// </summary>
         public static bool ExitOnEscape { get; private set; }
 
         /// <summary>
+        /// Gets the input handler globally orchestrating physical events mapped into the engine.
+        /// </summary>
+        public static InputManager Input { get; private set; }
+
+        /// <summary>
         /// Gets a reference to the audio control system.
         /// </summary>
         public static AudioController Audio { get; private set; }
+
+        /// <summary>
+        /// Gets the global coroutine controller responsible for managing all active coroutines across scenes.
+        /// </summary>
+        public static CoroutineController Coroutines { get; private set; }
 
         /// <summary>
         /// Gets the currently executing scene.
@@ -104,6 +110,7 @@ namespace FreedomEngine.Core
             SpriteBatch = new SpriteBatch(GraphicsDevice);
             Input = new InputManager();
             Audio = new AudioController();
+            Coroutines = new CoroutineController();
         }
 
         /// <inheritdoc/>
@@ -111,6 +118,7 @@ namespace FreedomEngine.Core
         {
             Input.Update(gameTime);
             Audio.Update();
+            Coroutines.Update(gameTime);
 
             if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
                 Exit();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -10,7 +11,8 @@ using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Components;
 using FreedomEngine.Graphics.BitmapFonts;
-using FreedomEngine;
+using FreedomEngine.Collections.Coroutines;
+using FreedomEngine.Collections;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -47,9 +49,11 @@ namespace MyGame.Scripts.Scenes
             _tileset.AddAnimation(0, _list1);
             _tileset.AddAnimation(5, _list2);
 
-            _tilemap = new Tilemap(_tileset, 15, 15);
-            _tilemap.X = 400;
-            _tilemap.Y = 150;
+            _tilemap = new(_tileset, 15, 15)
+            {
+                X = 400,
+                Y = 150
+            };
 
             for (UInt16 i = 0; i < _tilemap.Count; i++)
             {
@@ -100,6 +104,7 @@ namespace MyGame.Scripts.Scenes
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
             {
                 Core.Audio.PlaySoundEffect(_soundEffect);
+                Core.Coroutines.StartCoroutine(TestCoroutine());
             }
 
             if (Core.Input.Keyboard.IsKeyDown(Keys.A))
@@ -109,7 +114,7 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.IsKeyDown(Keys.Z))
             {
-                WorldCamera.Rotation += MathHelper.ToRadians(-1);
+                // WorldCamera.Rotation += MathHelper.ToRadians(-1);
             }
 
             _tilemap.Update(gameTime);
@@ -133,6 +138,24 @@ namespace MyGame.Scripts.Scenes
         public override void DrawUI(GameTime gameTime)
         {
             _bitmapText1.Draw(Application.SpriteBatch);
+        }
+
+
+        private IEnumerator TestCoroutine()
+        {
+            Logger.Info("Coroutine started.");
+
+            yield return new WaitForSeconds(TimeSpan.FromSeconds(1));
+
+            Logger.Info("1 second has passed.");
+
+            yield return new WaitForSeconds(TimeSpan.FromSeconds(2));
+
+            Logger.Info("2 more seconds have passed.");
+
+            yield return new WaitUntil(() => Core.Input.Keyboard.IsKeyDown(Keys.Space));
+
+            Logger.Info("Space key was pressed. Coroutine ending.");
         }
     }
 }
