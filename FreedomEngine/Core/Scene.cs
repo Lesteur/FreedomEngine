@@ -35,7 +35,7 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Pre-calculated scaling matrix to adapt the virtual resolution to the actual window size, maintaining aspect ratio.
         /// </summary>
-        private Matrix _scalingMatrix;
+        protected Matrix _scalingMatrix;
 
         #endregion
 
@@ -88,8 +88,11 @@ namespace FreedomEngine.Core
         #region Properties
 
         /// <summary>
-        /// Gets the content manager specifically associated with this scene.
+        /// Gets the ContentManager used for loading scene-specific assets.
         /// </summary>
+        /// <remarks>
+        /// Assets loaded through this ContentManager will be automatically unloaded when this scene ends.
+        /// </remarks>
         public ContentManager Content { get; protected set; }
 
         /// <summary>
@@ -103,7 +106,7 @@ namespace FreedomEngine.Core
         public Camera UICamera { get; protected set; }
 
         /// <summary>
-        /// Indicates whether this scene instance has been disposed.
+        /// Gets a value that indicates if the scene has been disposed of.
         /// </summary>
         public bool IsDisposed { get; protected set; }
 
@@ -112,24 +115,28 @@ namespace FreedomEngine.Core
         #region Lifecycle Methods
 
         /// <summary>
-        /// Initializes the scene's core resources.
+        /// Initializes the scene.
         /// </summary>
+        /// <remarks>
+        /// When overriding this in a derived class, ensure that base.Initialize()
+        /// still called as this is when LoadContent is called.
+        /// </remarks>
         public virtual void Initialize()
         {
             LoadContent();
         }
 
         /// <summary>
-        /// Called to load all assets and elements required by the scene.
+        /// Override to provide logic to load content for the scene.
         /// </summary>
         public virtual void LoadContent()
         {
         }
 
         /// <summary>
-        /// Updates logic, positional updates of the world camera, moving entities, etc.
+        /// Updates this scene.
         /// </summary>
-        /// <param name="gameTime">A snapshot of the current engine timing values.</param>
+        /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
         public virtual void Update(GameTime gameTime)
         {
             if (_following != null)
@@ -144,24 +151,26 @@ namespace FreedomEngine.Core
         }
 
         /// <summary>
-        /// Core rendering loop. First draws the world via WorldCamera, then the UI via UICamera.
+        /// Draws this scene.
         /// </summary>
-        /// <param name="gameTime">Time passed since the last call to Draw.</param>
+        /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
         public virtual void Draw(GameTime gameTime)
         {
+            /*
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
                 blendState: BlendState.AlphaBlend,
                 samplerState: SamplerState.PointClamp,
                 depthStencilState: null,
                 rasterizerState: null,
-                effect: null,
+                effect: _defaultEffect,
                 transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
             );
+            */
 
             DrawWorld(gameTime);
 
-            Application.SpriteBatch.End();
+            //Application.SpriteBatch.End();
 
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
@@ -179,7 +188,7 @@ namespace FreedomEngine.Core
         }
 
         /// <summary>
-        /// Called to unload all specific resources for this scene.
+        /// Unloads scene-specific content.
         /// </summary>
         public virtual void UnloadContent()
         {
@@ -211,7 +220,7 @@ namespace FreedomEngine.Core
         #region IDisposable Implementation
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Disposes of this scene.
         /// </summary>
         public void Dispose()
         {
@@ -220,9 +229,12 @@ namespace FreedomEngine.Core
         }
 
         /// <summary>
-        /// Protected implementation of the Dispose pattern.
+        /// Disposes of this scene.
         /// </summary>
-        /// <param name="disposing">True to release both managed and unmanaged resources.</param>
+        /// <param name="disposing">'
+        /// Indicates whether managed resources should be disposed. This value is only true when called from the main
+        /// Dispose method. When called from the finalizer, this will be false.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed)

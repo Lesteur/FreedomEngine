@@ -10,7 +10,7 @@ namespace FreedomEngine.Content.Pipeline.BitmapFonts
     /// <summary>
     /// Imports a BMFont (.fnt) file in binary format (version 3).
     /// </summary>
-    [ContentImporter(".fnt", DefaultProcessor = "Bitmap Font Processor", DisplayName = "Bitmap Font Importer")]
+    [ContentImporter(".fnt", DisplayName = "Bitmap Font Importer", DefaultProcessor = "BitmapFontProcessor")]
     public class BitmapFontImporter : ContentImporter<BitmapFontFileContent>
     {
         public override BitmapFontFileContent Import(string filename, ContentImporterContext context)

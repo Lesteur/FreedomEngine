@@ -114,25 +114,32 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.IsKeyDown(Keys.Z))
             {
-                // WorldCamera.Rotation += MathHelper.ToRadians(-1);
+                WorldCamera.Rotation += MathHelper.ToRadians(-1);
             }
 
             _tilemap.Update(gameTime);
             _entity.Update(gameTime);
 
             _bitmapText1.Update(gameTime);
-
-            //_bitmapText1.Rotation += MathHelper.ToRadians(1);
-            //var _pos = _bitmapText1.LengthSeeing;
-            //_bitmapText1.LengthSeeing = (_pos + 1) % (_bitmapText1.LengthWithoutMarkup + 1);
-
+            
             base.Update(gameTime);
         }
 
         public override void DrawWorld(GameTime gameTime)
         {
+            Application.SpriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: BlendState.AlphaBlend,
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
+            );
+
             _tilemap.Draw(Application.SpriteBatch);
             _entity.Draw(Application.SpriteBatch);
+
+            Application.SpriteBatch.End();
         }
 
         public override void DrawUI(GameTime gameTime)

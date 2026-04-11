@@ -10,14 +10,9 @@ namespace FreedomEngine.Core
         #region Fields
 
         /// <summary>
-        /// X coordinate of the camera's position in world space.
+        /// Coordinates of the camera's position in the game world.
         /// </summary>
-        private int _x;
-
-        /// <summary>
-        /// Y coordinate of the camera's position in world space.
-        /// </summary>
-        private int _y;
+        private Vector2 _position;
 
         /// <summary>
         /// Rotation of the camera in radians, applied around the center of the viewport.
@@ -63,10 +58,9 @@ namespace FreedomEngine.Core
         /// <param name="y">The initial Y position.</param>
         /// <param name="viewportWidth">The width of the viewport.</param>
         /// <param name="viewportHeight">The height of the viewport.</param>
-        public Camera(int x, int y, int viewportWidth, int viewportHeight)
+        public Camera(float x, float y, int viewportWidth, int viewportHeight)
         {
-            _x = x;
-            _y = y;
+            _position = new Vector2(x, y);
             _rotation = 0f;
             _scale = 1f;
             _viewportWidth = viewportWidth;
@@ -79,14 +73,27 @@ namespace FreedomEngine.Core
         #region Properties
 
         /// <summary>
-        /// Gets or sets the X coordinate of the camera's position.
+        /// Gets or sets the 2D position vector of the camera.
         /// </summary>
-        public int X
+        public Vector2 Position
         {
-            get => _x;
+            get => _position;
             set
             {
-                _x = value;
+                _position = value;
+                _dirty = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the X coordinate of the camera's position.
+        /// </summary>
+        public float X
+        {
+            get => _position.X;
+            set
+            {
+                _position.X = value;
                 _dirty = true;
             }
         }
@@ -94,26 +101,12 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Gets or sets the Y coordinate of the camera's position.
         /// </summary>
-        public int Y
+        public float Y
         {
-            get => _y;
+            get => _position.Y;
             set
             {
-                _y = value;
-                _dirty = true;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the 2D position vector of the camera.
-        /// </summary>
-        public Vector2 Position
-        {
-            get => new(_x, _y);
-            set
-            {
-                _x = (int)value.X;
-                _y = (int)value.Y;
+                _position.Y = value;
                 _dirty = true;
             }
         }
@@ -195,7 +188,7 @@ namespace FreedomEngine.Core
         private void RecalculateTransformMatrix()
         {
             _transformMatrix =
-                Matrix.CreateTranslation(new Vector3(-_x, -_y, 0f)) *
+                Matrix.CreateTranslation(new Vector3(-_position.X, -_position.Y, 0f)) *
                 Matrix.CreateRotationZ(_rotation) *
                 Matrix.CreateScale(_scale, _scale, 1f) *
                 Matrix.CreateTranslation(new Vector3(_viewportWidth * 0.5f, _viewportHeight * 0.5f, 0f));

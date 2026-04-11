@@ -60,6 +60,11 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Creates a new region and adds it to this texture atlas.
         /// </summary>
+        /// <param name="name">The name to give the texture region.</param>
+        /// <param name="x">The top-left x-coordinate position of the region boundary relative to the top-left corner of the source texture boundary.</param>
+        /// <param name="y">The top-left y-coordinate position of the region boundary relative to the top-left corner of the source texture boundary.</param>
+        /// <param name="width">The width, in pixels, of the region.</param>
+        /// <param name="height">The height, in pixels, of the region.</param>
         public void AddRegion(string name, ushort x, ushort y, ushort width, ushort height)
         {
             if (Texture == null)
@@ -72,6 +77,8 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Gets the region from this texture atlas with the specified name.
         /// </summary>
+        /// <param name="name">The name of the region to retrieve.</param>
+        /// <returns>The TextureRegion with the specified name.</returns>
         public TextureRegion GetRegion(string name)
         {
             return _regions[name];
@@ -80,6 +87,8 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Removes the region from this texture atlas with the specified name.
         /// </summary>
+        /// <param name="name">The name of the region to remove.</param>
+        /// <returns></returns>
         public bool RemoveRegion(string name)
         {
             return _regions.Remove(name);
@@ -90,24 +99,30 @@ namespace FreedomEngine.Graphics
         #region Public Methods (Sprites)
 
         /// <summary>
-        /// Adds the given sprite definition to this texture atlas mapped by the specified name.
+        /// Adds the given sprite to this texture atlas with the specified name.
         /// </summary>
+        /// <param name="spriteName">The name of the sprite to add.</param>
+        /// <param name="sprite">The sprite to add.</param>
         public void AddSprite(string spriteName, Sprite sprite)
         {
             _sprites.Add(spriteName, sprite);
         }
 
         /// <summary>
-        /// Retrieves a recognized sprite sequence mapped within this texture atlas by name.
+        /// Gets the sprite from this texture atlas with the specified name.
         /// </summary>
+        /// <param name="spriteName">The name of the sprite to retrieve.</param>
+        /// <returns>The sprite with the specified name.</returns>
         public Sprite GetSprite(string spriteName)
         {
             return _sprites[spriteName];
         }
 
         /// <summary>
-        /// Removes the sprite object bound to the specified name from this texture atlas.
+        /// Removes the sprite with the specified name from this texture atlas.
         /// </summary>
+        /// <param name="spriteName">The name of the sprite to remove.</param>
+        /// <returns>true if the sprite is removed successfully; otherwise, false.</returns>
         public bool RemoveSprite(string spriteName)
         {
             return _sprites.Remove(spriteName);

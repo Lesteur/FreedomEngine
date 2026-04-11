@@ -10,6 +10,50 @@ namespace FreedomEngine.Graphics
     /// </summary>
     public sealed class TextureRegion
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets the source texture this texture region is part of.
+        /// </summary>
+        public Texture2D Texture { get; }
+
+        /// <summary>
+        /// Gets the source rectangle boundary of this texture region within the source texture.
+        /// </summary>
+        public Rectangle SourceRectangle { get; }
+
+        /// <summary>
+        /// Gets the width, in pixels, of this texture region.
+        /// </summary>
+        public int Width => SourceRectangle.Width;
+
+        /// <summary>
+        /// Gets the height, in pixels, of this texture region.
+        /// </summary>
+        public int Height => SourceRectangle.Height;
+
+        /// <summary>
+        /// Gets the top normalized texture coordinate of this region.
+        /// </summary>
+        public float TopTextureCoordinate => SourceRectangle.Top / (float)Texture.Height;
+
+        /// <summary>
+        /// Gets the bottom normalized texture coordinate of this region.
+        /// </summary>
+        public float BottomTextureCoordinate => SourceRectangle.Bottom / (float)Texture.Height;
+
+        /// <summary>
+        ///  Gets the left normalized texture coordinate of this region.
+        /// </summary>
+        public float LeftTextureCoordinate => SourceRectangle.Left / (float)Texture.Width;
+
+        /// <summary>
+        /// Gets the right normalized texture coordinate of this region.
+        /// </summary>
+        public float RightTextureCoordinate => SourceRectangle.Right / (float)Texture.Width;
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -35,35 +79,14 @@ namespace FreedomEngine.Graphics
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Gets the source texture this texture region is part of.
-        /// </summary>
-        public Texture2D Texture { get; }
-
-        /// <summary>
-        /// Gets the source rectangle boundary of this texture region within the source texture.
-        /// </summary>
-        public Rectangle SourceRectangle { get; }
-
-        /// <summary>
-        /// Gets the width, in pixels, of this texture region.
-        /// </summary>
-        public int Width => SourceRectangle.Width;
-
-        /// <summary>
-        /// Gets the height, in pixels, of this texture region.
-        /// </summary>
-        public int Height => SourceRectangle.Height;
-
-        #endregion
-
         #region Public Methods
 
         /// <summary>
         /// Submit this texture region for drawing in the current batch.
         /// </summary>
+        /// <param name="spriteBatch">The spritebatch instance used for batching draw calls.</param>
+        /// <param name="position">The xy-coordinate location to draw this texture region on the screen.</param>
+        /// <param name="color">The color mask to apply when drawing this texture region on screen.</param>
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color)
         {
             // Chain to the most complex overload
@@ -71,8 +94,16 @@ namespace FreedomEngine.Graphics
         }
 
         /// <summary>
-        /// Submit this texture region for drawing in the current batch with a uniform scale.
+        /// Submit this texture region for drawing in the current batch.
         /// </summary>
+        /// <param name="spriteBatch">The spritebatch instance used for batching draw calls.</param>
+        /// <param name="position">The xy-coordinate location to draw this texture region on the screen.</param>
+        /// <param name="color">The color mask to apply when drawing this texture region on screen.</param>
+        /// <param name="rotation">The amount of rotation, in radians, to apply when drawing this texture region on screen.</param>
+        /// <param name="origin">The center of rotation, scaling, and position when drawing this texture region on screen.</param>
+        /// <param name="scale">The scale factor to apply when drawing this texture region on screen.</param>
+        /// <param name="effects">Specifies if this texture region should be flipped horizontally, vertically, or both when drawing on screen.</param>
+        /// <param name="layerDepth">The depth of the layer to use when drawing this texture region on screen.</param>
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
         {
             // Convert uniform scale to Vector2 scale and chain
@@ -82,6 +113,14 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Submit this texture region for drawing in the current batch.
         /// </summary>
+        /// <param name="spriteBatch">The spritebatch instance used for batching draw calls.</param>
+        /// <param name="position">The xy-coordinate location to draw this texture region on the screen.</param>
+        /// <param name="color">The color mask to apply when drawing this texture region on screen.</param>
+        /// <param name="rotation">The amount of rotation, in radians, to apply when drawing this texture region on screen.</param>
+        /// <param name="origin">The center of rotation, scaling, and position when drawing this texture region on screen.</param>
+        /// <param name="scale">The amount of scaling to apply to the x- and y-axes when drawing this texture region on screen.</param>
+        /// <param name="effects">Specifies if this texture region should be flipped horizontally, vertically, or both when drawing on screen.</param>
+        /// <param name="layerDepth">The depth of the layer to use when drawing this texture region on screen.</param>
         public void Draw(SpriteBatch spriteBatch, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
         {
             spriteBatch.Draw(

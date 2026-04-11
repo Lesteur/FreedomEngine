@@ -69,31 +69,6 @@ namespace FreedomEngine.Components
         #region Properties
 
         /// <summary>
-        /// Gets or Sets the X coordinate value.
-        /// </summary>
-        public int X { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or Sets the Y-coordinate value.
-        /// </summary>
-        public int Y { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets the position represented by the X and Y coordinates as a two-dimensional vector.
-        /// </summary>
-        /// <remarks>Setting this property updates both the X and Y components to match the specified
-        /// vector. The values are cast to integers when assigned.</remarks>
-        public Vector2 Position
-        {
-            get => new(X, Y);
-            set
-            {
-                X = (int)value.X;
-                Y = (int)value.Y;
-            }
-        }
-
-        /// <summary>
         /// Gets the total number of rows in this tilemap.
         /// </summary>
         public ushort Rows { get; }
@@ -114,6 +89,34 @@ namespace FreedomEngine.Components
         public Vector2 Scale { get; init; }
 
         /// <summary>
+        /// Gets or Sets a value indicating whether this tilemap contains any animated tiles.
+        /// </summary>
+        public bool IsAnimated { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the position of the tilemap.
+        /// </summary>
+        public Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the X-coordinate component of the position.
+        /// </summary>
+        public float X
+        {
+            get => Position.X;
+            set => Position = new Vector2(value, Position.Y);
+        }
+
+        /// <summary>
+        /// Gets or Sets the Y-coordinate component of the position.
+        /// </summary>
+        public float Y
+        {
+            get => Position.Y;
+            set => Position = new Vector2(Position.X, value);
+        }
+
+        /// <summary>
         /// Gets the width, in pixels, each tile is drawn at.
         /// </summary>
         public float TileWidth => _tileset.TileWidth * Scale.X;
@@ -122,11 +125,6 @@ namespace FreedomEngine.Components
         /// Gets the height, in pixels, each tile is drawn at.
         /// </summary>
         public float TileHeight => _tileset.TileHeight * Scale.Y;
-
-        /// <summary>
-        /// Gets or Sets a value indicating whether this tilemap contains any animated tiles.
-        /// </summary>
-        public bool IsAnimated { get; set; }
 
         #endregion
 

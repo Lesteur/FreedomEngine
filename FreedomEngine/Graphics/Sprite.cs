@@ -17,8 +17,7 @@ namespace FreedomEngine.Graphics
         /// <param name="texture">The base source texture applied initially to form this Sprite.</param>
         /// <param name="xOrigin">X starting origin of rendering operations on this sprite bounds.</param>
         /// <param name="yOrigin">Y starting origin of rendering operations on this sprite bounds.</param>
-        public Sprite(Texture2D texture, ushort xOrigin = 0, ushort yOrigin = 0)
-            : this(
+        public Sprite(Texture2D texture, ushort xOrigin = 0, ushort yOrigin = 0) : this(
                 [new TextureRegion(texture ?? throw new ArgumentNullException(nameof(texture)), 0, 0, (ushort)texture.Width, (ushort)texture.Height)],
                 TimeSpan.Zero,
                 xOrigin,
