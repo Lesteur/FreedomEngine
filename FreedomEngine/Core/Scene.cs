@@ -156,35 +156,9 @@ namespace FreedomEngine.Core
         /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
         public virtual void Draw(GameTime gameTime)
         {
-            /*
-            Application.SpriteBatch.Begin(
-                sortMode: SpriteSortMode.Deferred,
-                blendState: BlendState.AlphaBlend,
-                samplerState: SamplerState.PointClamp,
-                depthStencilState: null,
-                rasterizerState: null,
-                effect: _defaultEffect,
-                transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
-            );
-            */
-
             DrawWorld(gameTime);
 
-            //Application.SpriteBatch.End();
-
-            Application.SpriteBatch.Begin(
-                sortMode: SpriteSortMode.Deferred,
-                blendState: BlendState.AlphaBlend,
-                samplerState: SamplerState.PointClamp,
-                depthStencilState: null,
-                rasterizerState: null,
-                effect: null,
-                transformMatrix: UICamera.TransformMatrix * _scalingMatrix
-            );
-
             DrawUI(gameTime);
-
-            Application.SpriteBatch.End();
         }
 
         /// <summary>

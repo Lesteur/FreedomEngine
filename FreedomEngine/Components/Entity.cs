@@ -146,7 +146,7 @@ namespace FreedomEngine.Components
 
         #endregion
 
-        #region Lyfecycle Methods
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates the entity's state and animation.

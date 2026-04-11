@@ -31,11 +31,17 @@ namespace MyGame.Scripts.Scenes
         private BitmapFont _font;
         private Text _bitmapText1;
 
+        private Effect _effect;
+        private RenderTarget2D _renderTarget;
+        private Texture2D _pixel;
+        private BlendState _multiplyBlend;
+
         public override void Initialize()
         {
             // LoadContent is called during base.Initialize().
             base.Initialize();
 
+            //_animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);
 
@@ -70,6 +76,20 @@ namespace MyGame.Scripts.Scenes
                 HorizontalAlignment = TextHorizontalAlignment.Center,
                 MaxWidth = 400,
                 JumpHeight = 25
+            };
+
+            _pixel = new Texture2D(Application.GraphicsDevice, 1, 1);
+            _pixel.SetData(new[] { Color.White });
+
+            _renderTarget = new RenderTarget2D(Application.GraphicsDevice, _width, _height);
+
+            //_lightRect = new Rectangle(0, 0, 20, 20);
+
+            _multiplyBlend = new BlendState()
+            {
+                ColorBlendFunction = BlendFunction.Add,
+                ColorSourceBlend = Blend.DestinationColor,
+                ColorDestinationBlend = Blend.Zero
             };
         }
 
@@ -107,16 +127,6 @@ namespace MyGame.Scripts.Scenes
                 Core.Coroutines.StartCoroutine(TestCoroutine());
             }
 
-            if (Core.Input.Keyboard.IsKeyDown(Keys.A))
-            {
-                WorldCamera.Rotation += MathHelper.ToRadians(1);
-            }
-
-            if (Core.Input.Keyboard.IsKeyDown(Keys.Z))
-            {
-                WorldCamera.Rotation += MathHelper.ToRadians(-1);
-            }
-
             _tilemap.Update(gameTime);
             _entity.Update(gameTime);
 
@@ -127,6 +137,44 @@ namespace MyGame.Scripts.Scenes
 
         public override void DrawWorld(GameTime gameTime)
         {
+            
+            // Set the render target to draw our lights and shadows
+            Application.GraphicsDevice.SetRenderTarget(_renderTarget);
+            
+            // Clear with an ambient dark color (e.g., dark gray/blue). 
+            //Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
+            Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
+
+            Application.SpriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: BlendState.Additive, // Additive blending is used to combine overlapping lights
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                effect: null,
+                transformMatrix: WorldCamera.TransformMatrix 
+            );
+
+            // FIX: Re-center the light on the Entity (assuming the entity is 16x16, half size is 8).
+            int lightSize = 150;
+            int entityHalfWidth = 8;
+            int entityHalfHeight = 8;
+
+            Rectangle lightRect = new Rectangle(
+                (int)_entity.X + entityHalfWidth - (lightSize / 2),
+                (int)_entity.Y + entityHalfHeight - (lightSize / 2), 
+                lightSize, 
+                lightSize
+            );
+            
+            // NOTE: Using _pixel creates a hard solid square which makes it hard to see clearly. 
+            // For a real lighting system, it is highly recommended to replace _pixel by a round soft-gradient Texture2D!
+            Application.SpriteBatch.Draw(_pixel, lightRect, new Color(255, 150, 150, 255));
+
+            Application.SpriteBatch.End();
+            Application.GraphicsDevice.SetRenderTarget(null);
+            
+
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
                 blendState: BlendState.AlphaBlend,
@@ -140,11 +188,40 @@ namespace MyGame.Scripts.Scenes
             _entity.Draw(Application.SpriteBatch);
 
             Application.SpriteBatch.End();
+
+            Application.SpriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: _multiplyBlend, 
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                effect: null,
+                transformMatrix: _scalingMatrix 
+            );
+
+            // Draw the generated light mask on top of everything
+            Application.SpriteBatch.Draw(_renderTarget, Vector2.Zero, Color.White);
+
+            Application.SpriteBatch.End();
         }
 
         public override void DrawUI(GameTime gameTime)
         {
+            /*
+            Application.SpriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: BlendState.AlphaBlend,
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                effect: null,
+                transformMatrix: UICamera.TransformMatrix * _scalingMatrix
+            );
+
             _bitmapText1.Draw(Application.SpriteBatch);
+
+            Application.SpriteBatch.End();
+            */
         }
 
 

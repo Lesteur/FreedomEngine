@@ -20,6 +20,36 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/sfx_chest.wav;Assets/Audio/sfx_chest
 
+#begin Assets/Effects/3dEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Assets/Effects/3dEffect.fx;Assets/Effects/3dEffect
+
+#begin Assets/Effects/Gradient.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Assets/Effects/Gradient.fx;Assets/Effects/Gradient
+
+#begin Assets/Effects/RadiantLight.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Assets/Effects/RadiantLight.fx;Assets/Effects/RadiantLight
+
+#begin Assets/Effects/SolidColor.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Assets/Effects/SolidColor.fx;Assets/Effects/SolidColor
+
+#begin Assets/Effects/WaveEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Assets/Effects/WaveEffect.fx;Assets/Effects/WaveEffect
+
 #begin Assets/Fonts/Determination_0.png
 /importer:TextureImporter
 /processor:TextureProcessor

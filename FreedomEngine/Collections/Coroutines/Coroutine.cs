@@ -10,6 +10,8 @@ namespace FreedomEngine.Collections.Coroutines
     /// </summary>
     public sealed class Coroutine
     {
+        #region Fields
+
         /// <summary>
         /// The underlying enumerator that represents the coroutine execution.
         /// </summary>
@@ -24,6 +26,10 @@ namespace FreedomEngine.Collections.Coroutines
         /// Indicates whether this coroutine is currently paused.
         /// </summary>
         private bool _isPaused;
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets whether this coroutine has finished executing.
@@ -40,6 +46,9 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         public bool IsRunning => !_isFinished && !_isPaused;
 
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Coroutine"/> class.
@@ -52,31 +61,9 @@ namespace FreedomEngine.Collections.Coroutines
             _isPaused = false;
         }
 
+        #endregion
 
-        /// <summary>
-        /// Pauses the execution of this coroutine.
-        /// </summary>
-        public void Pause()
-        {
-            _isPaused = true;
-        }
-
-        /// <summary>
-        /// Resumes the execution of this coroutine.
-        /// </summary>
-        public void Resume()
-        {
-            _isPaused = false;
-        }
-
-        /// <summary>
-        /// Stops the execution of this coroutine immediately.
-        /// </summary>
-        public void Stop()
-        {
-            _isFinished = true;
-        }
-
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates the coroutine by one step.
@@ -105,5 +92,35 @@ namespace FreedomEngine.Collections.Coroutines
 
             return true;
         }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Pauses the execution of this coroutine.
+        /// </summary>
+        public void Pause()
+        {
+            _isPaused = true;
+        }
+
+        /// <summary>
+        /// Resumes the execution of this coroutine.
+        /// </summary>
+        public void Resume()
+        {
+            _isPaused = false;
+        }
+
+        /// <summary>
+        /// Stops the execution of this coroutine immediately.
+        /// </summary>
+        public void Stop()
+        {
+            _isFinished = true;
+        }
+
+        #endregion
     }
 }

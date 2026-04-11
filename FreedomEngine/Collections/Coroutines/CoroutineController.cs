@@ -7,6 +7,8 @@ namespace FreedomEngine.Collections.Coroutines
 {
     public sealed class CoroutineController
     {
+        #region Fields
+
         /// <summary>
         /// The list of all currently active coroutines.
         /// </summary>
@@ -22,6 +24,9 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         private readonly HashSet<Coroutine> _coroutinesToRemove;
 
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Gets the number of currently active coroutines.
@@ -33,6 +38,9 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         public bool HasActiveCoroutines => _coroutines.Count > 0;
 
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CoroutineManager"/> class.
@@ -44,6 +52,9 @@ namespace FreedomEngine.Collections.Coroutines
             _coroutinesToRemove = [];
         }
 
+        #endregion
+
+        #region Lifecycle Methods
 
         /// <summary>
         /// Updates all active coroutines.
@@ -68,6 +79,9 @@ namespace FreedomEngine.Collections.Coroutines
             ProcessPendingOperations();
         }
 
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Starts a new coroutine from an IEnumerator.
@@ -115,6 +129,9 @@ namespace FreedomEngine.Collections.Coroutines
             _coroutinesToRemove.Clear();
         }
 
+        #endregion
+
+        #region Private Methods
 
         private void ProcessPendingOperations()
         {
@@ -132,5 +149,7 @@ namespace FreedomEngine.Collections.Coroutines
                 _coroutinesToAdd.Clear();
             }
         }
+
+        #endregion
     }
 }
