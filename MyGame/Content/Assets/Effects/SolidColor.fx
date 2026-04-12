@@ -15,7 +15,7 @@ sampler2D SpriteTextureSampler = sampler_state
 #include "common.fxh"
 
 
-// Custom parameters
+// Solid Color Parameters
 float4 SolidColor = float4(1, 0, 0, 1); // Default: Red
 float AlphaThreshold = 0; // Pixels with alpha below this are considered transparent
 

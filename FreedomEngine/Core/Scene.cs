@@ -37,6 +37,9 @@ namespace FreedomEngine.Core
         /// </summary>
         protected Matrix _scalingMatrix;
 
+        private Vector2 _cameraLimitsMin;
+        private Vector2 _cameraLimitsMax;
+
         #endregion
 
         #region Constructors
@@ -81,6 +84,11 @@ namespace FreedomEngine.Core
 
             _width = EngineConfig.VirtualWidth * 2;
             _height = EngineConfig.VirtualHeight * 2;
+
+            _cameraLimitsMin = new Vector2(WorldCamera.ViewportWidth / 2f, WorldCamera.ViewportHeight / 2f);
+            _cameraLimitsMax = new Vector2(_width - _cameraLimitsMin.X, _height - _cameraLimitsMax.Y);
+
+            _following = null;
         }
 
         #endregion
@@ -141,11 +149,9 @@ namespace FreedomEngine.Core
         {
             if (_following != null)
             {
-                float halfViewportWidth = WorldCamera.ViewportWidth / 2f;
-                float halfViewportHeight = WorldCamera.ViewportHeight / 2f;
+                var x = Math.Clamp(_following.X, _cameraLimitsMin.X, _cameraLimitsMax.X);
+                var y = Math.Clamp(_following.Y, _cameraLimitsMin.Y, _cameraLimitsMax.Y);
 
-                var x = Math.Clamp(_following.X, halfViewportWidth, _width - halfViewportWidth);
-                var y = Math.Clamp(_following.Y, halfViewportHeight, _height - halfViewportHeight);
                 WorldCamera.Position = new Vector2(x, y);
             }
         }

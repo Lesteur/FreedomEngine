@@ -20,38 +20,36 @@ namespace MyGame.Scripts.Scenes
     {
         private Texture2D _texture;
         private Texture2D _textureTileset;
-        private SoundEffect _soundEffect;
+        private BitmapFont _font;
 
         private Sprite _animation;
         private Tileset _tileset;
 
+        private SoundEffect _soundEffect;
+
         private Entity _entity;
         private Tilemap _tilemap;
+        private Text _bitmapText;
 
-        private BitmapFont _font;
-        private Text _bitmapText1;
-
-        private Effect _effect;
-        private RenderTarget2D _renderTarget;
-        private Texture2D _pixel;
+        private Texture2D _lightTexture;
+        private RenderTarget2D _lightMap;
         private BlendState _multiplyBlend;
 
         public override void Initialize()
         {
-            // LoadContent is called during base.Initialize().
             base.Initialize();
 
-            //_animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);
-
+            
             _following = _entity;
+            
 
             var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
-
-            var _list1 = new List<UInt16> { 0, 1, 2, 3 };
-            var _list2 = new List<UInt16> { 5, 5, 5, 5, 6, 7, 8 };
             _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
+
+            var _list1 = new List<ushort> { 0, 1, 2, 3 };
+            var _list2 = new List<ushort> { 5, 5, 5, 5, 6, 7, 8 };
             _tileset.AddAnimation(0, _list1);
             _tileset.AddAnimation(5, _list2);
 
@@ -61,7 +59,7 @@ namespace MyGame.Scripts.Scenes
                 Y = 150
             };
 
-            for (UInt16 i = 0; i < _tilemap.Count; i++)
+            for (ushort i = 0; i < _tilemap.Count; i++)
             {
                 if (i % 2 == 0)
                     _tilemap.SetTile(i, 0);
@@ -69,8 +67,9 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
-            _bitmapText1 = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
-                "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", 400, 150)
+
+            _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
+                "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))
             {
                 VerticalAlignment = TextVerticalAlignment.Middle,
                 HorizontalAlignment = TextHorizontalAlignment.Center,
@@ -78,12 +77,11 @@ namespace MyGame.Scripts.Scenes
                 JumpHeight = 25
             };
 
-            _pixel = new Texture2D(Application.GraphicsDevice, 1, 1);
-            _pixel.SetData(new[] { Color.White });
 
-            _renderTarget = new RenderTarget2D(Application.GraphicsDevice, _width, _height);
+            _lightTexture = new Texture2D(Application.GraphicsDevice, 1, 1);
+            _lightTexture.SetData([Color.White]);
 
-            //_lightRect = new Rectangle(0, 0, 20, 20);
+            _lightMap = new RenderTarget2D(Application.GraphicsDevice, _width, _height);
 
             _multiplyBlend = new BlendState()
             {
@@ -99,6 +97,8 @@ namespace MyGame.Scripts.Scenes
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
+
+            base.LoadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -124,25 +124,27 @@ namespace MyGame.Scripts.Scenes
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
             {
                 Core.Audio.PlaySoundEffect(_soundEffect);
+            }
+
+            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
+            {
                 Core.Coroutines.StartCoroutine(TestCoroutine());
             }
 
             _tilemap.Update(gameTime);
             _entity.Update(gameTime);
 
-            _bitmapText1.Update(gameTime);
-            
+            _bitmapText.Update(gameTime);
+
             base.Update(gameTime);
         }
 
         public override void DrawWorld(GameTime gameTime)
         {
-            
             // Set the render target to draw our lights and shadows
-            Application.GraphicsDevice.SetRenderTarget(_renderTarget);
-            
-            // Clear with an ambient dark color (e.g., dark gray/blue). 
-            //Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
+            Application.GraphicsDevice.SetRenderTarget(_lightMap);
+
+            // Clear with an ambient dark color (e.g., dark gray/blue).
             Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
 
             Application.SpriteBatch.Begin(
@@ -152,28 +154,19 @@ namespace MyGame.Scripts.Scenes
                 depthStencilState: null,
                 rasterizerState: null,
                 effect: null,
-                transformMatrix: WorldCamera.TransformMatrix 
+                transformMatrix: WorldCamera.TransformMatrix
             );
 
-            // FIX: Re-center the light on the Entity (assuming the entity is 16x16, half size is 8).
-            int lightSize = 150;
-            int entityHalfWidth = 8;
-            int entityHalfHeight = 8;
-
-            Rectangle lightRect = new Rectangle(
-                (int)_entity.X + entityHalfWidth - (lightSize / 2),
-                (int)_entity.Y + entityHalfHeight - (lightSize / 2), 
-                lightSize, 
-                lightSize
-            );
-            
-            // NOTE: Using _pixel creates a hard solid square which makes it hard to see clearly. 
-            // For a real lighting system, it is highly recommended to replace _pixel by a round soft-gradient Texture2D!
-            Application.SpriteBatch.Draw(_pixel, lightRect, new Color(255, 150, 150, 255));
+            Application.SpriteBatch.Draw(_lightTexture, _entity.Position, new Rectangle(0, 0, 100, 100), Color.White, 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            Application.SpriteBatch.Draw(_lightTexture, new Vector2(400, 100), new Rectangle(0, 0, 100, 100), new Color(255, 100, 100), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            Application.SpriteBatch.Draw(_lightTexture, new Vector2(500, 300), new Rectangle(0, 0, 100, 100), new Color(100, 255, 100), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            Application.SpriteBatch.Draw(_lightTexture, new Vector2(400, 200), new Rectangle(0, 0, 100, 100), new Color(100, 100, 255), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
 
             Application.SpriteBatch.End();
             Application.GraphicsDevice.SetRenderTarget(null);
-            
+
+
+            Application.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
@@ -189,25 +182,25 @@ namespace MyGame.Scripts.Scenes
 
             Application.SpriteBatch.End();
 
+
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
-                blendState: _multiplyBlend, 
+                blendState: _multiplyBlend,
                 samplerState: SamplerState.PointClamp,
                 depthStencilState: null,
                 rasterizerState: null,
                 effect: null,
-                transformMatrix: _scalingMatrix 
+                transformMatrix: _scalingMatrix
             );
 
             // Draw the generated light mask on top of everything
-            Application.SpriteBatch.Draw(_renderTarget, Vector2.Zero, Color.White);
+            Application.SpriteBatch.Draw(_lightMap, Vector2.Zero, Color.White);
 
             Application.SpriteBatch.End();
         }
 
         public override void DrawUI(GameTime gameTime)
         {
-            /*
             Application.SpriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
                 blendState: BlendState.AlphaBlend,
@@ -218,10 +211,9 @@ namespace MyGame.Scripts.Scenes
                 transformMatrix: UICamera.TransformMatrix * _scalingMatrix
             );
 
-            _bitmapText1.Draw(Application.SpriteBatch);
+            _bitmapText.Draw(Application.SpriteBatch);
 
             Application.SpriteBatch.End();
-            */
         }
 
 
