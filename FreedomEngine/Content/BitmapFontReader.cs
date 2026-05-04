@@ -22,7 +22,7 @@ namespace FreedomEngine.Content
             }
 
             int lineHeight = reader.ReadInt32();
-            int baseline = reader.ReadInt32(); // baseline (ignored)
+            int baseline = reader.ReadInt32();
 
             int charCount = reader.ReadInt32();
 
