@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections;
+
+using Microsoft.Xna.Framework;
 
 namespace FreedomEngine.Collections.Coroutines
 {
@@ -54,7 +55,7 @@ namespace FreedomEngine.Collections.Coroutines
         /// Initializes a new instance of the <see cref="Coroutine"/> class.
         /// </summary>
         /// <param name="enumerator">The enumerator that represents the coroutine logic.</param>
-        internal Coroutine(IEnumerator enumerator)
+        public Coroutine(IEnumerator enumerator)
         {
             _enumerator = enumerator ?? throw new ArgumentNullException(nameof(enumerator));
             _isFinished = false;

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Input
 {
@@ -9,21 +9,8 @@ namespace FreedomEngine.Input
     /// Provides access to the current and previous keyboard states, enabling
     /// detection of key presses, releases, and real-time keyboard input changes.
     /// </summary>
-    public class KeyboardInfo
+    public class KeyboardInfo : IUpdate
     {
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="KeyboardInfo"/> class, initializing the previous and current keyboard states.
-        /// </summary>
-        public KeyboardInfo()
-        {
-            PreviousState = new KeyboardState();
-            CurrentState = Keyboard.GetState();
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -38,12 +25,25 @@ namespace FreedomEngine.Input
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="KeyboardInfo"/> class, initializing the previous and current keyboard states.
+        /// </summary>
+        public KeyboardInfo()
+        {
+            PreviousState = new KeyboardState();
+            CurrentState = Keyboard.GetState();
+        }
+
+        #endregion
+
         #region Lifecycle Methods
 
         /// <summary>
         /// Updates the state information about keyboard input.
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             PreviousState = CurrentState;
             CurrentState = Keyboard.GetState();

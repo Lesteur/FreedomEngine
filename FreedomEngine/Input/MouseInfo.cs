@@ -1,27 +1,16 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+using FreedomEngine.Collections.Interfaces;
+
 namespace FreedomEngine.Input
 {
     /// <summary>
     /// Provides information about the current and previous state of mouse
     /// input, including position, button states, and scroll wheel values.
     /// </summary>
-    public class MouseInfo
+    public class MouseInfo : IUpdate
     {
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="MouseInfo"/> class, initializing the previous and current mouse states.
-        /// </summary>
-        public MouseInfo()
-        {
-            PreviousState = new MouseState();
-            CurrentState = Mouse.GetState();
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -93,12 +82,25 @@ namespace FreedomEngine.Input
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="MouseInfo"/> class, initializing the previous and current mouse states.
+        /// </summary>
+        public MouseInfo()
+        {
+            PreviousState = new MouseState();
+            CurrentState = Mouse.GetState();
+        }
+
+        #endregion
+
         #region Lifecycle Methods
 
         /// <summary>
         /// Updates the state information about mouse input.
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             PreviousState = CurrentState;
             CurrentState = Mouse.GetState();

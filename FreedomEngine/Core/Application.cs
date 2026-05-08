@@ -1,14 +1,15 @@
-﻿using FreedomEngine.Audio;
-using FreedomEngine.Collections;
-using FreedomEngine.Collections.Coroutines;
-using FreedomEngine.Input;
+﻿using System;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using System;
+using FreedomEngine.Collections;
+using FreedomEngine.Collections.Coroutines;
+using FreedomEngine.Audio;
+using FreedomEngine.Input;
+using FreedomEngine.UI;
 
 namespace FreedomEngine.Core
 {
@@ -66,6 +67,11 @@ namespace FreedomEngine.Core
         public static CoroutineController Coroutines { get; private set; }
 
         /// <summary>
+        /// Gets the global manager for handling tween animations.
+        /// </summary>
+        public static TweenManager Tweens { get; private set; }
+
+        /// <summary>
         /// Gets the currently executing scene.
         /// </summary>
         public static Scene CurrentScene { get; private set; }
@@ -111,6 +117,7 @@ namespace FreedomEngine.Core
             Input = new InputManager();
             Audio = new AudioController();
             Coroutines = new CoroutineController();
+            Tweens = new TweenManager();
         }
 
         /// <inheritdoc/>
@@ -119,6 +126,7 @@ namespace FreedomEngine.Core
             Input.Update(gameTime);
             Audio.Update();
             Coroutines.Update(gameTime);
+            Tweens.Update(gameTime);
 
             if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
                 Exit();
@@ -135,7 +143,7 @@ namespace FreedomEngine.Core
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            CurrentScene?.Draw(gameTime);
+            CurrentScene?.Draw(SpriteBatch);
             base.Draw(gameTime);
         }
 

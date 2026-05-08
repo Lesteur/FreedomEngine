@@ -1,10 +1,9 @@
-using Microsoft.Xna.Framework;
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+
+using Microsoft.Xna.Framework;
 
 namespace FreedomEngine.Graphics.BitmapFonts
 {
@@ -25,43 +24,6 @@ namespace FreedomEngine.Graphics.BitmapFonts
         private int _lineSpacing;
         private bool _useKernings;
         private int _revision;
-
-        #endregion
-
-        #region Constructors
-
-        public BitmapFont(string face, int size, int lineHeight, IEnumerable<BitmapFontCharacter> characters, int baseline)
-            : this(face, size, lineHeight, 0, 0, characters, baseline)
-        {
-        }
-
-        public BitmapFont(string face, int size, int lineHeight, int letterSpacing, int lineSpacing, IEnumerable<BitmapFontCharacter> characters, int baseline)
-        {
-            Face = face ?? string.Empty;
-            Size = size;
-            LineHeight = lineHeight;
-            Baseline = baseline;
-
-            _letterSpacing = letterSpacing;
-            _lineSpacing = lineSpacing;
-            _useKernings = true;
-
-            _asciiCharacters = new BitmapFontCharacter[AsciiRange];
-            _characters = [];
-            _measureCache = new Dictionary<string, SizeF>(128, StringComparer.Ordinal);
-
-            if (characters == null) return;
-
-            foreach (var character in characters)
-            {
-                if (character == null) continue;
-
-                if (character.Character >= 0 && character.Character < AsciiRange)
-                    _asciiCharacters[character.Character] = character;
-                else
-                    _characters[character.Character] = character;
-            }
-        }
 
         #endregion
 
@@ -108,6 +70,43 @@ namespace FreedomEngine.Graphics.BitmapFonts
                 if (_useKernings == value) return;
                 _useKernings = value;
                 InvalidateLayoutCache();
+            }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public BitmapFont(string face, int size, int lineHeight, IEnumerable<BitmapFontCharacter> characters, int baseline)
+            : this(face, size, lineHeight, 0, 0, characters, baseline)
+        {
+        }
+
+        public BitmapFont(string face, int size, int lineHeight, int letterSpacing, int lineSpacing, IEnumerable<BitmapFontCharacter> characters, int baseline)
+        {
+            Face = face ?? string.Empty;
+            Size = size;
+            LineHeight = lineHeight;
+            Baseline = baseline;
+
+            _letterSpacing = letterSpacing;
+            _lineSpacing = lineSpacing;
+            _useKernings = true;
+
+            _asciiCharacters = new BitmapFontCharacter[AsciiRange];
+            _characters = [];
+            _measureCache = new Dictionary<string, SizeF>(128, StringComparer.Ordinal);
+
+            if (characters == null) return;
+
+            foreach (var character in characters)
+            {
+                if (character == null) continue;
+
+                if (character.Character >= 0 && character.Character < AsciiRange)
+                    _asciiCharacters[character.Character] = character;
+                else
+                    _characters[character.Character] = character;
             }
         }
 

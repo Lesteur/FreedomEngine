@@ -7,28 +7,6 @@ namespace FreedomEngine.Graphics.BitmapFonts
     /// </summary>
     public sealed class BitmapFontCharacter
     {
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BitmapFontCharacter"/> class.
-        /// </summary>
-        /// <param name="character">The character code.</param>
-        /// <param name="textureRegion">The texture region that contains the character's image.</param>
-        /// <param name="xOffset">The horizontal offset for rendering the character.</param>
-        /// <param name="yOffset">The vertical offset for rendering the character.</param>
-        /// <param name="xAdvance">The horizontal advance value for rendering the next character.</param>
-        public BitmapFontCharacter(int character, TextureRegion textureRegion, int xOffset, int yOffset, int xAdvance)
-        {
-            Character = character;
-            TextureRegion = textureRegion;
-            XOffset = xOffset;
-            YOffset = yOffset;
-            XAdvance = xAdvance;
-            Kernings = [];
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -60,6 +38,28 @@ namespace FreedomEngine.Graphics.BitmapFonts
         /// Gets the dictionary of kerning values for pairs of characters.
         /// </summary>
         public Dictionary<int, int> Kernings { get; }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitmapFontCharacter"/> class.
+        /// </summary>
+        /// <param name="character">The character code.</param>
+        /// <param name="textureRegion">The texture region that contains the character's image.</param>
+        /// <param name="xOffset">The horizontal offset for rendering the character.</param>
+        /// <param name="yOffset">The vertical offset for rendering the character.</param>
+        /// <param name="xAdvance">The horizontal advance value for rendering the next character.</param>
+        public BitmapFontCharacter(int character, TextureRegion textureRegion, int xOffset, int yOffset, int xAdvance)
+        {
+            Character = character;
+            TextureRegion = textureRegion;
+            XOffset = xOffset;
+            YOffset = yOffset;
+            XAdvance = xAdvance;
+            Kernings = [];
+        }
 
         #endregion
     }

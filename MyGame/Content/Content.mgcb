@@ -77,6 +77,18 @@
 /processor:BitmapFontProcessor
 /build:Assets/Fonts/ZeldaFont.fnt;Assets/Fonts/ZeldaFont
 
+#begin Assets/Textures/background-pattern.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/background-pattern.png;Assets/Textures/background-pattern
+
 #begin Assets/Textures/spr_jonathan.png
 /importer:TextureImporter
 /processor:TextureProcessor

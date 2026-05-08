@@ -1,16 +1,17 @@
-﻿using FreedomEngine.Graphics;
+﻿using System;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
+using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Graphics;
 
 namespace FreedomEngine.Components
 {
     /// <summary>
     /// Represents a grid of tiles for rendering in a 2D space.
     /// </summary>
-    public class Tilemap
+    public class Tilemap : IDraw
     {
         #region Fields
 
@@ -33,36 +34,6 @@ namespace FreedomEngine.Components
         /// Tracks the total elapsed time since the last animation frame update. This is used to determine when to advance animations.
         /// </summary>
         private TimeSpan _elapsed;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="Tilemap"/> class with the specified tileset and dimensions.
-        /// </summary>
-        /// <param name="tileset">The tileset used by this tilemap.</param>
-        /// <param name="columns">The total number of columns in this tilemap.</param>
-        /// <param name="rows">The total number of rows in this tilemap.</param>
-        public Tilemap(Tileset tileset, ushort columns, ushort rows)
-        {
-            _tileset = tileset;
-            _elapsed = TimeSpan.Zero;
-
-            Rows = rows;
-            Columns = columns;
-            Count = (ushort)(Columns * Rows);
-            Scale = Vector2.One;
-            IsAnimated = _tileset.Animations.Count > 0;
-
-            _tiles = new ushort[Count];
-
-            // Initialize the remap array with the size of the tileset.
-            _animationRemap = new ushort[_tileset.Count];
-
-            // Default state: each tile points to itself.
-            ResetAnimationRemap();
-        }
 
         #endregion
 
@@ -125,6 +96,36 @@ namespace FreedomEngine.Components
         /// Gets the height, in pixels, each tile is drawn at.
         /// </summary>
         public float TileHeight => _tileset.TileHeight * Scale.Y;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="Tilemap"/> class with the specified tileset and dimensions.
+        /// </summary>
+        /// <param name="tileset">The tileset used by this tilemap.</param>
+        /// <param name="columns">The total number of columns in this tilemap.</param>
+        /// <param name="rows">The total number of rows in this tilemap.</param>
+        public Tilemap(Tileset tileset, ushort columns, ushort rows)
+        {
+            _tileset = tileset;
+            _elapsed = TimeSpan.Zero;
+
+            Rows = rows;
+            Columns = columns;
+            Count = (ushort)(Columns * Rows);
+            Scale = Vector2.One;
+            IsAnimated = _tileset.Animations.Count > 0;
+
+            _tiles = new ushort[Count];
+
+            // Initialize the remap array with the size of the tileset.
+            _animationRemap = new ushort[_tileset.Count];
+
+            // Default state: each tile points to itself.
+            ResetAnimationRemap();
+        }
 
         #endregion
 

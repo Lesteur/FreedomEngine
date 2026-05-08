@@ -7,17 +7,16 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using FreedomEngine.Collections;
-using FreedomEngine.Collections.Coroutines;
-using FreedomEngine.Components;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
+using FreedomEngine.Components;
 using FreedomEngine.Graphics.BitmapFonts;
-using FreedomEngine.UI;
+using FreedomEngine.Collections.Coroutines;
+using FreedomEngine.Collections;
 
 namespace MyGame.Scripts.Scenes
 {
-    public class MyScene : Scene
+    public class SceneShadow : Scene
     {
         private Texture2D _texture;
         private Texture2D _textureTileset;
@@ -32,18 +31,9 @@ namespace MyGame.Scripts.Scenes
         private Tilemap _tilemap;
         private Text _bitmapText;
 
-        // The texture used for the background pattern.
-        private Texture2D _backgroundPattern;
-        // The destination rectangle for the background pattern to fill.
-        private Rectangle _backgroundDestination;
-        // The offset to apply when drawing the background pattern so it appears to
-        // be scrolling.
-        private Vector2 _backgroundOffset;
-        // The speed that the background pattern scrolls.
-        private readonly float _scrollSpeed = 50.0f;
-
-        // Variable to hold the reference to our active tween
-        private ITween _scaleTween;
+        private Texture2D _lightTexture;
+        private RenderTarget2D _lightMap;
+        private BlendState _multiplyBlend;
 
         public override void Initialize()
         {
@@ -87,12 +77,18 @@ namespace MyGame.Scripts.Scenes
                 JumpHeight = 25
             };
 
-            // Initialize the offset of the background pattern at zero.
-            _backgroundOffset = Vector2.Zero;
 
-            // Set the background pattern destination rectangle to fill the entire
-            // screen background.
-            _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
+            _lightTexture = new Texture2D(Application.GraphicsDevice, 1, 1);
+            _lightTexture.SetData([Color.White]);
+
+            _lightMap = new RenderTarget2D(Application.GraphicsDevice, _width, _height);
+
+            _multiplyBlend = new BlendState()
+            {
+                ColorBlendFunction = BlendFunction.Add,
+                ColorSourceBlend = Blend.DestinationColor,
+                ColorDestinationBlend = Blend.Zero
+            };
         }
 
         public override void LoadContent()
@@ -101,7 +97,6 @@ namespace MyGame.Scripts.Scenes
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
-            _backgroundPattern = Content.Load<Texture2D>("Assets/Textures/background-pattern");
 
             base.LoadContent();
         }
@@ -129,16 +124,6 @@ namespace MyGame.Scripts.Scenes
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
             {
                 Core.Audio.PlaySoundEffect(_soundEffect);
-
-                //Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
-                if (_scaleTween != null && !_scaleTween.IsComplete)
-                {
-                    _scaleTween.Kill();
-                }
-
-                Vector2 targetScale = _entity.Scale == Vector2.One ? Vector2.One * 2 : Vector2.One;
-
-                _scaleTween = Core.Tweens.TweenScale(_entity, Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2));//, TweenEasing.BounceOut);//, TweenLoopType.PingPong);
             }
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
@@ -151,26 +136,36 @@ namespace MyGame.Scripts.Scenes
 
             _bitmapText.Update(gameTime);
 
-            // Update the offsets for the background pattern wrapping so that it
-            // scrolls down and to the right.
-            float offset = _scrollSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            _backgroundOffset.X -= offset;
-            _backgroundOffset.Y -= offset;
-
-            // Ensure that the offsets do not go beyond the texture bounds so it is
-            // a seamless wrap.
-            _backgroundOffset.X %= _backgroundPattern.Width;
-            _backgroundOffset.Y %= _backgroundPattern.Height;
-
             base.Update(gameTime);
         }
 
         public override void DrawWorld(SpriteBatch spriteBatch)
         {
-            // Draw the background pattern first using the PointWrap sampler state.
-            spriteBatch.Begin(samplerState: SamplerState.PointWrap);
-            spriteBatch.Draw(_backgroundPattern, _backgroundDestination, new Rectangle(_backgroundOffset.ToPoint(), _backgroundDestination.Size), Color.White * 0.5f);
+            // Set the render target to draw our lights and shadows
+            Application.GraphicsDevice.SetRenderTarget(_lightMap);
+            // Clear with an ambient dark color (e.g., dark gray/blue).
+            Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
+
+            spriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: BlendState.Additive, // Additive blending is used to combine overlapping lights
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                effect: null,
+                transformMatrix: WorldCamera.TransformMatrix
+            );
+
+            spriteBatch.Draw(_lightTexture, _entity.Position, new Rectangle(0, 0, 100, 100), Color.White, 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(_lightTexture, new Vector2(400, 100), new Rectangle(0, 0, 100, 100), new Color(255, 100, 100), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(_lightTexture, new Vector2(500, 300), new Rectangle(0, 0, 100, 100), new Color(100, 255, 100), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(_lightTexture, new Vector2(400, 200), new Rectangle(0, 0, 100, 100), new Color(100, 100, 255), 0f, new Vector2(0.5f, 0.5f), 1f, SpriteEffects.None, 0f);
+
             spriteBatch.End();
+            Application.GraphicsDevice.SetRenderTarget(null);
+
+
+            Application.GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,
@@ -181,8 +176,24 @@ namespace MyGame.Scripts.Scenes
                 transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
             );
 
-            _tilemap.Draw(spriteBatch);
-            _entity.Draw(spriteBatch);
+            _tilemap.Draw(Application.SpriteBatch);
+            _entity.Draw(Application.SpriteBatch);
+
+            spriteBatch.End();
+
+
+            spriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: _multiplyBlend,
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                effect: null,
+                transformMatrix: _scalingMatrix
+            );
+
+            // Draw the generated light mask on top of everything
+            spriteBatch.Draw(_lightMap, Vector2.Zero, Color.White);
 
             spriteBatch.End();
         }

@@ -3,13 +3,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
+using FreedomEngine.Collections.Interfaces;
+
 namespace FreedomEngine.Input
 {
     /// <summary>
     /// Represents the state and input information for a gamepad,
     /// including player index, button states, and thumbstick values.
     /// </summary>
-    public class GamePadInfo
+    public class GamePadInfo : IUpdate
     {
         #region Fields
 
@@ -17,21 +19,6 @@ namespace FreedomEngine.Input
         /// The amount of time remaining for the current vibration effect on this gamepad.
         /// </summary>
         private TimeSpan _vibrationTimeRemaining = TimeSpan.Zero;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="GamePadInfo"/> class for the specified player index.
-        /// </summary>
-        /// <param name="playerIndex">The index of the player for this gamepad.</param>
-        public GamePadInfo(PlayerIndex playerIndex)
-        {
-            PlayerIndex = playerIndex;
-            PreviousState = new GamePadState();
-            CurrentState = GamePad.GetState(playerIndex);
-        }
 
         #endregion
 
@@ -76,6 +63,21 @@ namespace FreedomEngine.Input
         /// Gets the value of the right trigger of this gamepad.
         /// </summary>
         public float RightTrigger => CurrentState.Triggers.Right;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="GamePadInfo"/> class for the specified player index.
+        /// </summary>
+        /// <param name="playerIndex">The index of the player for this gamepad.</param>
+        public GamePadInfo(PlayerIndex playerIndex)
+        {
+            PlayerIndex = playerIndex;
+            PreviousState = new GamePadState();
+            CurrentState = GamePad.GetState(playerIndex);
+        }
 
         #endregion
 

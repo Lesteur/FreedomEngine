@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
@@ -24,6 +24,15 @@ namespace FreedomEngine.Graphics
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the source texture represented by this texture atlas.
+        /// </summary>
+        public Texture2D Texture { get; set; }
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -43,15 +52,6 @@ namespace FreedomEngine.Graphics
         {
             Texture = texture;
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets or sets the source texture represented by this texture atlas.
-        /// </summary>
-        public Texture2D Texture { get; set; }
 
         #endregion
 

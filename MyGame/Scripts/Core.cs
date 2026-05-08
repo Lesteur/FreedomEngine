@@ -1,6 +1,7 @@
-﻿using FreedomEngine.Core;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+
+using FreedomEngine.Core;
+
 using MyGame.Scripts.Scenes;
 
 namespace MyGame.Scripts

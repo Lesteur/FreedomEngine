@@ -1,11 +1,12 @@
-﻿using FreedomEngine.Graphics.BitmapFonts;
-using FreedomEngine.Collections;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using FreedomEngine.Collections;
+using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Graphics.BitmapFonts;
 
 using RectangleF = System.Drawing.RectangleF;
 
@@ -57,7 +58,7 @@ namespace FreedomEngine.Components
     /// Represents a drawable rich bitmap text with cached parsing and cached glyph layout.
     /// Supports inline markup for color, scale, and shake animations.
     /// </summary>
-    public sealed class Text
+    public sealed class Text : IDraw
     {
         #region Nested Types
 
@@ -259,47 +260,6 @@ namespace FreedomEngine.Components
         /// The total accumulated time used for driving layout animations (e.g., shake).
         /// </summary>
         private float _time;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class with a font and a text content.
-        /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
-        public Text(BitmapFont font, string text)
-            : this(font, text, Vector2.Zero)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class with specific X and Y coordinates.
-        /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
-        /// <param name="x">The X position of the text.</param>
-        /// <param name="y">The Y position of the text.</param>
-        public Text(BitmapFont font, string text, int x, int y)
-            : this(font, text, new Vector2(x, y))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class at the given position.
-        /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
-        /// <param name="position">The global position of the text.</param>
-        public Text(BitmapFont font, string text, Vector2 position)
-        {
-            _font = font;
-            _text = text ?? string.Empty;
-            Position = position;
-            _markupDirty = true;
-            _layoutDirty = true;
-        }
 
         #endregion
 
@@ -515,6 +475,47 @@ namespace FreedomEngine.Components
                 _jumpHeight = value;
                 _layoutDirty = true;
             }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Text"/> class with a font and a text content.
+        /// </summary>
+        /// <param name="font">The bitmap font used for rendering.</param>
+        /// <param name="text">The raw text content, which may contain markup.</param>
+        public Text(BitmapFont font, string text)
+            : this(font, text, Vector2.Zero)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Text"/> class with specific X and Y coordinates.
+        /// </summary>
+        /// <param name="font">The bitmap font used for rendering.</param>
+        /// <param name="text">The raw text content, which may contain markup.</param>
+        /// <param name="x">The X position of the text.</param>
+        /// <param name="y">The Y position of the text.</param>
+        public Text(BitmapFont font, string text, int x, int y)
+            : this(font, text, new Vector2(x, y))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Text"/> class at the given position.
+        /// </summary>
+        /// <param name="font">The bitmap font used for rendering.</param>
+        /// <param name="text">The raw text content, which may contain markup.</param>
+        /// <param name="position">The global position of the text.</param>
+        public Text(BitmapFont font, string text, Vector2 position)
+        {
+            _font = font;
+            _text = text ?? string.Empty;
+            Position = position;
+            _markupDirty = true;
+            _layoutDirty = true;
         }
 
         #endregion

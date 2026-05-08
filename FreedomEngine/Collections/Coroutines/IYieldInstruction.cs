@@ -20,7 +20,6 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         private TimeSpan _remainingTime;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WaitForSeconds"/> class.
         /// </summary>
@@ -34,7 +33,6 @@ namespace FreedomEngine.Collections.Coroutines
         {
             _remainingTime = TimeSpan.FromSeconds(seconds);
         }
-
 
         public bool IsDone(TimeSpan timeSpan)
         {
@@ -52,7 +50,6 @@ namespace FreedomEngine.Collections.Coroutines
         /// Indicates whether one frame has passed.
         /// </summary>
         private bool _hasWaited;
-
 
         public bool IsDone(TimeSpan timeSpan)
         {
@@ -74,7 +71,6 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         private readonly Func<bool> _predicate;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WaitUntil"/> class.
         /// </summary>
@@ -83,7 +79,6 @@ namespace FreedomEngine.Collections.Coroutines
         {
             _predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
         }
-
 
         public bool IsDone(TimeSpan timeSpan)
         {
@@ -101,7 +96,6 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         private readonly Func<bool> _predicate;
 
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WaitWhile"/> class.
         /// </summary>
@@ -110,7 +104,6 @@ namespace FreedomEngine.Collections.Coroutines
         {
             _predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
         }
-
 
         public bool IsDone(TimeSpan timeSpan)
         {

@@ -1,11 +1,12 @@
-﻿using FreedomEngine.Collections;
-using FreedomEngine.Components;
+﻿using System;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
+using FreedomEngine.Collections;
+using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Components;
 
 namespace FreedomEngine.Core
 {
@@ -13,7 +14,7 @@ namespace FreedomEngine.Core
     /// Represents a base scene or game state within the engine.
     /// Handles updates, rendering of the world and UI, and manages cameras.
     /// </summary>
-    public abstract class Scene : IDisposable
+    public abstract class Scene : IDisposable, IDraw
     {
         #region Fields
 
@@ -39,6 +40,33 @@ namespace FreedomEngine.Core
 
         private Vector2 _cameraLimitsMin;
         private Vector2 _cameraLimitsMax;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the ContentManager used for loading scene-specific assets.
+        /// </summary>
+        /// <remarks>
+        /// Assets loaded through this ContentManager will be automatically unloaded when this scene ends.
+        /// </remarks>
+        public ContentManager Content { get; protected set; }
+
+        /// <summary>
+        /// Gets the world camera for rendering entities and backgrounds.
+        /// </summary>
+        public Camera WorldCamera { get; protected set; }
+
+        /// <summary>
+        /// Gets the UI camera for rendering menus, HUD elements.
+        /// </summary>
+        public Camera UICamera { get; protected set; }
+
+        /// <summary>
+        /// Gets a value that indicates if the scene has been disposed of.
+        /// </summary>
+        public bool IsDisposed { get; protected set; }
 
         #endregion
 
@@ -93,33 +121,6 @@ namespace FreedomEngine.Core
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Gets the ContentManager used for loading scene-specific assets.
-        /// </summary>
-        /// <remarks>
-        /// Assets loaded through this ContentManager will be automatically unloaded when this scene ends.
-        /// </remarks>
-        public ContentManager Content { get; protected set; }
-
-        /// <summary>
-        /// Gets the world camera for rendering entities and backgrounds.
-        /// </summary>
-        public Camera WorldCamera { get; protected set; }
-
-        /// <summary>
-        /// Gets the UI camera for rendering menus, HUD elements.
-        /// </summary>
-        public Camera UICamera { get; protected set; }
-
-        /// <summary>
-        /// Gets a value that indicates if the scene has been disposed of.
-        /// </summary>
-        public bool IsDisposed { get; protected set; }
-
-        #endregion
-
         #region Lifecycle Methods
 
         /// <summary>
@@ -159,12 +160,11 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Draws this scene.
         /// </summary>
-        /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
-        public virtual void Draw(GameTime gameTime)
+        /// <param name="spriteBatch">The SpriteBatch used for rendering.</param>
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
-            DrawWorld(gameTime);
-
-            DrawUI(gameTime);
+            DrawWorld(spriteBatch);
+            DrawUI(spriteBatch);
         }
 
         /// <summary>
@@ -182,16 +182,16 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Override this to render all components composing your background and world entities.
         /// </summary>
-        /// <param name="gameTime">Rendering time context.</param>
-        public virtual void DrawWorld(GameTime gameTime)
+        /// <param name="spriteBatch">The SpriteBatch used for rendering.</param>
+        public virtual void DrawWorld(SpriteBatch spriteBatch)
         {
         }
 
         /// <summary>
         /// Override this to render all canvas screens, HUD data, or purely screen-based UI coordinates.
         /// </summary>
-        /// <param name="gameTime">Rendering time context.</param>
-        public virtual void DrawUI(GameTime gameTime)
+        /// <param name="spriteBatch">The SpriteBatch used for rendering.</param>
+        public virtual void DrawUI(SpriteBatch spriteBatch)
         {
         }
 

@@ -1,32 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 
+using FreedomEngine.Collections.Interfaces;
+
 namespace FreedomEngine.Input
 {
     /// <summary>
     /// Manages input from keyboard, mouse, and up to four gamepads, providing
     /// access to their current state for interactive applications.
     /// </summary>
-    public class InputManager
+    public class InputManager : IUpdate
     {
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="InputManager"/> class, initializing the keyboard, mouse, and gamepad input states.
-        /// </summary>
-        public InputManager()
-        {
-            Keyboard = new KeyboardInfo();
-            Mouse = new MouseInfo();
-
-            GamePads = new GamePadInfo[4];
-            for (int i = 0; i < 4; i++)
-            {
-                GamePads[i] = new GamePadInfo((PlayerIndex)i);
-            }
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -46,6 +29,25 @@ namespace FreedomEngine.Input
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="InputManager"/> class, initializing the keyboard, mouse, and gamepad input states.
+        /// </summary>
+        public InputManager()
+        {
+            Keyboard = new KeyboardInfo();
+            Mouse = new MouseInfo();
+
+            GamePads = new GamePadInfo[4];
+            for (int i = 0; i < 4; i++)
+            {
+                GamePads[i] = new GamePadInfo((PlayerIndex)i);
+            }
+        }
+
+        #endregion
+
         #region Lifecycle Methods
 
         /// <summary>
@@ -54,8 +56,8 @@ namespace FreedomEngine.Input
         /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
         public void Update(GameTime gameTime)
         {
-            Keyboard.Update();
-            Mouse.Update();
+            Keyboard.Update(gameTime);
+            Mouse.Update(gameTime);
 
             for (int i = 0; i < 4; i++)
             {

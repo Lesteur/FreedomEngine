@@ -1,6 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System;
 
-using System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
 {
@@ -9,6 +9,30 @@ namespace FreedomEngine.Graphics
     /// </summary>
     public class Sprite
     {
+        #region Properties
+
+        /// <summary>
+        /// Gets the collection of texture regions that make up the frames of this sprite.
+        /// </summary>
+        public TextureRegion[] Frames { get; }
+
+        /// <summary>
+        /// Gets the amount of time to delay before moving to the next frame.
+        /// </summary>
+        public TimeSpan Delay { get; }
+
+        /// <summary>
+        /// Gets the local X offset indicating drawing origin center.
+        /// </summary>
+        public ushort XOrigin { get; }
+
+        /// <summary>
+        /// Gets the local Y offset indicating drawing origin center.
+        /// </summary>
+        public ushort YOrigin { get; }
+
+        #endregion
+
         #region Constructors
 
         /// <summary>
@@ -82,30 +106,6 @@ namespace FreedomEngine.Graphics
             XOrigin = xOrigin;
             YOrigin = yOrigin;
         }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the collection of texture regions that make up the frames of this sprite.
-        /// </summary>
-        public TextureRegion[] Frames { get; }
-
-        /// <summary>
-        /// Gets the amount of time to delay before moving to the next frame.
-        /// </summary>
-        public TimeSpan Delay { get; }
-
-        /// <summary>
-        /// Gets the local X offset indicating drawing origin center.
-        /// </summary>
-        public ushort XOrigin { get; }
-
-        /// <summary>
-        /// Gets the local Y offset indicating drawing origin center.
-        /// </summary>
-        public ushort YOrigin { get; }
 
         #endregion
     }

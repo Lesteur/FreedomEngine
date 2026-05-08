@@ -1,14 +1,17 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
 using FreedomEngine.Graphics;
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Components
 {
     /// <summary>
     /// Represents a base entity in the game.
     /// </summary>
-    public class Entity
+    public class Entity : IDraw
     {
         #region Fields
 
@@ -22,10 +25,9 @@ namespace FreedomEngine.Components
         #region Properties
 
         /// <summary>
-        /// Gets or Sets the sprite of the entity.
+        /// Gets the sprite of the entity.
         /// </summary>
-        public Sprite Sprite { get; set; }
-
+        public Sprite Sprite { get; private set; }
 
         /// <summary>
         /// Gets or Sets the color mask to apply when rendering this entity.
@@ -154,7 +156,7 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (Sprite?.Frames == null || Sprite.Frames.Length == 0 || Sprite.Delay == TimeSpan.Zero)
+            if (Sprite?.Frames == null || Sprite.Frames.Length <= 1 || Sprite.Delay == TimeSpan.Zero)
                 return;
 
             _elapsed += gameTime.ElapsedGameTime;
@@ -193,6 +195,19 @@ namespace FreedomEngine.Components
                 Effects,
                 LayerDepth
             );
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public void ChangeSprite(Sprite sprite)
+        {
+            if (Sprite != null || Sprite != sprite)
+            {
+                Sprite = sprite;
+                CurrentFrame = 0;
+            }
         }
 
         #endregion

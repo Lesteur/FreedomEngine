@@ -49,27 +49,6 @@ namespace FreedomEngine.Core
 
         #endregion
 
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Camera"/> class.
-        /// </summary>
-        /// <param name="x">The initial X position.</param>
-        /// <param name="y">The initial Y position.</param>
-        /// <param name="viewportWidth">The width of the viewport.</param>
-        /// <param name="viewportHeight">The height of the viewport.</param>
-        public Camera(float x, float y, int viewportWidth, int viewportHeight)
-        {
-            _position = new Vector2(x, y);
-            _rotation = 0f;
-            _scale = 1f;
-            _viewportWidth = viewportWidth;
-            _viewportHeight = viewportHeight;
-            _dirty = true;
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -176,6 +155,27 @@ namespace FreedomEngine.Core
 
                 return _transformMatrix;
             }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        /// <param name="x">The initial X position.</param>
+        /// <param name="y">The initial Y position.</param>
+        /// <param name="viewportWidth">The width of the viewport.</param>
+        /// <param name="viewportHeight">The height of the viewport.</param>
+        public Camera(float x, float y, int viewportWidth, int viewportHeight)
+        {
+            _position = new Vector2(x, y);
+            _rotation = 0f;
+            _scale = 1f;
+            _viewportWidth = viewportWidth;
+            _viewportHeight = viewportHeight;
+            _dirty = true;
         }
 
         #endregion

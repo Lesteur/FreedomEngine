@@ -1,11 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
+
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Coroutines
 {
-    public sealed class CoroutineController
+    public sealed class CoroutineController : IUpdate
     {
         #region Fields
 
