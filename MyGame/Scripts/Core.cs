@@ -13,7 +13,8 @@ namespace MyGame.Scripts
             base.Initialize();
 
             // TODO: Add your initialization logic here
-            ChangeScene(new MyScene());
+            //ChangeScene(new MyScene());
+            ChangeScene(new SceneShadow());
         }
 
         protected override void LoadContent()

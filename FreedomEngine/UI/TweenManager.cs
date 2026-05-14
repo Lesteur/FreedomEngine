@@ -101,6 +101,12 @@ namespace FreedomEngine.UI
             return tween;
         }
 
+        public void Clear()
+        {
+            _tweens.Clear();
+            _pendingTweens.Clear();
+        }
+
         #endregion
     }
 }

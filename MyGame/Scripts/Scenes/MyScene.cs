@@ -14,11 +14,13 @@ using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Graphics.BitmapFonts;
 using FreedomEngine.UI;
+using FreedomEngine.Particles;
 
 namespace MyGame.Scripts.Scenes
 {
     public class MyScene : Scene
     {
+        private Texture2D _pixel;
         private Texture2D _texture;
         private Texture2D _textureTileset;
         private BitmapFont _font;
@@ -26,11 +28,12 @@ namespace MyGame.Scripts.Scenes
         private Sprite _animation;
         private Tileset _tileset;
 
-        private SoundEffect _soundEffect;
+        //private SoundEffect _soundEffect;
 
         private Entity _entity;
         private Tilemap _tilemap;
         private Text _bitmapText;
+        private ParticleEmitter<ParticleDefault> _particleEmitter;
 
         // The texture used for the background pattern.
         private Texture2D _backgroundPattern;
@@ -48,6 +51,8 @@ namespace MyGame.Scripts.Scenes
         public override void Initialize()
         {
             base.Initialize();
+
+            _particleEmitter = new ParticleEmitter<ParticleDefault>(_pixel, 100, new Vector2(200, 200));
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);
@@ -99,9 +104,12 @@ namespace MyGame.Scripts.Scenes
         {
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
-            _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
+            //_soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
             _backgroundPattern = Content.Load<Texture2D>("Assets/Textures/background-pattern");
+
+            _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
+            _pixel.SetData([Color.White]);
 
             base.LoadContent();
         }
@@ -128,9 +136,8 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
             {
-                Core.Audio.PlaySoundEffect(_soundEffect);
+                // Core.Audio.PlaySoundEffect(_soundEffect);
 
-                //Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
                 if (_scaleTween != null && !_scaleTween.IsComplete)
                 {
                     _scaleTween.Kill();
@@ -138,12 +145,16 @@ namespace MyGame.Scripts.Scenes
 
                 Vector2 targetScale = _entity.Scale == Vector2.One ? Vector2.One * 2 : Vector2.One;
 
+                // Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
                 _scaleTween = Core.Tweens.TweenScale(_entity, Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2));//, TweenEasing.BounceOut);//, TweenLoopType.PingPong);
             }
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                Core.Coroutines.StartCoroutine(TestCoroutine());
+                // Core.Coroutines.StartCoroutine(TestCoroutine());
+                // Application.ChangeScene(new Scene1());
+
+                _particleEmitter.Emit(30);
             }
 
             _tilemap.Update(gameTime);
@@ -161,6 +172,8 @@ namespace MyGame.Scripts.Scenes
             // a seamless wrap.
             _backgroundOffset.X %= _backgroundPattern.Width;
             _backgroundOffset.Y %= _backgroundPattern.Height;
+
+            _particleEmitter.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -184,6 +197,8 @@ namespace MyGame.Scripts.Scenes
             _tilemap.Draw(spriteBatch);
             _entity.Draw(spriteBatch);
 
+            _particleEmitter.Draw(spriteBatch);
+
             spriteBatch.End();
         }
 
@@ -202,6 +217,16 @@ namespace MyGame.Scripts.Scenes
             _bitmapText.Draw(spriteBatch);
 
             spriteBatch.End();
+        }
+
+        public override void UnloadContent()
+        {
+            Application.Coroutines.Clear();
+            Application.Tweens.Clear();
+
+            _pixel.Dispose();
+
+            base.UnloadContent();
         }
 
 

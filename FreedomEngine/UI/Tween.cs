@@ -9,12 +9,11 @@ namespace FreedomEngine.UI
     /// <summary>
     /// Interface allowing the TweenManager to update tweens of any generic type.
     /// </summary>
-    public interface ITween
+    public interface ITween : IUpdate
     {
         bool IsComplete { get; }
+
         bool IsKilled { get; }
-        
-        void Update(GameTime gameTime);
         
         /// <summary>
         /// Instantly stops the tween and marks it for removal from the TweenManager.
@@ -22,7 +21,7 @@ namespace FreedomEngine.UI
         void Kill();
     }
 
-    public class Tween<T> : ITween, IUpdate
+    public class Tween<T> : ITween
     {
         #region Fields
 

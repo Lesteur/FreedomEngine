@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+
 using Microsoft.Xna.Framework;
 
 namespace FreedomEngine.Collections

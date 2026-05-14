@@ -131,6 +131,11 @@ namespace FreedomEngine.Collections.Coroutines
             _coroutinesToRemove.Clear();
         }
 
+        public void Clear()
+        {
+            StopAllCoroutines();
+        }
+
         #endregion
 
         #region Private Methods

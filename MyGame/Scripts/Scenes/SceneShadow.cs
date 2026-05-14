@@ -41,9 +41,8 @@ namespace MyGame.Scripts.Scenes
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);
-            
+
             _following = _entity;
-            
 
             var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
             _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
@@ -128,7 +127,8 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                Core.Coroutines.StartCoroutine(TestCoroutine());
+                //Core.Coroutines.StartCoroutine(TestCoroutine());
+                Application.ChangeScene(new MyScene());
             }
 
             _tilemap.Update(gameTime);
@@ -213,6 +213,15 @@ namespace MyGame.Scripts.Scenes
             _bitmapText.Draw(spriteBatch);
 
             spriteBatch.End();
+        }
+
+        public override void UnloadContent()
+        {
+            _lightTexture?.Dispose();
+            _lightMap?.Dispose();
+            _multiplyBlend?.Dispose();
+
+            base.UnloadContent();
         }
 
 

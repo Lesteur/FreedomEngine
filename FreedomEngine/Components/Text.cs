@@ -255,11 +255,11 @@ namespace FreedomEngine.Components
         /// The vertical distance applied when jumping to a new line.
         /// </summary>
         private int _jumpHeight = 20;
-        
+
         /// <summary>
         /// The total accumulated time used for driving layout animations (e.g., shake).
         /// </summary>
-        private float _time;
+        private TimeSpan _time = TimeSpan.Zero;
 
         #endregion
 
@@ -477,6 +477,8 @@ namespace FreedomEngine.Components
             }
         }
 
+        public bool IsDisposed { get; set; }
+
         #endregion
 
         #region Constructors
@@ -528,7 +530,7 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The current game time.</param>
         public void Update(GameTime gameTime)
         {
-            _time += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _time += gameTime.ElapsedGameTime;
         }
 
         /// <summary>
@@ -546,8 +548,8 @@ namespace FreedomEngine.Components
 
             Matrix rotationMatrix = Rotation != 0f ? Matrix.CreateRotationZ(Rotation) : Matrix.Identity;
 
-            float shakeTime = _time * 25f;
-            float waveTime = _time * 10f;
+            float shakeTime = (float)(_time.TotalSeconds * 25f);
+            float waveTime = (float)(_time.TotalSeconds * 10f);
 
             for (int i = 0; i < Math.Min(_glyphs.Count, LengthSeeing); i++)
             {
@@ -572,9 +574,9 @@ namespace FreedomEngine.Components
                 {
                     // Set a color from HSV
                     localColor = Color.FromNonPremultiplied(
-                    (int)(128 + 127 * Math.Sin(_time * 5f + i)),
-                    (int)(128 + 127 * Math.Sin(_time * 5f + i + 2)),
-                    (int)(128 + 127 * Math.Sin(_time * 5f + i + 4)),
+                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i)),
+                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i + 2)),
+                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i + 4)),
                     localColor.A);
                 }
 
