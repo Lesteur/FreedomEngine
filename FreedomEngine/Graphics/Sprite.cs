@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,15 +12,7 @@ namespace FreedomEngine.Graphics
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the collection of texture regions that make up the frames of this sprite.
-        /// </summary>
-        public TextureRegion[] Frames { get; }
-
-        /// <summary>
-        /// Gets the amount of time to delay before moving to the next frame.
-        /// </summary>
-        public TimeSpan Delay { get; }
+        public Animation Animation { get; }
 
         /// <summary>
         /// Gets the local X offset indicating drawing origin center.
@@ -66,8 +59,7 @@ namespace FreedomEngine.Graphics
             if (delay < TimeSpan.Zero)
                 throw new ArgumentException("Delay cannot be negative.", nameof(delay));
 
-            Frames = frames;
-            Delay = delay;
+            Animation = new Animation(frames, delay);
             XOrigin = xOrigin;
             YOrigin = yOrigin;
         }
@@ -94,15 +86,15 @@ namespace FreedomEngine.Graphics
             ushort frameWidth = (ushort)(texture2D.Width / frameCount);
             ushort frameHeight = (ushort)texture2D.Height;
 
-            Frames = new TextureRegion[frameCount];
+            TextureRegion[] frames = new TextureRegion[frameCount];
 
             for (int i = 0; i < frameCount; i++)
             {
                 TextureRegion region = new(texture2D, i * frameWidth, 0, frameWidth, frameHeight);
-                Frames[i] = region;
+                frames[i] = region;
             }
 
-            Delay = delay;
+            Animation = new Animation(frames, delay);
             XOrigin = xOrigin;
             YOrigin = yOrigin;
         }

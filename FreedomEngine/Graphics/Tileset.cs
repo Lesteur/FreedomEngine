@@ -18,12 +18,7 @@ namespace FreedomEngine.Graphics
         /// <summary>
         /// Gets the dictionary containing tile animations, mapped by their ID.
         /// </summary>
-        public Dictionary<ushort, List<ushort>> Animations { get; }
-
-        /// <summary>
-        /// Gets the default delay between frames for tile animations.
-        /// </summary>
-        public TimeSpan Delay { get; }
+        public Dictionary<ushort, TileAnimation> Animations { get; }
 
         /// <summary>
         /// Gets the width of a single tile in pixels.
@@ -70,8 +65,7 @@ namespace FreedomEngine.Graphics
             if (textureRegion == null)
                 throw new ArgumentNullException(nameof(textureRegion), "Texture region cannot be null.");
 
-            Animations = [];
-            Delay = TimeSpan.FromSeconds(0.125);
+            Animations = new Dictionary<ushort, TileAnimation>();
             TileWidth = tileWidth;
             TileHeight = tileHeight;
 
@@ -122,40 +116,24 @@ namespace FreedomEngine.Graphics
         }
 
         /// <summary>
-        /// Adds a tile animation sequence mapping.
+        /// Adds a mono-delay tile animation sequence mapping.
         /// </summary>
-        /// <param name="tileID">The tile ID that represents the base tile for this animation sequence.</param>
-        /// <param name="frameTilesIDs">The list of tile IDs that represent the frames of the animation sequence, in order.</param>
-        public void AddAnimation(ushort tileID, List<ushort> frameTilesIDs)
+        public void AddAnimation(ushort tileID, ushort[] frameTilesIDs, TimeSpan delay)
         {
-            Animations[tileID] = frameTilesIDs;
+            Animations[tileID] = new TileAnimation(frameTilesIDs, delay);
         }
 
         /// <summary>
-        /// Removes a tile animation from the tileset definitions.
+        /// Adds a variable-delay tile animation sequence mapping.
         /// </summary>
-        /// <param name="tileID">The tile ID of the animation to remove.</param>
+        public void AddAnimation(ushort tileID, ushort[] frameTilesIDs, TimeSpan[] delays)
+        {
+            Animations[tileID] = new TileAnimation(frameTilesIDs, delays);
+        }
+
         public void RemoveAnimation(ushort tileID)
         {
             Animations.Remove(tileID);
-        }
-
-        /// <summary>
-        /// Gets the tile ID of the current frame of the animation for the given tile ID based on the elapsed time.
-        /// </summary>
-        /// <param name="tileID">The tile ID to check for animation frames.</param>
-        /// <param name="elapsed">The elapsed time used to calculate the current animation frame.</param>
-        /// <returns>The tile ID of the current frame of the animation if an animation exists for the given tile ID;
-        /// otherwise, returns the original tile ID.</returns>
-        public ushort TryGetAnimation(ushort tileID, TimeSpan elapsed)
-        {
-            if (Animations.TryGetValue(tileID, out List<ushort> frameTileIDs))
-            {
-                int frameIndex = (int)(elapsed.TotalSeconds / Delay.TotalSeconds) % frameTileIDs.Count;
-                return frameTileIDs[frameIndex];
-            }
-
-            return tileID;
         }
 
         #endregion

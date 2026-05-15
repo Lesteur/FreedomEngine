@@ -47,8 +47,12 @@ namespace FreedomEngine.Particles
 
         public override void Update(GameTime gameTime)
         {
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Move the particle based on its velocity
+            Velocity += new Vector2(0, 20f) * deltaTime; // Apply gravity
+
             base.Update(gameTime);
-            // Additional behavior can be added here if needed.
         }
 
         public override void Draw(SpriteBatch spriteBatch)

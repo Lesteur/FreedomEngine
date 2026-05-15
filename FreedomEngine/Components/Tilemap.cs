@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,10 +31,9 @@ namespace FreedomEngine.Components
         /// </summary>
         private readonly ushort[] _animationRemap;
 
-        /// <summary>
-        /// Tracks the total elapsed time since the last animation frame update. This is used to determine when to advance animations.
-        /// </summary>
-        private TimeSpan _elapsed;
+        // Tracks elapsed time and frame states uniquely for each animated tile ID
+        private readonly Dictionary<ushort, TimeSpan> _animationElapsedStates;
+        private readonly Dictionary<ushort, int> _animationFrameStates;
 
         #endregion
 
@@ -110,7 +110,6 @@ namespace FreedomEngine.Components
         public Tilemap(Tileset tileset, ushort columns, ushort rows)
         {
             _tileset = tileset;
-            _elapsed = TimeSpan.Zero;
 
             Rows = rows;
             Columns = columns;
@@ -120,11 +119,11 @@ namespace FreedomEngine.Components
 
             _tiles = new ushort[Count];
 
-            // Initialize the remap array with the size of the tileset.
             _animationRemap = new ushort[_tileset.Count];
+            _animationElapsedStates = new Dictionary<ushort, TimeSpan>();
+            _animationFrameStates = new Dictionary<ushort, int>();
 
-            // Default state: each tile points to itself.
-            ResetAnimationRemap();
+            ResetAnimationStates();
         }
 
         #endregion
@@ -139,14 +138,24 @@ namespace FreedomEngine.Components
             if (!IsAnimated)
                 return;
 
-            _elapsed += gameTime.ElapsedGameTime;
-
-            // PRE-CALCULATION: Update the remap table once per frame.
-            // We only iterate over the tiles that actually HAVE animations.
-            foreach (var animation in _tileset.Animations)
+            foreach (var kvp in _tileset.Animations)
             {
-                ushort originalID = animation.Key;
-                _animationRemap[originalID] = _tileset.TryGetAnimation(originalID, _elapsed);
+                ushort originalID = kvp.Key;
+                var animation = kvp.Value;
+
+                // Add elapsed time to this specific animation
+                var currentElapsedTime = _animationElapsedStates[originalID] + gameTime.ElapsedGameTime;
+                int currentFrameIndex = _animationFrameStates[originalID];
+
+                // Determine next frame
+                currentFrameIndex = animation.GetNextFrame(currentFrameIndex, currentElapsedTime, out TimeSpan newElapsedTime);
+
+                // Update states
+                _animationElapsedStates[originalID] = newElapsedTime;
+                _animationFrameStates[originalID] = currentFrameIndex;
+
+                // Pre-calculate the remap table value for rendering
+                _animationRemap[originalID] = animation.Frames[currentFrameIndex];
             }
         }
 
@@ -157,10 +166,8 @@ namespace FreedomEngine.Components
         {
             for (int i = 0; i < Count; i++)
             {
-                // Accessing the tileset index from our pre-calculated remap table.
-                // This is a direct array access (O(1)), much faster than dictionary lookups in a loop.
                 ushort tilesetIndex = _animationRemap[_tiles[i]];
-                TextureRegion tile = _tileset.GetTile(tilesetIndex);
+                var tile = _tileset.GetTile(tilesetIndex);
 
                 int column = i % Columns;
                 int row = i / Columns;
@@ -212,13 +219,19 @@ namespace FreedomEngine.Components
         #region Private Methods
 
         /// <summary>
-        /// Fills the remap table with identity values (index 0 points to tile 0, etc.).
+        /// Initializes or resets the animation states for all tiles in the tilemap.
         /// </summary>
-        private void ResetAnimationRemap()
+        private void ResetAnimationStates()
         {
             for (ushort i = 0; i < _animationRemap.Length; i++)
             {
                 _animationRemap[i] = i;
+
+                if (_tileset.Animations.ContainsKey(i))
+                {
+                    _animationElapsedStates[i] = TimeSpan.Zero;
+                    _animationFrameStates[i] = 0;
+                }
             }
         }
 

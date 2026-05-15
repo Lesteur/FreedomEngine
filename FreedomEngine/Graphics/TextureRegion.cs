@@ -52,6 +52,14 @@ namespace FreedomEngine.Graphics
         /// </summary>
         public float RightTextureCoordinate => SourceRectangle.Right / (float)Texture.Width;
 
+        /// <summary>
+        /// Gets the normalized texture coordinate proportions of this region relative to the source texture.
+        /// </summary>
+        /// <remarks>
+        /// Can be used for calculating UV coordinates when rendering this texture region on screen.
+        /// </remarks>
+        public Vector2 TextureProportion => new(Width / (float)Texture.Width, Height / (float)Texture.Height);
+
         #endregion
 
         #region Constructors

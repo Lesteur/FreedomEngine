@@ -47,10 +47,12 @@ namespace MyGame.Scripts.Scenes
             var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
             _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
 
-            var _list1 = new List<ushort> { 0, 1, 2, 3 };
-            var _list2 = new List<ushort> { 5, 5, 5, 5, 6, 7, 8 };
-            _tileset.AddAnimation(0, _list1);
-            _tileset.AddAnimation(5, _list2);
+            ushort[] _list1 = new ushort[] { 0, 1, 2, 3 };
+            ushort[] _list2 = new ushort[] { 5, 6, 7, 8 };
+            TimeSpan[] _delays = new TimeSpan[] { TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125) };
+            
+            _tileset.AddAnimation(0, _list1, TimeSpan.FromSeconds(0.125));
+            _tileset.AddAnimation(5, _list2, _delays);
 
             _tilemap = new(_tileset, 15, 15)
             {

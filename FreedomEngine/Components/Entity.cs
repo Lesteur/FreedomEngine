@@ -91,7 +91,7 @@ namespace FreedomEngine.Components
         /// <remarks>
         /// Width is calculated by multiplying the width of the source texture region by the x-axis scale factor.
         /// </remarks>
-        //public float Width => Region.Width * Scale.X;
+        public float Width => Sprite.Animation.Frames[CurrentFrame].Width * Scale.X;
 
         /// <summary>
         /// Gets the height, in pixels, of this sprite.
@@ -99,7 +99,7 @@ namespace FreedomEngine.Components
         /// <remarks>
         /// Height is calculated by multiplying the height of the source texture region by the y-axis scale factor.
         /// </remarks>
-        //public float Height => Sprite.Region.Height * Scale.Y;
+        public float Height => Sprite.Animation.Frames[CurrentFrame].Height * Scale.Y;
 
         /// <summary>
         /// Gets or Sets the current animation frame index.
@@ -156,18 +156,15 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (Sprite?.Frames == null || Sprite.Frames.Length <= 1 || Sprite.Delay == TimeSpan.Zero)
-                return;
-
             _elapsed += gameTime.ElapsedGameTime;
 
-            if (_elapsed >= Sprite.Delay)
-            {
-                _elapsed -= Sprite.Delay;
-                
-                // Modulo allows naturally looping back to the start of the animation
-                CurrentFrame = (CurrentFrame + 1) % Sprite.Frames.Length;
-            }
+            if (Sprite?.Animation == null)
+                return;
+
+            var animation = Sprite.Animation;
+
+            CurrentFrame = animation.GetNextFrame(CurrentFrame, _elapsed, out TimeSpan newElapsedTime);
+            _elapsed = newElapsedTime;
         }
 
         /// <summary>
@@ -176,7 +173,7 @@ namespace FreedomEngine.Components
         /// <param name="spriteBatch">The rendering context.</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible || Sprite?.Frames == null || CurrentFrame >= Sprite.Frames.Length)
+            if (!Visible || Sprite?.Animation.Frames == null)
                 return;
 
             // Factorize recurring calculations
@@ -185,7 +182,7 @@ namespace FreedomEngine.Components
             var scale = new Vector2(Scale.X, Scale.Y);
             float rotationRadians = MathHelper.ToRadians(Rotation);
 
-            Sprite.Frames[CurrentFrame].Draw(
+            Sprite.Animation.Frames[CurrentFrame].Draw(
                 spriteBatch,
                 position,
                 Color,
