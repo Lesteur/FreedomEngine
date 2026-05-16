@@ -22,7 +22,7 @@ namespace MyGame.Scripts.Scenes
     {
         private Texture2D _pixel;
         private Texture2D _texture;
-        private Texture2D _textureTileset;
+        //private Texture2D _textureTileset;
         private BitmapFont _font;
 
         private Sprite _animation;
@@ -58,17 +58,6 @@ namespace MyGame.Scripts.Scenes
             _entity = new Entity(_animation, 0, 0);
             
             _following = _entity;
-            
-
-            var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
-            _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
-
-            ushort[] _list1 = new ushort[] { 0, 1, 2, 3 };
-            ushort[] _list2 = new ushort[] { 5, 6, 7, 8 };
-            TimeSpan[] _delays = new TimeSpan[] { TimeSpan.FromSeconds(2.0), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125) };
-            
-            _tileset.AddAnimation(0, _list1, TimeSpan.FromSeconds(0.125));
-            _tileset.AddAnimation(5, _list2, _delays);
 
             _tilemap = new(_tileset, 15, 15)
             {
@@ -105,8 +94,7 @@ namespace MyGame.Scripts.Scenes
         public override void LoadContent()
         {
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
-            _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
-            //_soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
+            _tileset = Content.Load<Tileset>("Assets/Tilesets/TilesetMario");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
             _backgroundPattern = Content.Load<Texture2D>("Assets/Textures/background-pattern");
 
@@ -152,9 +140,7 @@ namespace MyGame.Scripts.Scenes
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
                 // Core.Coroutines.StartCoroutine(TestCoroutine());
-                // Application.ChangeScene(new Scene1());
-
-                _particleEmitter.Emit(30);
+                Application.ChangeScene(new SceneShadow());
             }
 
             _tilemap.Update(gameTime);

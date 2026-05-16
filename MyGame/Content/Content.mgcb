@@ -113,7 +113,7 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Tileset.png;Assets/Textures/Tileset
 
-#begin Assets/Textures/TilesetMario.png
+#begin Assets/Textures/Tilesets/TilesetMario.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -123,5 +123,10 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/TilesetMario.png;Assets/Textures/TilesetMario
+/build:Assets/Textures/Tilesets/TilesetMario.png;Assets/Textures/Tilesets/TilesetMario
+
+#begin Assets/Tilesets/TilesetMario.tsj
+/importer:TiledTilesetImporter
+/processor:TiledTilesetProcessor
+/build:Assets/Tilesets/TilesetMario.tsj;Assets/Tilesets/TilesetMario
 

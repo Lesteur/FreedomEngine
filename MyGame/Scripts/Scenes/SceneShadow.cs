@@ -19,7 +19,7 @@ namespace MyGame.Scripts.Scenes
     public class SceneShadow : Scene
     {
         private Texture2D _texture;
-        private Texture2D _textureTileset;
+        //private Texture2D _textureTileset;
         private BitmapFont _font;
 
         private Sprite _animation;
@@ -44,6 +44,7 @@ namespace MyGame.Scripts.Scenes
 
             _following = _entity;
 
+            /*
             var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
             _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
 
@@ -53,6 +54,7 @@ namespace MyGame.Scripts.Scenes
             
             _tileset.AddAnimation(0, _list1, TimeSpan.FromSeconds(0.125));
             _tileset.AddAnimation(5, _list2, _delays);
+            */
 
             _tilemap = new(_tileset, 15, 15)
             {
@@ -95,7 +97,7 @@ namespace MyGame.Scripts.Scenes
         public override void LoadContent()
         {
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
-            _textureTileset = Content.Load<Texture2D>("Assets/Textures/TilesetMario");
+            _tileset = Content.Load<Tileset>("Assets/Tilesets/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
 
