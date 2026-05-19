@@ -8,16 +8,13 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
     {
         protected override void Write(ContentWriter output, TiledTilesetContent value)
         {
-            // Write basic properties
-            //output.Write(value.Columns);
             output.Write(value.ImageHeight);
             output.Write(value.ImageWidth);
-            output.Write(value.Margin);
+            output.Write((ushort)value.Margin);
             output.Write(value.Name ?? string.Empty);
-            output.Write(value.Spacing);
-            //output.Write(value.TileCount);
-            output.Write(value.TileHeight);
-            output.Write(value.TileWidth);
+            output.Write((ushort)value.Spacing);
+            output.Write((ushort)value.TileHeight);
+            output.Write((ushort)value.TileWidth);
 
             // Write tiles array
             if (value.Tiles != null)
@@ -25,15 +22,28 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
                 output.Write(value.Tiles.Count);
                 foreach (var tile in value.Tiles)
                 {
-                    output.Write(tile.Id);
-                    
-                    if (tile.Animation != null)
+                    output.Write((ushort)tile.Id);
+
+                    if (tile.Animation != null && tile.Animation.Count > 0)
                     {
                         output.Write(tile.Animation.Count);
-                        foreach (var frame in tile.Animation)
+                        output.Write(tile.MonoFrameDelay);
+
+                        if (tile.MonoFrameDelay)
                         {
-                            output.Write(frame.TileId);
-                            output.Write(frame.Duration);
+                            output.Write((ushort)tile.Animation[0].Duration);
+                            foreach (var frame in tile.Animation)
+                            {
+                                output.Write((ushort)frame.TileId);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var frame in tile.Animation)
+                            {
+                                output.Write((ushort)frame.TileId);
+                                output.Write((ushort)frame.Duration);
+                            }
                         }
                     }
                     else
@@ -50,8 +60,6 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            // You will need to implement a TiledTilesetReader in your game project
-            // to read this binary data. Return its fully qualified assembly name here.
             return "FreedomEngine.Content.TilesetReader, FreedomEngine";
         }
     }

@@ -73,6 +73,8 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
+            Tilemap.Camera = WorldCamera;
+            Entity.Camera = WorldCamera;
 
             _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))

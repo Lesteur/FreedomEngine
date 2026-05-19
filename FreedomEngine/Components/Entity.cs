@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Graphics;
 using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Core;
 
 namespace FreedomEngine.Components
 {
@@ -23,6 +24,8 @@ namespace FreedomEngine.Components
         #endregion
 
         #region Properties
+
+        public static Camera Camera { get; set; }
 
         /// <summary>
         /// Gets the sprite of the entity.
@@ -43,7 +46,7 @@ namespace FreedomEngine.Components
         /// <remarks>
         /// Default value is 0.0f
         /// </remarks>
-        public int Rotation { get; set; } = 0;
+        public float Rotation { get; set; } = 0.0f;
 
         /// <summary>
         /// Gets or Sets the scale factor to apply to the x- and y-axes when rendering this entity.
@@ -177,18 +180,22 @@ namespace FreedomEngine.Components
                 return;
 
             // Factorize recurring calculations
-            var origin = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
-            var position = new Vector2(X + origin.X, Y + origin.Y);
-            var scale = new Vector2(Scale.X, Scale.Y);
-            float rotationRadians = MathHelper.ToRadians(Rotation);
+            var origin              = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
+            var position            = new Vector2(X + origin.X, Y + origin.Y);
+
+            if (Camera != null)
+            {
+                if (!Camera.IsInView(position, Width, Height))
+                    return;
+            }
 
             Sprite.Animation.Frames[CurrentFrame].Draw(
                 spriteBatch,
                 position,
                 Color,
-                rotationRadians,
+                Rotation,
                 origin,
-                scale,
+                Scale,
                 Effects,
                 LayerDepth
             );

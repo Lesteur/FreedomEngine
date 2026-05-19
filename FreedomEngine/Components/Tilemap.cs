@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Collections.Interfaces;
 using FreedomEngine.Graphics;
+using FreedomEngine.Core;
 
 namespace FreedomEngine.Components
 {
@@ -33,11 +34,14 @@ namespace FreedomEngine.Components
 
         // Tracks elapsed time and frame states uniquely for each animated tile ID
         private readonly Dictionary<ushort, TimeSpan> _animationElapsedStates;
+
         private readonly Dictionary<ushort, int> _animationFrameStates;
 
         #endregion
 
         #region Properties
+
+        public static Camera Camera { get; set; }
 
         /// <summary>
         /// Gets the total number of rows in this tilemap.
@@ -120,8 +124,8 @@ namespace FreedomEngine.Components
             _tiles = new ushort[Count];
 
             _animationRemap = new ushort[_tileset.Count];
-            _animationElapsedStates = new Dictionary<ushort, TimeSpan>();
-            _animationFrameStates = new Dictionary<ushort, int>();
+            _animationElapsedStates = [];
+            _animationFrameStates = [];
 
             ResetAnimationStates();
         }
@@ -166,13 +170,18 @@ namespace FreedomEngine.Components
         {
             for (int i = 0; i < Count; i++)
             {
-                ushort tilesetIndex = _animationRemap[_tiles[i]];
-                var tile = _tileset.GetTile(tilesetIndex);
-
                 int column = i % Columns;
                 int row = i / Columns;
-
                 Vector2 position = new(X + column * TileWidth, Y + row * TileHeight);
+
+                if (Camera != null)
+                {
+                    if (!Camera.IsInView(position, TileWidth, TileHeight))
+                        continue;
+                }
+
+                ushort tilesetIndex = _animationRemap[_tiles[i]];
+                var tile = _tileset.GetTile(tilesetIndex);
 
                 tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
             }

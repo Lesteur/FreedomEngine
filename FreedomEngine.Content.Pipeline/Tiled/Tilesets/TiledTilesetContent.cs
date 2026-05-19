@@ -52,5 +52,9 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
 
         [JsonPropertyName("id")]
         public ushort Id { get; set; }
+
+        // Determine if all animation frames share the same duration
+        [JsonIgnore]
+        public bool MonoFrameDelay { get; set; }
     }
 }

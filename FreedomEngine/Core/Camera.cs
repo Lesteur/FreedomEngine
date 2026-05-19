@@ -180,6 +180,21 @@ namespace FreedomEngine.Core
 
         #endregion
 
+        #region Public Methods
+
+        public bool IsInView(Vector2 Position, float width, float height)
+        {
+            var _posX = _position.X - (_viewportWidth / 2f);
+            var _posY = _position.Y - (_viewportHeight / 2f);
+
+            return Position.X + width > _posX &&
+                   Position.X < _posX + _viewportWidth &&
+                   Position.Y + height > _posY &&
+                   Position.Y < _posY + _viewportHeight;
+        }
+
+        #endregion
+
         #region Private Methods
 
         /// <summary>

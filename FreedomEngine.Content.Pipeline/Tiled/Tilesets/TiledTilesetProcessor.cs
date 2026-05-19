@@ -9,8 +9,29 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
         {
             context.Logger.LogMessage("Processing Tiled tileset: {0}", input.Name);
 
-            // Here you can process or validate the tileset content before it gets compiled
-            // For example, ensuring positive dimensions or recomputing paths
+            // Check if animations exist and if they have a mono frame delay
+            if (input.Tiles != null)
+            {
+                foreach (var tile in input.Tiles)
+                {
+                    if (tile.Animation != null && tile.Animation.Count > 0)
+                    {
+                        bool monoDelay = true;
+                        int firstDuration = tile.Animation[0].Duration;
+
+                        for (int i = 1; i < tile.Animation.Count; i++)
+                        {
+                            if (tile.Animation[i].Duration != firstDuration)
+                            {
+                                monoDelay = false;
+                                break;
+                            }
+                        }
+
+                        tile.MonoFrameDelay = monoDelay;
+                    }
+                }
+            }
 
             return input;
         }
