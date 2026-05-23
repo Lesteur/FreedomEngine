@@ -81,6 +81,8 @@ namespace FreedomEngine.Core
         /// </summary>
         public static Scene NextScene { get; private set; }
 
+        public static Texture2D PixelTexture { get; private set; }
+
         #endregion
 
         #region Constructors
@@ -98,10 +100,10 @@ namespace FreedomEngine.Core
             Content = base.Content;
             Content.RootDirectory = "Content";
 
-            IsMouseVisible = true;
-            ExitOnEscape = true;
-            CurrentScene = null;
-            NextScene = null;
+            IsMouseVisible  = true;
+            ExitOnEscape    = true;
+            CurrentScene    = null;
+            NextScene       = null;
         }
 
         #endregion
@@ -112,12 +114,15 @@ namespace FreedomEngine.Core
         protected override void Initialize()
         {
             base.Initialize();
-            GraphicsDevice = base.GraphicsDevice;
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
-            Input = new InputManager();
-            Audio = new AudioController();
-            Coroutines = new CoroutineController();
-            Tweens = new TweenManager();
+            GraphicsDevice  = base.GraphicsDevice;
+            SpriteBatch     = new SpriteBatch(GraphicsDevice);
+            Input           = new InputManager();
+            Audio           = new AudioController();
+            Coroutines      = new CoroutineController();
+            Tweens          = new TweenManager();
+
+            PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
+            PixelTexture.SetData([Color.White]);
         }
 
         /// <inheritdoc/>
@@ -150,6 +155,8 @@ namespace FreedomEngine.Core
         /// <inheritdoc/>
         protected override void UnloadContent()
         {
+            PixelTexture.Dispose();
+
             Audio.Dispose();
             base.UnloadContent();
         }
@@ -176,12 +183,12 @@ namespace FreedomEngine.Core
         /// </summary>
         private void ConfigureGraphics()
         {
-            Graphics.PreferredBackBufferWidth = EngineConfig.WindowWidth;
-            Graphics.PreferredBackBufferHeight = EngineConfig.WindowHeight;
+            Graphics.PreferredBackBufferWidth       = EngineConfig.WindowWidth;
+            Graphics.PreferredBackBufferHeight      = EngineConfig.WindowHeight;
             Graphics.SynchronizeWithVerticalRetrace = EngineConfig.VSync;
 
-            IsFixedTimeStep = EngineConfig.IsFixedTimeStep;
-            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / EngineConfig.TargetFPS);
+            IsFixedTimeStep     = EngineConfig.IsFixedTimeStep;
+            TargetElapsedTime   = TimeSpan.FromSeconds(1.0 / EngineConfig.TargetFPS);
         }
 
         /// <summary>

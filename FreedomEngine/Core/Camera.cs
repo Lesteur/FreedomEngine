@@ -164,18 +164,22 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
         /// </summary>
-        /// <param name="x">The initial X position.</param>
-        /// <param name="y">The initial Y position.</param>
+        /// <param name="Position">The initial position of the camera.</param>
         /// <param name="viewportWidth">The width of the viewport.</param>
         /// <param name="viewportHeight">The height of the viewport.</param>
-        public Camera(float x, float y, int viewportWidth, int viewportHeight)
+        public Camera(Vector2 Position, int viewportWidth, int viewportHeight)
         {
-            _position = new Vector2(x, y);
-            _rotation = 0f;
-            _scale = 1f;
-            _viewportWidth = viewportWidth;
+            _position       = Position;
+            _rotation       = 0f;
+            _scale          = 1f;
+            _viewportWidth  = viewportWidth;
             _viewportHeight = viewportHeight;
-            _dirty = true;
+            _dirty          = true;
+        }
+
+        public Camera(float x, float y, int viewportWidth, int viewportHeight)
+            : this(new Vector2(x, y), viewportWidth, viewportHeight)
+        {
         }
 
         #endregion

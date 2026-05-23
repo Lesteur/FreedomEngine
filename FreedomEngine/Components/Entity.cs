@@ -3,9 +3,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Collections.Interfaces;
-using FreedomEngine.Core;
+using FreedomEngine.Components.Collisions;
 
 namespace FreedomEngine.Components
 {
@@ -132,6 +133,8 @@ namespace FreedomEngine.Components
             set => Position = new Vector2(Position.X, value);
         }
 
+        public CollisionMask Collision { get; set; }
+
         #endregion
 
         #region Constructors
@@ -147,6 +150,9 @@ namespace FreedomEngine.Components
             Sprite = sprite;
             X = x;
             Y = y;
+
+            //Collision = new RectangleCollision(Vector2.Zero, Width, Height);
+            Collision = new CircleCollision(new Vector2(Width / 2f, Height / 2f), MathF.Max(Width, Height) / 2f);
         }
 
         #endregion
@@ -199,6 +205,8 @@ namespace FreedomEngine.Components
                 Effects,
                 LayerDepth
             );
+
+            Collision?.Draw(spriteBatch, Position);
         }
 
         #endregion
@@ -212,6 +220,14 @@ namespace FreedomEngine.Components
                 Sprite = sprite;
                 CurrentFrame = 0;
             }
+        }
+
+        public bool CollidesWith(CollisionMask other, Vector2 offset)
+        {
+            if (Collision == null || other == null)
+                return false;
+
+            return Collision.Intersects(other, Position + offset, other.Position);
         }
 
         #endregion

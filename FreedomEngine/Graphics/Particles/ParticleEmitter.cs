@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FreedomEngine.Collections;
 using FreedomEngine.Collections.Interfaces;
 
-namespace FreedomEngine.Particles
+namespace FreedomEngine.Graphics.Particles
 {
     public class ParticleEmitter<T> : IDraw where T : Particle
     {

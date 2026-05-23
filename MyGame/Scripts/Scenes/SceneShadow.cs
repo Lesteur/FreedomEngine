@@ -44,18 +44,6 @@ namespace MyGame.Scripts.Scenes
 
             _following = _entity;
 
-            /*
-            var _textureRegion = new TextureRegion(_textureTileset, 0, 0, 170, 136);
-            _tileset = new Tileset(_textureRegion, 16, 16, 1, 1, 1, 1);
-
-            ushort[] _list1 = new ushort[] { 0, 1, 2, 3 };
-            ushort[] _list2 = new ushort[] { 5, 6, 7, 8 };
-            TimeSpan[] _delays = new TimeSpan[] { TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125), TimeSpan.FromSeconds(0.125) };
-            
-            _tileset.AddAnimation(0, _list1, TimeSpan.FromSeconds(0.125));
-            _tileset.AddAnimation(5, _list2, _delays);
-            */
-
             _tilemap = new(_tileset, 15, 15)
             {
                 X = 400,
@@ -70,6 +58,8 @@ namespace MyGame.Scripts.Scenes
                     _tilemap.SetTile(i, 5);
             }
 
+            Tilemap.Camera = WorldCamera;
+            Entity.Camera = WorldCamera;
 
             _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))

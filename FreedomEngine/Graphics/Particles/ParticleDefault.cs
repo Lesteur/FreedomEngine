@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Collections;
 
-namespace FreedomEngine.Particles
+namespace FreedomEngine.Graphics.Particles
 {
     public class ParticleDefault : Particle
     {

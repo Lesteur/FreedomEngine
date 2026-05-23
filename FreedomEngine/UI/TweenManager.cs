@@ -96,7 +96,7 @@ namespace FreedomEngine.UI
         /// </summary>
         public ITween TweenRotation(Entity entity, float fromRadians, float toRadians, TimeSpan duration)
         {
-            var tween = new Tween<float>(fromRadians, toRadians, duration, val => entity.Rotation = (int)MathHelper.ToDegrees(val), MathHelper.Lerp);
+            var tween = new Tween<float>(fromRadians, toRadians, duration, val => entity.Rotation = val, MathHelper.Lerp);
             _pendingTweens.Add(tween);
             return tween;
         }
