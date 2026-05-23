@@ -52,7 +52,7 @@ namespace MyGame.Scripts.Scenes
         {
             base.Initialize();
 
-            _particleEmitter = new ParticleEmitter<ParticleDefault>(_pixel, 100, new Vector2(200, 200));
+            _particleEmitter = new ParticleEmitter<ParticleDefault>(_pixel, 100, new Vector2(200, 200), texture => new ParticleDefault(texture));
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);

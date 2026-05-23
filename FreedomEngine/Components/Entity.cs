@@ -180,8 +180,8 @@ namespace FreedomEngine.Components
                 return;
 
             // Factorize recurring calculations
-            var origin              = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
-            var position            = new Vector2(X + origin.X, Y + origin.Y);
+            var origin      = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
+            var position    = new Vector2(X + origin.X, Y + origin.Y);
 
             if (Camera != null)
             {

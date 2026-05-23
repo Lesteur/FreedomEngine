@@ -52,7 +52,7 @@ namespace FreedomEngine.Content.Pipeline.BitmapFonts
 
         public override string GetRuntimeType(TargetPlatform targetPlatform)
         {
-            return "FreedomEngine.Graphics.BitmapFont, FreedomEngine";
+            return "FreedomEngine.Graphics.BitmapFonts.BitmapFont, FreedomEngine";
         }
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)

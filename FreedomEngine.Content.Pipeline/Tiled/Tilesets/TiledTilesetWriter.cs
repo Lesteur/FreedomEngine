@@ -58,6 +58,11 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
             }
         }
 
+        public override string GetRuntimeType(TargetPlatform targetPlatform)
+        {
+            return "FreedomEngine.Graphics.Tileset, FreedomEngine";
+        }
+
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
             return "FreedomEngine.Content.TilesetReader, FreedomEngine";

@@ -1,9 +1,9 @@
-﻿using FreedomEngine.Collections;
-using FreedomEngine.Collections.Interfaces;
+﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Particles
 {

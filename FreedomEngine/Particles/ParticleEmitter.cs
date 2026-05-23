@@ -18,6 +18,8 @@ namespace FreedomEngine.Particles
 
         private TimeSpan _elapsed;
 
+        private readonly Func<Texture2D, T> _particleFactory;
+
         #endregion
 
         #region Properties
@@ -41,17 +43,18 @@ namespace FreedomEngine.Particles
 
         #region Constructors
 
-        public ParticleEmitter(Texture2D texture, int capacity, Vector2 position)
+        public ParticleEmitter(Texture2D texture, int capacity, Vector2 position, Func<Texture2D, T> particleFactory)
         {
             _particles = new T[capacity];
             Position = position;
             _activeCount = 0;
             _elapsed = TimeSpan.Zero;
+            _particleFactory = particleFactory;
 
             // Populate the array with dead particle objects, for pooling.
             for (int i = 0; i < capacity; i++)
             {
-                var particle = (T)Activator.CreateInstance(typeof(T), texture);
+                var particle = _particleFactory(texture);
                 particle.PercentLife = -1f; // Force particle to be considered dead
                 _particles[i] = particle;
             }
