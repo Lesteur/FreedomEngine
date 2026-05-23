@@ -22,6 +22,8 @@ namespace FreedomEngine.Components
         /// </summary>
         private TimeSpan _elapsed = TimeSpan.Zero;
 
+        private Vector2 _position = Vector2.Zero;
+
         #endregion
 
         #region Properties
@@ -113,15 +115,27 @@ namespace FreedomEngine.Components
         /// <summary>
         /// Gets or Sets the X position of the entity.
         /// </summary>
-        public Vector2 Position { get; set; } = Vector2.Zero;
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                _position = value;
+                Collision?.Position = value;
+            }
+        }
 
         /// <summary>
         /// Gets or Sets the X position of the entity.
         /// </summary>
         public float X
         {
-            get => Position.X;
-            set => Position = new Vector2(value, Position.Y);
+            get => _position.X;
+            set
+            {
+                _position.X = value;
+                Collision?.Position = _position;
+            }
         }
 
         /// <summary>
@@ -129,8 +143,12 @@ namespace FreedomEngine.Components
         /// </summary>
         public float Y
         {
-            get => Position.Y;
-            set => Position = new Vector2(Position.X, value);
+            get => _position.Y;
+            set
+            {
+                _position.Y = value;
+                Collision?.Position = _position;
+            }
         }
 
         public CollisionMask Collision { get; set; }
@@ -151,8 +169,8 @@ namespace FreedomEngine.Components
             X = x;
             Y = y;
 
-            //Collision = new RectangleCollision(Vector2.Zero, Width, Height);
-            Collision = new CircleCollision(new Vector2(Width / 2f, Height / 2f), MathF.Max(Width, Height) / 2f);
+            Collision = new RectangleCollision(new Vector2(X, Y), Width, Height);
+            //Collision = new CircleCollision(new Vector2(Width / 2f, Height / 2f), MathF.Max(Width, Height) / 2f);
         }
 
         #endregion
@@ -206,7 +224,7 @@ namespace FreedomEngine.Components
                 LayerDepth
             );
 
-            Collision?.Draw(spriteBatch, Position);
+            Collision?.Draw(spriteBatch);
         }
 
         #endregion
@@ -227,7 +245,7 @@ namespace FreedomEngine.Components
             if (Collision == null || other == null)
                 return false;
 
-            return Collision.Intersects(other, Position + offset, other.Position);
+            return Collision.Intersects(other, offset);
         }
 
         #endregion

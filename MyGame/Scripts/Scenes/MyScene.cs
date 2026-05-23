@@ -90,7 +90,9 @@ namespace MyGame.Scripts.Scenes
             // screen background.
             _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
 
-            _collision = new RectangleCollision(new Vector2(100, 100), 50, 50);
+            //_collision = new RectangleCollision(new Vector2(100, 100), 50, 50);
+            //_collision = new LineCollision(new Vector2(100, 100), new Vector2(200, 150));
+            _collision = new CircleCollision(new Vector2(400, 150), 25);
         }
 
         public override void LoadContent()
@@ -194,7 +196,7 @@ namespace MyGame.Scripts.Scenes
 
             _particleEmitter.Draw(spriteBatch);
 
-            _collision.Draw(spriteBatch, _collision.Position);
+            _collision.Draw(spriteBatch);
 
             spriteBatch.End();
         }

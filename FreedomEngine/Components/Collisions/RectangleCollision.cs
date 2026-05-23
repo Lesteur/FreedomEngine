@@ -27,22 +27,22 @@ namespace FreedomEngine.Components.Collisions
 
         #region Public Methods
 
-        public override bool Intersects(CollisionMask other, Vector2 thisPosition, Vector2 otherPosition)
+        public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
             return other switch
             {
-                PointCollision point            => IntersectsPoint(point, thisPosition, otherPosition),
-                LineCollision line              => IntersectsLine(line, thisPosition, otherPosition),
-                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition, otherPosition),
-                CircleCollision circle          => IntersectsCircle(circle, thisPosition, otherPosition),
+                PointCollision point            => IntersectsPoint(point, thisPosition),
+                LineCollision line              => IntersectsLine(line, thisPosition),
+                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition),
+                CircleCollision circle          => IntersectsCircle(circle, thisPosition),
                 _ => false
             };
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            float left = position.X + Position.X;
-            float top = position.Y + Position.Y;
+            float left = Position.X;
+            float top = Position.Y;
             float right = left + Width;
             float bottom = top + Height;
 
@@ -57,15 +57,15 @@ namespace FreedomEngine.Components.Collisions
 
         #region Internal Methods
 
-        internal override bool IntersectsPoint(PointCollision point, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsPoint(PointCollision point, Vector2 thisPosition)
         {
             float left = thisPosition.X + Position.X;
             float top = thisPosition.Y + Position.Y;
             float right = left + Width;
             float bottom = top + Height;
 
-            float px = otherPosition.X + point.Position.X;
-            float py = otherPosition.Y + point.Position.Y;
+            float px = point.Position.X;
+            float py = point.Position.Y;
 
             return px >= left && px <= right && py >= top && py <= bottom;
         }
@@ -74,15 +74,15 @@ namespace FreedomEngine.Components.Collisions
         /// Checks if a line segment intersects this rectangle.
         /// Tests if either endpoint is inside, or if the line crosses any edge.
         /// </summary>
-        internal override bool IntersectsLine(LineCollision line, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsLine(LineCollision line, Vector2 thisPosition)
         {
             float left = thisPosition.X + Position.X;
             float top = thisPosition.Y + Position.Y;
             float right = left + Width;
             float bottom = top + Height;
 
-            float x1 = otherPosition.X + line.Position.X;
-            float y1 = otherPosition.Y + line.Position.Y;
+            float x1 = line.Position.X;
+            float y1 = line.Position.Y;
             float x2 = x1 + line.PositionEnd.X;
             float y2 = y1 + line.PositionEnd.Y;
 
@@ -97,25 +97,25 @@ namespace FreedomEngine.Components.Collisions
             LineCollision leftEdge      = new(new Vector2(left, top), new Vector2(left, bottom));
             LineCollision rightEdge     = new(new Vector2(right, top), new Vector2(right, bottom));
 
-            return line.IntersectsLine(topEdge, otherPosition, Vector2.Zero) ||
-                   line.IntersectsLine(bottomEdge, otherPosition, Vector2.Zero) ||
-                   line.IntersectsLine(leftEdge, otherPosition, Vector2.Zero) ||
-                   line.IntersectsLine(rightEdge, otherPosition, Vector2.Zero);
+            return line.IntersectsLine(topEdge, Vector2.Zero) ||
+                   line.IntersectsLine(bottomEdge, Vector2.Zero) ||
+                   line.IntersectsLine(leftEdge, Vector2.Zero) ||
+                   line.IntersectsLine(rightEdge, Vector2.Zero);
         }
 
         /// <summary>
         /// Checks if this rectangle intersects with another rectangle.
         /// Uses axis-aligned bounding box (AABB) collision detection for optimal performance.
         /// </summary>
-        internal override bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition)
         {
             float left1 = thisPosition.X + Position.X;
             float top1 = thisPosition.Y + Position.Y;
             float right1 = left1 + Width;
             float bottom1 = top1 + Height;
 
-            float left2 = otherPosition.X + rectangle.Position.X;
-            float top2 = otherPosition.Y + rectangle.Position.Y;
+            float left2 = rectangle.Position.X;
+            float top2 = rectangle.Position.Y;
             float right2 = left2 + rectangle.Width;
             float bottom2 = top2 + rectangle.Height;
 
@@ -127,10 +127,10 @@ namespace FreedomEngine.Components.Collisions
         /// Checks if this rectangle intersects with a circle.
         /// Uses clamping to find the closest point on the rectangle to the circle center.
         /// </summary>
-        internal override bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition)
         {
             // Delegate to circle's rectangle collision detection
-            return circle.IntersectsRectangle(this, thisPosition, otherPosition);
+            return circle.IntersectsRectangle(this, thisPosition);
         }
 
         #endregion

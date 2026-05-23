@@ -31,22 +31,22 @@ namespace FreedomEngine.Components.Collisions
 
         #region Public Methods
 
-        public override bool Intersects(CollisionMask other, Vector2 thisPosition, Vector2 otherPosition)
+        public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
             return other switch
             {
-                PointCollision point            => IntersectsPoint(point, thisPosition, otherPosition),
-                LineCollision line              => IntersectsLine(line, thisPosition, otherPosition),
-                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition, otherPosition),
-                CircleCollision circle          => IntersectsCircle(circle, thisPosition, otherPosition),
+                PointCollision point            => IntersectsPoint(point, thisPosition),
+                LineCollision line              => IntersectsLine(line, thisPosition),
+                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition),
+                CircleCollision circle          => IntersectsCircle(circle, thisPosition),
                 _ => false
             };
         }
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 position)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            float centerX = position.X + Position.X;
-            float centerY = position.Y + Position.Y;
+            float centerX = Position.X;
+            float centerY = Position.Y;
             float radius = Radius;
             int segments = 32;
 
@@ -69,12 +69,12 @@ namespace FreedomEngine.Components.Collisions
 
         #region Internal Methods
 
-        internal override bool IntersectsPoint(PointCollision point, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsPoint(PointCollision point, Vector2 thisPosition)
         {
             float centerX = thisPosition.X + Position.X;
             float centerY = thisPosition.Y + Position.Y;
-            float px = otherPosition.X + point.Position.X;
-            float py = otherPosition.Y + point.Position.Y;
+            float px = point.Position.X;
+            float py = point.Position.Y;
 
             float dx = px - centerX;
             float dy = py - centerY;
@@ -83,13 +83,13 @@ namespace FreedomEngine.Components.Collisions
             return distanceSquared <= Radius * Radius;
         }
 
-        internal override bool IntersectsLine(LineCollision line, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsLine(LineCollision line, Vector2 thisPosition)
         {
             float centerX = thisPosition.X + Position.X;
             float centerY = thisPosition.Y + Position.Y;
 
-            float x1 = otherPosition.X + line.Position.X;
-            float y1 = otherPosition.Y + line.Position.Y;
+            float x1 = line.Position.X;
+            float y1 = line.Position.Y;
             float x2 = x1 + line.PositionEnd.X;
             float y2 = y1 + line.PositionEnd.Y;
 
@@ -119,13 +119,13 @@ namespace FreedomEngine.Components.Collisions
             return distanceSquared <= Radius * Radius;
         }
 
-        internal override bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition)
         {
             float centerX = thisPosition.X + Position.X;
             float centerY = thisPosition.Y + Position.Y;
 
-            float left = otherPosition.X + rectangle.Position.X;
-            float top = otherPosition.Y + rectangle.Position.Y;
+            float left = rectangle.Position.X;
+            float top = rectangle.Position.Y;
             float right = left + rectangle.Width;
             float bottom = top + rectangle.Height;
 
@@ -141,12 +141,12 @@ namespace FreedomEngine.Components.Collisions
             return distanceSquared <= Radius * Radius;
         }
 
-        internal override bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition, Vector2 otherPosition)
+        internal override bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition)
         {
             float center1X = thisPosition.X + Position.X;
             float center1Y = thisPosition.Y + Position.Y;
-            float center2X = otherPosition.X + circle.Position.X;
-            float center2Y = otherPosition.Y + circle.Position.Y;
+            float center2X = circle.Position.X;
+            float center2Y = circle.Position.Y;
 
             float dx = center2X - center1X;
             float dy = center2Y - center1Y;

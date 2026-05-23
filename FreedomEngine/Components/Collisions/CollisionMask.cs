@@ -48,21 +48,21 @@ namespace FreedomEngine.Components.Collisions
 
         #region Public Methods
 
-        public abstract bool Intersects(CollisionMask other, Vector2 thisPosition, Vector2 otherPosition);
+        public abstract bool Intersects(CollisionMask other, Vector2 thisPosition);
 
-        public abstract void Draw(SpriteBatch spriteBatch, Vector2 position);
+        public abstract void Draw(SpriteBatch spriteBatch);
 
         #endregion
 
         #region Internal Methods
 
-        internal abstract bool IntersectsPoint(PointCollision point, Vector2 thisPosition, Vector2 otherPosition);
+        internal abstract bool IntersectsPoint(PointCollision point, Vector2 thisPosition);
 
-        internal abstract bool IntersectsLine(LineCollision line, Vector2 thisPosition, Vector2 otherPosition);
+        internal abstract bool IntersectsLine(LineCollision line, Vector2 thisPosition);
 
-        internal abstract bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition, Vector2 otherPosition);
+        internal abstract bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition);
 
-        internal abstract bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition, Vector2 otherPosition);
+        internal abstract bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition);
 
         #endregion
     }
