@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace FreedomEngine.Components.Collisions
 {
@@ -22,7 +23,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public CircleCollision(Vector2 position, float radius) : base(position)
+        public CircleCollision(Vector2 position, ushort tag, float radius) : base(position, tag)
         {
             Radius = radius;
         }

@@ -10,6 +10,7 @@ using FreedomEngine.Collections.Coroutines;
 using FreedomEngine.Audio;
 using FreedomEngine.Input;
 using FreedomEngine.UI;
+using FreedomEngine.Components.Collisions;
 
 namespace FreedomEngine.Core
 {
@@ -71,6 +72,8 @@ namespace FreedomEngine.Core
         /// </summary>
         public static TweenManager Tweens { get; private set; }
 
+        public static CollisionManager Collisions { get; private set; }
+
         /// <summary>
         /// Gets the currently executing scene.
         /// </summary>
@@ -120,6 +123,7 @@ namespace FreedomEngine.Core
             Audio           = new AudioController();
             Coroutines      = new CoroutineController();
             Tweens          = new TweenManager();
+            Collisions      = new CollisionManager();
 
             PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
             PixelTexture.SetData([Color.White]);

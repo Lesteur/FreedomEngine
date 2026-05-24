@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -11,8 +10,8 @@ using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Components;
 using FreedomEngine.Graphics.BitmapFonts;
-using FreedomEngine.Collections.Coroutines;
 using FreedomEngine.Collections;
+using FreedomEngine.Collections.Coroutines;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -82,6 +81,12 @@ namespace MyGame.Scripts.Scenes
                 ColorSourceBlend = Blend.DestinationColor,
                 ColorDestinationBlend = Blend.Zero
             };
+
+            _width = 700;//640;
+            _height = 400;//360;
+
+            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
+            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
         }
 
         public override void LoadContent()

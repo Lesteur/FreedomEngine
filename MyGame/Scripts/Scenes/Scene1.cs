@@ -1,22 +1,79 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-
+﻿using FreedomEngine.Components.Collisions;
 using FreedomEngine.Core;
+using FreedomEngine.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MyGame.Scripts.Scenes
 {
-    internal class Scene1 : Scene
+    public class Scene1 : Scene
     {
+        private Player _entity;
+
+        private Texture2D _texture;
+        private Sprite _animation;
+
+        private CollisionMask _collision1;
+        private CollisionMask _collision2;
+        private CollisionMask _collision3;
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
+            _entity = new Player(_animation, 0, 0);
+
+            _following = _entity;
+
+            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
+            _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
+            _collision3 = new RectangleCollision(new Vector2(0, 350), 1, 700, 50);
+
+            Core.Collisions.Add(_collision1);
+            Core.Collisions.Add(_collision2);
+            Core.Collisions.Add(_collision3);
+
+            _width = 700;
+            _height = 400;
+
+            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
+            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
+        }
+
+        public override void LoadContent()
+        {
+            _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
+
+            base.LoadContent();
+        }
+
         public override void Update(GameTime gameTime)
         {
-
-            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
-            {
-                //Core.Coroutines.StartCoroutine(TestCoroutine());
-                Application.ChangeScene(new MyScene());
-            }
+            _entity.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        public override void DrawWorld(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Begin(
+                sortMode: SpriteSortMode.Deferred,
+                blendState: BlendState.AlphaBlend,
+                samplerState: SamplerState.PointClamp,
+                depthStencilState: null,
+                rasterizerState: null,
+                transformMatrix: WorldCamera.TransformMatrix * _scalingMatrix
+            );
+
+            _entity.Draw(spriteBatch);
+
+            _collision1.Draw(spriteBatch);
+            _collision2.Draw(spriteBatch);
+            _collision3.Draw(spriteBatch);
+
+            spriteBatch.End();
         }
     }
 }

@@ -169,8 +169,10 @@ namespace FreedomEngine.Components
             X = x;
             Y = y;
 
-            Collision = new RectangleCollision(new Vector2(X, Y), Width, Height);
+            Collision = new RectangleCollision(new Vector2(X, Y), 0, Width, Height);
             //Collision = new CircleCollision(new Vector2(Width / 2f, Height / 2f), MathF.Max(Width, Height) / 2f);
+
+            Application.Collisions.Add(Collision);
         }
 
         #endregion
@@ -183,8 +185,6 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            _elapsed += gameTime.ElapsedGameTime;
-
             if (Sprite?.Animation == null)
                 return;
 
@@ -192,6 +192,8 @@ namespace FreedomEngine.Components
 
             CurrentFrame = animation.GetNextFrame(CurrentFrame, _elapsed, out TimeSpan newElapsedTime);
             _elapsed = newElapsedTime;
+
+            _elapsed += gameTime.ElapsedGameTime;
         }
 
         /// <summary>
@@ -240,12 +242,13 @@ namespace FreedomEngine.Components
             }
         }
 
-        public bool CollidesWith(CollisionMask other, Vector2 offset)
+        //public bool CollidesWith(CollisionMask other, Vector2 offset)
+        public bool CollidesWith(ushort tag, Vector2 offset)
         {
-            if (Collision == null || other == null)
+            if (Collision == null)
                 return false;
 
-            return Collision.Intersects(other, offset);
+            return Application.Collisions.CheckCollisions(Collision, tag, offset);
         }
 
         #endregion

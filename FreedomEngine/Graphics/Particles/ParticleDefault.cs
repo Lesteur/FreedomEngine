@@ -3,8 +3,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using FreedomEngine.Collections;
-
 namespace FreedomEngine.Graphics.Particles
 {
     public class ParticleDefault : Particle

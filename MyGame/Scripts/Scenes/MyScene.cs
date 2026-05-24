@@ -31,7 +31,9 @@ namespace MyGame.Scripts.Scenes
         private Tilemap _tilemap;
         private Text _bitmapText;
         private ParticleEmitter<ParticleDefault> _particleEmitter;
-        private CollisionMask _collision;
+
+        private CollisionMask _collision1;
+        private CollisionMask _collision2;
 
         // The texture used for the background pattern.
         private Texture2D _backgroundPattern;
@@ -90,9 +92,19 @@ namespace MyGame.Scripts.Scenes
             // screen background.
             _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
 
-            //_collision = new RectangleCollision(new Vector2(100, 100), 50, 50);
+            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
+            _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
             //_collision = new LineCollision(new Vector2(100, 100), new Vector2(200, 150));
-            _collision = new CircleCollision(new Vector2(400, 150), 25);
+            //_collision = new CircleCollision(new Vector2(400, 150), 25);
+
+            Core.Collisions.Add(_collision1);
+            Core.Collisions.Add(_collision2);
+
+            _width = 700;
+            _height = 400;
+
+            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
+            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
         }
 
         public override void LoadContent()
@@ -127,7 +139,7 @@ namespace MyGame.Scripts.Scenes
                 movement.Y -= 1;
             }
 
-            if (!_entity.CollidesWith(_collision, movement))
+            if (!_entity.CollidesWith(1, movement))
             {
                 _entity.Position += movement;
             }
@@ -196,7 +208,8 @@ namespace MyGame.Scripts.Scenes
 
             _particleEmitter.Draw(spriteBatch);
 
-            _collision.Draw(spriteBatch);
+            _collision1.Draw(spriteBatch);
+            _collision2.Draw(spriteBatch);
 
             spriteBatch.End();
         }

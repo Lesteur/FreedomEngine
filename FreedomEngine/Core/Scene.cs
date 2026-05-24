@@ -38,8 +38,8 @@ namespace FreedomEngine.Core
         /// </summary>
         protected Matrix _scalingMatrix;
 
-        private Vector2 _cameraLimitsMin;
-        private Vector2 _cameraLimitsMax;
+        protected Vector2 _cameraLimitsMin;
+        protected Vector2 _cameraLimitsMax;
 
         #endregion
 
@@ -109,12 +109,6 @@ namespace FreedomEngine.Core
             // Use the smaller scale to maintain aspect ratio (letterbox mode)
             var scale = MathHelper.Min(scaleX, scaleY);
             _scalingMatrix = Matrix.CreateScale(scale, scale, 1f);
-
-            _width = EngineConfig.VirtualWidth * 2;
-            _height = EngineConfig.VirtualHeight * 2;
-
-            _cameraLimitsMin = new Vector2(WorldCamera.ViewportWidth / 2f, WorldCamera.ViewportHeight / 2f);
-            _cameraLimitsMax = new Vector2(_width - _cameraLimitsMin.X, _height - _cameraLimitsMax.Y);
 
             _following = null;
         }

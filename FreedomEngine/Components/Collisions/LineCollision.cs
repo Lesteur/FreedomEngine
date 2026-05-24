@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace FreedomEngine.Components.Collisions
 {
@@ -14,7 +15,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public LineCollision(Vector2 position, Vector2 positionEnd) : base(position)
+        public LineCollision(Vector2 position, ushort tag, Vector2 positionEnd) : base(position, tag)
         {
             PositionEnd = positionEnd;
         }

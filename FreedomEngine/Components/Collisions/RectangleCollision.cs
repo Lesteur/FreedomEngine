@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Drawing;
 
 namespace FreedomEngine.Components.Collisions
 {
@@ -17,7 +15,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public RectangleCollision(Vector2 position, float width, float height) : base(position)
+        public RectangleCollision(Vector2 position, ushort tag, float width, float height) : base(position, tag)
         {
             Width = width;
             Height = height;
@@ -92,10 +90,10 @@ namespace FreedomEngine.Components.Collisions
                 return true;
 
             // Check intersection with each edge of the rectangle
-            LineCollision topEdge       = new(new Vector2(left, top), new Vector2(right, top));
-            LineCollision bottomEdge    = new(new Vector2(left, bottom), new Vector2(right, bottom));
-            LineCollision leftEdge      = new(new Vector2(left, top), new Vector2(left, bottom));
-            LineCollision rightEdge     = new(new Vector2(right, top), new Vector2(right, bottom));
+            LineCollision topEdge       = new(new Vector2(left, top), Tag, new Vector2(right, top));
+            LineCollision bottomEdge    = new(new Vector2(left, bottom), Tag, new Vector2(right, bottom));
+            LineCollision leftEdge      = new(new Vector2(left, top), Tag, new Vector2(left, bottom));
+            LineCollision rightEdge     = new(new Vector2(right, top), Tag, new Vector2(right, bottom));
 
             return line.IntersectsLine(topEdge, Vector2.Zero) ||
                    line.IntersectsLine(bottomEdge, Vector2.Zero) ||
@@ -120,7 +118,7 @@ namespace FreedomEngine.Components.Collisions
             float bottom2 = top2 + rectangle.Height;
 
             // AABB collision detection
-            return !(right1 < left2 || left1 > right2 || bottom1 < top2 || top1 > bottom2);
+            return !(right1 <= left2 || left1 >= right2 || bottom1 <= top2 || top1 >= bottom2);
         }
 
         /// <summary>

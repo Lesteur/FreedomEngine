@@ -3,7 +3,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using FreedomEngine.Collections;
 using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Graphics.Particles

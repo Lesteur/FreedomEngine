@@ -1,7 +1,9 @@
-﻿using FreedomEngine.Core;
+﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+
+using FreedomEngine.Core;
 
 namespace FreedomEngine.Components.Collisions
 {
@@ -11,13 +13,16 @@ namespace FreedomEngine.Components.Collisions
 
         public Vector2 Position { get; set; }
 
+        public ushort Tag { get; set; }
+
         #endregion
 
         #region Constructors
 
-        public CollisionMask(Vector2 position)
+        public CollisionMask(Vector2 position, ushort tag)
         {
             Position = position;
+            Tag = tag;
         }
 
         #endregion
