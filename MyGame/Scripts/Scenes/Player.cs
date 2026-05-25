@@ -1,12 +1,11 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
 using FreedomEngine.Collections;
 using FreedomEngine.Components;
 using FreedomEngine.Graphics;
 using FreedomEngine.Core;
+using FreedomEngine.Components.Collisions;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -15,14 +14,30 @@ namespace MyGame.Scripts.Scenes
         private float _xSpeed = 0f;
         private float _ySpeed = 0f;
 
-        // Gravity
+        // Gravity & Physics parameters
         private float _grav = .3f;
         private float _maxFallSpeed = 4f;
         private bool _onGround = false;
 
-        // Hang time
+        // Jump parameters
+        private int _jumpBufferTime = 30;
+        private bool _jumpKeyBuffered = false;
+        private int _jumpKeyBufferedTimer = 0;
+        private int _jumpMax = 2;
+        private int _jumpCount = 0;
+        private int _jumpHoldTimer = 0;
+        private bool _jumpKey = false;
+        private bool _jumpKeyPressed = false;
+
+        private int[] _jumpHoldFrames = new int[2] { 18, 10 };
+        private float[] _jumpSpeed = new float[2] { -3.4f, -3.1f };
+
+        // Hang time / Coyote time parameters
         private int _coyoteHangFrames = 2;
         private int _coyoteHangTimer = 0;
+
+        private int _coyoteJumpFrames = 6;
+        private int _coyoteJumpTimer = 0;
 
         public Player(Sprite sprite, int x, int y) : base(sprite, x, y)
         {
@@ -30,20 +45,32 @@ namespace MyGame.Scripts.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            // Handle the X movement
+            GetControllerInput();
+
+            // Calculate base frame speeds
             _xSpeed = HandlePlayerMovement();
-            // Gravity
             _ySpeed = HandleGravity();
 
+            // Process jump logic and assign the correct vertical speed
             _ySpeed = HandlePlayerJump();
 
-            // Handle the X Speed
-            HandleXSpeed();
+            // Clamp falling speed before applying delta time
+            if (_ySpeed > _maxFallSpeed)
+            {
+                _ySpeed = _maxFallSpeed;
+            }
 
-            // Handle the Y Speed
-            HandleYSpeed();
+            // Apply Delta Time multiplier to get exact pixel movement for this frame
+            float dtMultiplier = (float)gameTime.ElapsedGameTime.TotalSeconds * 60f;
+            float moveX = _xSpeed * dtMultiplier;
+            float moveY = _ySpeed * dtMultiplier;
 
-            Position += new Vector2(_xSpeed, _ySpeed);
+            // Handle horizontal and vertical collisions using delta-scaled movement
+            HandleXSpeed(ref moveX);
+            HandleYSpeed(ref moveY);
+
+            // Apply final validated movement to position
+            Position += new Vector2(moveX, moveY);
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
@@ -54,21 +81,86 @@ namespace MyGame.Scripts.Scenes
             base.Update(gameTime);
         }
 
+        private void GetControllerInput()
+        {
+            _jumpKey = Core.Input.Keyboard.IsKeyDown(Keys.Space);
+            _jumpKeyPressed = Core.Input.Keyboard.WasKeyJustPressed(Keys.Space);
+
+            // Jump key buffering logic
+            if (_jumpKeyPressed)
+            {
+                _jumpKeyBufferedTimer = _jumpBufferTime;
+            }
+
+            if (_jumpKeyBufferedTimer > 0)
+            {
+                _jumpKeyBuffered = true;
+                _jumpKeyBufferedTimer--;
+            }
+            else
+            {
+                _jumpKeyBuffered = false;
+            }
+        }
+
         private float HandlePlayerJump()
         {
             float ySpeed = _ySpeed;
-            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
+
+            // Reset or prepare jumping variables based on ground state
+            if (_onGround)
             {
-                ySpeed = -7f;
+                _jumpCount = 0;
+                _jumpHoldTimer = 0; // Fixes IndexOutOfRangeException when landing while holding jump
+                _coyoteJumpTimer = _coyoteJumpFrames;
+            }
+            else
+            {
+                _coyoteJumpTimer--;
+
+                // Consume the first jump if coyote time window expires in mid-air
+                if (_jumpCount == 0 && _coyoteJumpTimer <= 0)
+                {
+                    _jumpCount = 1;
+                }
+            }
+
+            // Initiate the jump (Removed _onGround check to allow mid-air double jumping)
+            if (_jumpKeyBuffered && _jumpCount < _jumpMax)
+            {
+                // Reset the input buffer
+                _jumpKeyBuffered = false;
+                _jumpKeyBufferedTimer = 0;
+
+                // Track current jump index
+                _jumpCount++;
+
+                // Set the jump frames hold duration for variable height
+                _jumpHoldTimer = _jumpHoldFrames[_jumpCount - 1];
+
+                // Player leaves the ground immediately
                 SetOnGround(false);
             }
+
+            // Stop upward acceleration early if the player releases the jump key
+            if (!_jumpKey)
+            {
+                _jumpHoldTimer = 0;
+            }
+
+            // Apply variable jump speed while hold timer is active
+            if (_jumpHoldTimer > 0)
+            {
+                ySpeed = _jumpSpeed[_jumpCount - 1];
+                _jumpHoldTimer--;
+            }
+
             return ySpeed;
         }
 
         private float HandlePlayerMovement()
         {
-            float xSpeed = _xSpeed;
-
+            float xSpeed = 0f;
             int moveDirection = 0;
 
             if (Core.Input.Keyboard.IsKeyDown(Keys.Left))
@@ -84,10 +176,6 @@ namespace MyGame.Scripts.Scenes
             if (moveDirection != 0)
             {
                 xSpeed = moveDirection * 2f;
-            }
-            else
-            {
-                xSpeed = 0;
             }
 
             return xSpeed;
@@ -123,63 +211,58 @@ namespace MyGame.Scripts.Scenes
             return ySpeed;
         }
 
-        private void HandleXSpeed()
+        private void HandleXSpeed(ref float moveX)
         {
-            // On vérifie la collision sur l'ensemble du déplacement horizontal prévu
-            if (CollidesWith(1, new Vector2(_xSpeed, 0)))
+            // Check horizontal collision for the entire intended frame movement
+            if (CollidesWith(1, new Vector2(moveX, 0)))
             {
-                float signX = Math.Sign(_xSpeed);
+                float signX = Math.Sign(moveX);
 
-                // On avance pixel par pixel (ou unité par unité) jusqu'à frôler le mur
+                // Pixel-perfect approach loop
                 while (!CollidesWith(1, new Vector2(signX, 0)))
                 {
                     Position += new Vector2(signX, 0);
                 }
 
+                moveX = 0;
                 _xSpeed = 0;
             }
         }
 
-        private void HandleYSpeed()
+        private void HandleYSpeed(ref float moveY)
         {
-            if (_ySpeed > _maxFallSpeed)
+            // Check vertical collision for the entire intended frame movement
+            if (CollidesWith(1, new Vector2(0, moveY)))
             {
-                _ySpeed = _maxFallSpeed;
-            }
+                float signY = Math.Sign(moveY);
 
-            // On vérifie la collision sur l'ensemble du déplacement vertical prévu
-            if (CollidesWith(1, new Vector2(0, _ySpeed)))
-            {
-                float signY = Math.Sign(_ySpeed);
-
-                // On se rapproche du sol ou du plafond précisément
+                // Pixel-perfect approach loop
                 while (!CollidesWith(1, new Vector2(0, signY)))
                 {
                     Position += new Vector2(0, signY);
                 }
 
-                Position = new Vector2(Position.X, (float)Math.Round(Position.Y));
-
-                // Si signY > 0, on tombait, donc on a touché le sol !
-                if (signY > 0)
+                if (signY > 0) // Landed on the ground
                 {
                     SetOnGround(true);
                 }
+                else if (signY < 0) // Hit a ceiling
+                {
+                    _jumpHoldTimer = 0; // Instantly cancel upward jump acceleration
+                }
 
+                moveY = 0;
                 _ySpeed = 0;
             }
             else
             {
-                // Si on ne entre pas en collision, on vérifie si on est toujours sur le sol.
-                // On ne le fait que si on ne saute pas (vitesse positive ou nulle).
+                // Verify if player is still riding the floor while moving down or stationary
                 if (_ySpeed >= 0 && CollidesWith(1, new Vector2(0, 1f)))
                 {
                     SetOnGround(true);
                 }
                 else
                 {
-                    // On passe _onGround à false sans appeler SetOnGround(false)
-                    // pour permettre au Coyote Time de s'égrener naturellement.
                     _onGround = false;
                 }
             }
