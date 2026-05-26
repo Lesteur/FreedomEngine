@@ -9,35 +9,19 @@ using FreedomEngine.Components.Collisions;
 
 namespace MyGame.Scripts.Scenes
 {
-    public class Player : Entity
+    public class Player : ObjectPhysic
     {
-        private float _xSpeed = 0f;
-        private float _ySpeed = 0f;
-
-        // Gravity & Physics parameters
-        private float _grav = .3f;
-        private float _maxFallSpeed = 4f;
-        private bool _onGround = false;
-
         // Jump parameters
         private int _jumpBufferTime = 30;
         private bool _jumpKeyBuffered = false;
         private int _jumpKeyBufferedTimer = 0;
         private int _jumpMax = 2;
         private int _jumpCount = 0;
-        private int _jumpHoldTimer = 0;
         private bool _jumpKey = false;
         private bool _jumpKeyPressed = false;
 
-        private int[] _jumpHoldFrames = new int[2] { 18, 10 };
-        private float[] _jumpSpeed = new float[2] { -3.4f, -3.1f };
-
-        // Hang time / Coyote time parameters
-        private int _coyoteHangFrames = 2;
-        private int _coyoteHangTimer = 0;
-
-        private int _coyoteJumpFrames = 6;
-        private int _coyoteJumpTimer = 0;
+        private readonly int[] _jumpHoldFrames = [18, 10];
+        private readonly float[] _jumpSpeed = [-3.4f, -3.1f];
 
         public Player(Sprite sprite, int x, int y) : base(sprite, x, y)
         {
@@ -54,31 +38,12 @@ namespace MyGame.Scripts.Scenes
             // Process jump logic and assign the correct vertical speed
             _ySpeed = HandlePlayerJump();
 
-            // Clamp falling speed before applying delta time
-            if (_ySpeed > _maxFallSpeed)
-            {
-                _ySpeed = _maxFallSpeed;
-            }
-
-            // Apply Delta Time multiplier to get exact pixel movement for this frame
-            float dtMultiplier = (float)gameTime.ElapsedGameTime.TotalSeconds * 60f;
-            float moveX = _xSpeed * dtMultiplier;
-            float moveY = _ySpeed * dtMultiplier;
-
-            // Handle horizontal and vertical collisions using delta-scaled movement
-            HandleXSpeed(ref moveX);
-            HandleYSpeed(ref moveY);
-
-            // Apply final validated movement to position
-            Position += new Vector2(moveX, moveY);
-
-            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
-            {
-                Logger.Info($"Position: {Position}, OnGround: {_onGround}, CoyoteHangTimer: {_coyoteHangTimer}");
-                Logger.Info($"Width: {Width}, Height: {Height}");
-            }
-
             base.Update(gameTime);
+
+            if (Core.Input.Keyboard.IsKeyDown(Keys.Enter))
+            {
+                Logger.Info($"Position: {Position}");
+            }
         }
 
         private void GetControllerInput()
@@ -179,93 +144,6 @@ namespace MyGame.Scripts.Scenes
             }
 
             return xSpeed;
-        }
-
-        private void SetOnGround(bool onGround = true)
-        {
-            if (onGround)
-            {
-                _onGround = true;
-                _coyoteHangTimer = _coyoteHangFrames;
-            }
-            else
-            {
-                _onGround = false;
-                _coyoteHangTimer = 0;
-            }
-        }
-
-        private float HandleGravity()
-        {
-            float ySpeed = _ySpeed;
-
-            if (_coyoteHangTimer > 0)
-            {
-                _coyoteHangTimer--;
-            }
-            else if (!_onGround)
-            {
-                ySpeed += _grav;
-            }
-
-            return ySpeed;
-        }
-
-        private void HandleXSpeed(ref float moveX)
-        {
-            // Check horizontal collision for the entire intended frame movement
-            if (CollidesWith(1, new Vector2(moveX, 0)))
-            {
-                float signX = Math.Sign(moveX);
-
-                // Pixel-perfect approach loop
-                while (!CollidesWith(1, new Vector2(signX, 0)))
-                {
-                    Position += new Vector2(signX, 0);
-                }
-
-                moveX = 0;
-                _xSpeed = 0;
-            }
-        }
-
-        private void HandleYSpeed(ref float moveY)
-        {
-            // Check vertical collision for the entire intended frame movement
-            if (CollidesWith(1, new Vector2(0, moveY)))
-            {
-                float signY = Math.Sign(moveY);
-
-                // Pixel-perfect approach loop
-                while (!CollidesWith(1, new Vector2(0, signY)))
-                {
-                    Position += new Vector2(0, signY);
-                }
-
-                if (signY > 0) // Landed on the ground
-                {
-                    SetOnGround(true);
-                }
-                else if (signY < 0) // Hit a ceiling
-                {
-                    _jumpHoldTimer = 0; // Instantly cancel upward jump acceleration
-                }
-
-                moveY = 0;
-                _ySpeed = 0;
-            }
-            else
-            {
-                // Verify if player is still riding the floor while moving down or stationary
-                if (_ySpeed >= 0 && CollidesWith(1, new Vector2(0, 1f)))
-                {
-                    SetOnGround(true);
-                }
-                else
-                {
-                    _onGround = false;
-                }
-            }
         }
     }
 }
