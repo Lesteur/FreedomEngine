@@ -112,6 +112,8 @@ namespace FreedomEngine.Components
         /// </summary>
         public int CurrentFrame { get; set; } = 0;
 
+        public CollisionMask Collision { get; set; }
+
         /// <summary>
         /// Gets or Sets the X position of the entity.
         /// </summary>
@@ -121,7 +123,11 @@ namespace FreedomEngine.Components
             set
             {
                 _position = value;
-                Collision?.Position = value;
+                
+                if (Collision != null)
+                {
+                    Collision.Position = _position;
+                }
             }
         }
 
@@ -134,7 +140,11 @@ namespace FreedomEngine.Components
             set
             {
                 _position.X = value;
-                Collision?.Position = _position;
+
+                if (Collision != null)
+                {
+                    Collision.Position = _position;
+                }
             }
         }
 
@@ -147,11 +157,13 @@ namespace FreedomEngine.Components
             set
             {
                 _position.Y = value;
-                Collision?.Position = _position;
+
+                if (Collision != null)
+                {
+                    Collision.Position = _position;
+                }
             }
         }
-
-        public CollisionMask Collision { get; set; }
 
         #endregion
 
