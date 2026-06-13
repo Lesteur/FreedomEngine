@@ -38,6 +38,13 @@ namespace MyGame.Scripts.Scenes
         {
             base.Initialize();
 
+            _width = 640;
+            _height = 360;
+
+            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
+            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
+
+
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
             _entity = new Entity(_animation, 0, 0);
 
@@ -81,12 +88,6 @@ namespace MyGame.Scripts.Scenes
                 ColorSourceBlend = Blend.DestinationColor,
                 ColorDestinationBlend = Blend.Zero
             };
-
-            _width = 700;//640;
-            _height = 400;//360;
-
-            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
-            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
         }
 
         public override void LoadContent()

@@ -52,6 +52,13 @@ namespace MyGame.Scripts.Scenes
         {
             base.Initialize();
 
+            _width = 700;
+            _height = 400;
+
+            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
+            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
+
+
             _particleEmitter = new ParticleEmitter<ParticleDefault>(Core.PixelTexture, 100, new Vector2(200, 200), texture => new ParticleDefault(texture));
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
@@ -99,12 +106,6 @@ namespace MyGame.Scripts.Scenes
 
             Core.Collisions.Add(_collision1);
             Core.Collisions.Add(_collision2);
-
-            _width = 700;
-            _height = 400;
-
-            _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
-            _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
         }
 
         public override void LoadContent()

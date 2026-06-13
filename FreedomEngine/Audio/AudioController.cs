@@ -141,7 +141,6 @@ namespace FreedomEngine.Audio
         /// <param name="pan">The panning, ranging from -1.0 (left speaker) to 0.0 (centered), 1.0 (right speaker).</param>
         /// <param name="isLooped">Whether the the sound effect should loop after playback.</param>
         /// <returns>The sound effect instance created by playing the sound effect.</returns>
-        /// <returns>The sound effect instance created by this method.</returns>
         public SoundEffectInstance PlaySoundEffect(SoundEffect soundEffect, float volume, float pitch, float pan, bool isLooped)
         {
             ArgumentNullException.ThrowIfNull(soundEffect);
