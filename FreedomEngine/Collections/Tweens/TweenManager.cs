@@ -1,9 +1,11 @@
-﻿using FreedomEngine.Collections.Interfaces;
-using FreedomEngine.Components;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
+
+using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Components;
+using FreedomEngine.Collections.Utilities;
 
 namespace FreedomEngine.Collections.Tweens
 {

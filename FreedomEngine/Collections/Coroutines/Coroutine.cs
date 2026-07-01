@@ -21,28 +21,28 @@ namespace FreedomEngine.Collections.Coroutines
         private readonly IEnumerator _enumerator;
 
         /// <summary>
-        /// Indicates whether this coroutine has completed execution.
-        /// </summary>
-        private bool _isFinished;
-
-        /// <summary>
         /// Indicates whether this coroutine is currently paused.
         /// </summary>
         private bool _isPaused;
+
+        /// <summary>
+        /// Indicates whether this coroutine has completed execution.
+        /// </summary>
+        private bool _isFinished;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// Gets whether this coroutine has finished executing.
-        /// </summary>
-        public bool IsFinished => _isFinished;
-
-        /// <summary>
         /// Gets whether this coroutine is currently paused.
         /// </summary>
         public bool IsPaused => _isPaused;
+
+        /// <summary>
+        /// Gets whether this coroutine has finished executing.
+        /// </summary>
+        public bool IsFinished => _isFinished;
 
         /// <summary>
         /// Gets whether this coroutine is currently running (not paused and not finished).

@@ -22,14 +22,14 @@ namespace FreedomEngine.Collections.Tweens
         private readonly Func<T, T, float, T> _lerpFunc;
 
         /// <summary>
-        /// Indicates whether this coroutine has completed execution.
-        /// </summary>
-        private bool _isFinished;
-
-        /// <summary>
         /// Indicates whether this coroutine is currently paused.
         /// </summary>
         private bool _isPaused;
+
+        /// <summary>
+        /// Indicates whether this coroutine has completed execution.
+        /// </summary>
+        private bool _isFinished;
 
         #endregion
 
@@ -44,14 +44,14 @@ namespace FreedomEngine.Collections.Tweens
         public TimeSpan Elapsed { get; private set; }
 
         /// <summary>
-        /// Gets whether this coroutine has finished executing.
-        /// </summary>
-        public bool IsFinished => _isFinished || Elapsed >= Duration;
-
-        /// <summary>
         /// Gets whether this coroutine is currently paused.
         /// </summary>
         public bool IsPaused => _isPaused;
+
+        /// <summary>
+        /// Gets whether this coroutine has finished executing.
+        /// </summary>
+        public bool IsFinished => _isFinished || Elapsed >= Duration;
 
         /// <summary>
         /// Gets whether this coroutine is currently running (not paused and not finished).

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -10,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using FreedomEngine.Core;
 
 using FreedomEngine.Collections;
+using FreedomEngine.Collections.Utilities;
 using FreedomEngine.Collections.Tweens;
 using FreedomEngine.Collections.Coroutines;
 
@@ -107,8 +107,6 @@ namespace MyGame.Scripts.Scenes
 
             _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
             _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
-            //_collision = new LineCollision(new Vector2(100, 100), new Vector2(200, 150));
-            //_collision = new CircleCollision(new Vector2(400, 150), 25);
 
             Core.Collisions.Add(_collision1);
             Core.Collisions.Add(_collision2);
@@ -163,7 +161,7 @@ namespace MyGame.Scripts.Scenes
                 // Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
                 //_tween = Core.Tweens.TweenScale(_entity, Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2));//, TweenEasing.BounceOut);//, TweenLoopType.PingPong);
                 //_tween = Core.Tweens.TweenPosition(_entity, _entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(1));
-                _tween = Core.Tweens.TweenRotation(_entity, 0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(1));//, TweenLoopType.PingPong);
+                _tween = Core.Tweens.TweenRotation(_entity, 0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3));
             }
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
