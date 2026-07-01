@@ -1,25 +1,50 @@
-﻿using System;
+﻿using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Components;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using System;
 using System.Collections.Generic;
 
-using Microsoft.Xna.Framework;
-
-using FreedomEngine.Collections.Interfaces;
-using FreedomEngine.Components;
-
-namespace FreedomEngine.UI
+namespace FreedomEngine.Collections.Tweens
 {
-    public class TweenManager : IUpdate
+    /// <summary>
+    /// Manages the state and execution of all active tweens.
+    /// </summary>
+    public class TweenManager : IProcessManager
     {
         #region Fields
 
+        /// <summary>
+        /// The list of all currently active tweens.
+        /// </summary>
         private readonly List<ITween> _tweens;
 
+        /// <summary>
+        /// Pending tweens to add, processed safely.
+        /// </summary>
         private readonly List<ITween> _pendingTweens; 
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the number of currently active tweens.
+        /// </summary>
+        public int ActiveCount => _tweens.Count;
+
+        /// <summary>
+        /// Gets whether there are any active tweens.
+        /// </summary>
+        public bool HasActiveProcesses => _tweens.Count > 0;
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TweenManager"/> class.
+        /// </summary>
         public TweenManager()
         {
             _tweens = [];
@@ -49,8 +74,7 @@ namespace FreedomEngine.UI
                 var tween = _tweens[i];
                 tween.Update(gameTime);
 
-                // This will now also remove tweens that have been killed using .Kill()
-                if (tween.IsComplete)
+                if (tween.IsFinished)
                 {
                     _tweens.RemoveAt(i);
                 }
@@ -60,6 +84,47 @@ namespace FreedomEngine.UI
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Pauses all active tweens.
+        /// </summary>
+        public void PauseAll()
+        {
+            foreach (var tween in _tweens)
+            {
+                tween.Pause();
+            }
+        }
+
+        /// <summary>
+        /// Resumes all active tweens.
+        /// </summary>
+        public void ResumeAll()
+        {
+            foreach (var tween in _tweens)
+            {
+                tween.Resume();
+            }
+        }
+
+        /// <summary>
+        /// Stops all active tweens immediately.
+        /// </summary>
+        public void StopAll()
+        {
+            foreach (var tween in _tweens)
+            {
+                tween.Stop();
+            }
+
+            foreach (var tween in _pendingTweens)
+            {
+                tween.Stop();
+            }
+
+            _tweens.Clear();
+            _pendingTweens.Clear();
+        }
 
         /// <summary>
         /// Animates the position of an Entity or UIElement.
@@ -101,10 +166,26 @@ namespace FreedomEngine.UI
             return tween;
         }
 
-        public void Clear()
+        #endregion
+
+        #region IDisposable Implementation
+
+        /// <summary>
+        /// Disposes of this tween manager and cleans up resources.
+        /// </summary>
+        public void Dispose()
         {
-            _tweens.Clear();
-            _pendingTweens.Clear();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes this tween manager and cleans up resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            StopAll();
         }
 
         #endregion

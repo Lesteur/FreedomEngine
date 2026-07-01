@@ -22,6 +22,9 @@ namespace FreedomEngine.Components
         /// </summary>
         private TimeSpan _elapsed = TimeSpan.Zero;
 
+        /// <summary>
+        /// Represents the position of the entity in 2D space.
+        /// </summary>
         private Vector2 _position = Vector2.Zero;
 
         #endregion
@@ -112,6 +115,9 @@ namespace FreedomEngine.Components
         /// </summary>
         public int CurrentFrame { get; set; } = 0;
 
+        /// <summary>
+        /// Gets or Sets the collision mask associated with this entity.
+        /// </summary>
         public CollisionMask Collision { get; set; }
 
         /// <summary>
@@ -175,16 +181,18 @@ namespace FreedomEngine.Components
         /// <param name="sprite">The sprite associated with the entity.</param>
         /// <param name="x">The starting X position.</param>
         /// <param name="y">The starting Y position.</param>
-        public Entity(Sprite sprite, int x = 0, int y = 0)
+        /// <param name="collisionMask">The collision mask associated with the entity.</param>
+        public Entity(Sprite sprite, int x = 0, int y = 0, CollisionMask collisionMask = null)
         {
             Sprite = sprite;
             X = x;
             Y = y;
 
-            Collision = new RectangleCollision(new Vector2(X, Y), 0, Width, Height);
-            //Collision = new CircleCollision(new Vector2(Width / 2f, Height / 2f), MathF.Max(Width, Height) / 2f);
-
-            Application.Collisions.Add(Collision);
+            if (collisionMask != null)
+            {
+                Collision = collisionMask;
+                Collision.Position = new Vector2(X, Y);
+            }
         }
 
         #endregion

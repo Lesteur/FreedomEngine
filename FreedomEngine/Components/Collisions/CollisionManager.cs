@@ -7,9 +7,9 @@ namespace FreedomEngine.Components.Collisions
 {
     public class CollisionManager
     {
-        #region Properties
+        #region Fields
 
-        List<CollisionMask> _collisionMasks = [];
+        private readonly List<CollisionMask> _collisionMasks = [];
 
         #endregion
 
@@ -46,7 +46,24 @@ namespace FreedomEngine.Components.Collisions
             return false;
         }
 
-        public void Clear()
+        #endregion
+
+        #region IDisposable Implementation
+
+        /// <summary>
+        /// Disposes of this tween manager and cleans up resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes this tween manager and cleans up resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
+        protected virtual void Dispose(bool disposing)
         {
             _collisionMasks.Clear();
         }

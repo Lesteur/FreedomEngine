@@ -7,14 +7,17 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using FreedomEngine.Collections;
-using FreedomEngine.Collections.Coroutines;
-using FreedomEngine.Components;
 using FreedomEngine.Core;
+
+using FreedomEngine.Collections;
+using FreedomEngine.Collections.Tweens;
+using FreedomEngine.Collections.Coroutines;
+
 using FreedomEngine.Graphics;
 using FreedomEngine.Graphics.BitmapFonts;
-using FreedomEngine.UI;
 using FreedomEngine.Graphics.Particles;
+
+using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
 
 namespace MyGame.Scripts.Scenes
@@ -62,8 +65,11 @@ namespace MyGame.Scripts.Scenes
             _particleEmitter = new ParticleEmitter<ParticleDefault>(Core.PixelTexture, 100, new Vector2(200, 200), texture => new ParticleDefault(texture));
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Entity(_animation, 0, 0);
-            
+            RectangleCollision collision = new(new Vector2(0, 0), 1, 32, 32);
+            _entity = new Entity(_animation, 0, 0, collision);
+
+            Core.Collisions.Add(collision);
+
             _following = _entity;
 
             _tilemap = new(_tileset, 15, 15)
@@ -149,9 +155,9 @@ namespace MyGame.Scripts.Scenes
             {
                 // Core.Audio.PlaySoundEffect(_soundEffect);
 
-                if (_tween != null && !_tween.IsComplete)
+                if (_tween != null && !_tween.IsFinished)
                 {
-                    _tween.Kill();
+                    _tween.Stop();
                 }
 
                 // Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
@@ -162,8 +168,9 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                // Core.Coroutines.StartCoroutine(TestCoroutine());
-                Application.ChangeScene(new SceneShadow());
+                Logger.Info("Coroutine");
+                Core.Coroutines.StartCoroutine(TestCoroutine());
+                //Application.ChangeScene(new SceneShadow());
             }
 
             _tilemap.Update(gameTime);
@@ -234,9 +241,6 @@ namespace MyGame.Scripts.Scenes
 
         public override void UnloadContent()
         {
-            Application.Coroutines.Clear();
-            Application.Tweens.Clear();
-
             base.UnloadContent();
         }
 

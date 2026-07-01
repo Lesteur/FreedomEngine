@@ -3,13 +3,15 @@ using System.Collections;
 
 using Microsoft.Xna.Framework;
 
+using FreedomEngine.Collections.Interfaces;
+
 namespace FreedomEngine.Collections.Coroutines
 {
     /// <summary>
     /// Represents a coroutine that can be executed over multiple frames.
     /// Wraps an IEnumerator to provide pause/resume functionality similar to Unity.
     /// </summary>
-    public sealed class Coroutine
+    public sealed class Coroutine : IControllableProcess
     {
         #region Fields
 
@@ -72,26 +74,23 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         /// <param name="deltaTime">The time elapsed since the last frame.</param>
         /// <returns>True if the coroutine should continue, false if it has finished.</returns>
-        internal bool Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             if (_isFinished || _isPaused)
-                return !_isFinished;
+                return;
 
             // Check if current yield instruction needs to wait
             if (_enumerator.Current is IYieldInstruction yieldInstruction)
             {
                 if (!yieldInstruction.IsDone(gameTime.ElapsedGameTime))
-                    return true;
+                    return;
             }
 
             // Move to next step
             if (!_enumerator.MoveNext())
             {
                 _isFinished = true;
-                return false;
             }
-
-            return true;
         }
 
         #endregion

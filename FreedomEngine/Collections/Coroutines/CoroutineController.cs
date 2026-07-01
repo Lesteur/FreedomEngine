@@ -1,13 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
+﻿using FreedomEngine.Collections.Interfaces;
 using Microsoft.Xna.Framework;
-
-using FreedomEngine.Collections.Interfaces;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace FreedomEngine.Collections.Coroutines
 {
-    public sealed class CoroutineController : IUpdate
+    /// <summary>
+    /// Manages the state and execution of all active coroutines.
+    /// </summary>
+    public class CoroutineController : IProcessManager
     {
         #region Fields
 
@@ -33,19 +35,19 @@ namespace FreedomEngine.Collections.Coroutines
         /// <summary>
         /// Gets the number of currently active coroutines.
         /// </summary>
-        public int ActiveCoroutineCount => _coroutines.Count;
+        public int ActiveCount => _coroutines.Count;
 
         /// <summary>
         /// Gets whether there are any active coroutines.
         /// </summary>
-        public bool HasActiveCoroutines => _coroutines.Count > 0;
+        public bool HasActiveProcesses => _coroutines.Count > 0;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoroutineManager"/> class.
+        /// Initializes a new instance of the <see cref="CoroutineController"/> class.
         /// </summary>
         public CoroutineController()
         {
@@ -69,9 +71,10 @@ namespace FreedomEngine.Collections.Coroutines
             for (int i = 0; i < coroutineCount; i++)
             {
                 var coroutine = _coroutines[i];
+                coroutine.Update(gameTime);
 
                 // Update returns false when coroutine is finished
-                if (!coroutine.Update(gameTime))
+                if (coroutine.IsFinished)
                 {
                     _coroutinesToRemove.Add(coroutine);
                 }
@@ -84,6 +87,43 @@ namespace FreedomEngine.Collections.Coroutines
         #endregion
 
         #region Public Methods
+
+        /// <summary>
+        /// Pauses all running coroutines.
+        /// </summary>
+        public void PauseAll()
+        {
+            foreach (var coroutine in _coroutines)
+            {
+                coroutine.Pause();
+            }
+        }
+
+        /// <summary>
+        /// Resumes all paused coroutines.
+        /// </summary>
+        public void ResumeAll()
+        {
+            foreach (var coroutine in _coroutines)
+            {
+                coroutine.Resume();
+            }
+        }
+
+        /// <summary>
+        /// Stops all running coroutines immediately.
+        /// </summary>
+        public void StopAll()
+        {
+            foreach (var coroutine in _coroutines)
+            {
+                coroutine.Stop();
+            }
+
+            _coroutines.Clear();
+            _coroutinesToAdd.Clear();
+            _coroutinesToRemove.Clear();
+        }
 
         /// <summary>
         /// Starts a new coroutine from an IEnumerator.
@@ -101,39 +141,6 @@ namespace FreedomEngine.Collections.Coroutines
             var coroutine = new Coroutine(enumerator);
             _coroutinesToAdd.Add(coroutine);
             return coroutine;
-        }
-
-        /// <summary>
-        /// Stops a running coroutine.
-        /// </summary>
-        /// <param name="coroutine">The coroutine to stop.</param>
-        public void StopCoroutine(Coroutine coroutine)
-        {
-            if (coroutine == null)
-                return;
-
-            coroutine.Stop();
-            _coroutinesToRemove.Add(coroutine);
-        }
-
-        /// <summary>
-        /// Stops all running coroutines immediately.
-        /// </summary>
-        public void StopAllCoroutines()
-        {
-            foreach (var coroutine in _coroutines)
-            {
-                coroutine.Stop();
-            }
-
-            _coroutines.Clear();
-            _coroutinesToAdd.Clear();
-            _coroutinesToRemove.Clear();
-        }
-
-        public void Clear()
-        {
-            StopAllCoroutines();
         }
 
         #endregion
@@ -155,6 +162,28 @@ namespace FreedomEngine.Collections.Coroutines
                 _coroutines.AddRange(_coroutinesToAdd);
                 _coroutinesToAdd.Clear();
             }
+        }
+
+        #endregion
+
+        #region IDisposable Implementation
+
+        /// <summary>
+        /// Disposes of this coroutine controller and cleans up resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes this coroutine controller and cleans up resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            StopAll();
         }
 
         #endregion

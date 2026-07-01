@@ -5,11 +5,14 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using FreedomEngine.Audio;
+
+using FreedomEngine.Input;
+
 using FreedomEngine.Collections;
 using FreedomEngine.Collections.Coroutines;
-using FreedomEngine.Audio;
-using FreedomEngine.Input;
-using FreedomEngine.UI;
+using FreedomEngine.Collections.Tweens;
+
 using FreedomEngine.Components.Collisions;
 
 namespace FreedomEngine.Core
@@ -68,10 +71,13 @@ namespace FreedomEngine.Core
         public static CoroutineController Coroutines { get; private set; }
 
         /// <summary>
-        /// Gets the global manager for handling tween animations.
+        /// Gets the global tween manager for handling tween animations.
         /// </summary>
         public static TweenManager Tweens { get; private set; }
 
+        /// <summary>
+        /// Gets the global collision manager responsible for handling collision detection and response.
+        /// </summary>
         public static CollisionManager Collisions { get; private set; }
 
         /// <summary>
@@ -84,6 +90,9 @@ namespace FreedomEngine.Core
         /// </summary>
         public static Scene NextScene { get; private set; }
 
+        /// <summary>
+        /// Gets a single-pixel texture used for drawing primitives and debugging purposes.
+        /// </summary>
         public static Texture2D PixelTexture { get; private set; }
 
         #endregion
@@ -133,7 +142,7 @@ namespace FreedomEngine.Core
         protected override void Update(GameTime gameTime)
         {
             Input.Update(gameTime);
-            Audio.Update();
+            Audio.Update(gameTime);
             Coroutines.Update(gameTime);
             Tweens.Update(gameTime);
 
@@ -162,6 +171,9 @@ namespace FreedomEngine.Core
             PixelTexture.Dispose();
 
             Audio.Dispose();
+            Coroutines.Dispose();
+            Tweens.Dispose();
+            Collisions.Dispose();
             base.UnloadContent();
         }
 

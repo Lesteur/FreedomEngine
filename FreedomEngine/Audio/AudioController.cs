@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Audio;
+﻿using FreedomEngine.Collections.Interfaces;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
 using System;
@@ -9,7 +11,7 @@ namespace FreedomEngine.Audio
     /// <summary>
     /// Manages audio playback for the engine, including background music and sound effects.
     /// </summary>
-    public class AudioController : IDisposable
+    public class AudioController : IProcessManager
     {
         #region Fields
 
@@ -30,24 +32,17 @@ namespace FreedomEngine.Audio
 
         #endregion
 
-        #region Constructors
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="AudioController"/> class, initializing the active sound effect instances list.
-        /// </summary>
-        public AudioController()
-        {
-            _activeSoundEffectInstances = [];
-        }
-
-        /// <summary>
-        /// Finalizer called when the object is collected by the garbage collector.
-        /// </summary>
-        ~AudioController() => Dispose(false);
-
-        #endregion
-
         #region Properties
+
+        /// <summary>
+        /// Gets the number of currently active audio processes.
+        /// </summary>
+        public int ActiveCount => _activeSoundEffectInstances.Count;
+
+        /// <summary>
+        /// Gets whether there are any active audio processes.
+        /// </summary>
+        public bool HasActiveProcesses => _activeSoundEffectInstances.Count > 0;
 
         /// <summary>
         /// Gets a value that indicates if audio is muted.
@@ -95,12 +90,29 @@ namespace FreedomEngine.Audio
 
         #endregion
 
+        #region Constructors
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="AudioController"/> class, initializing the active sound effect instances list.
+        /// </summary>
+        public AudioController()
+        {
+            _activeSoundEffectInstances = [];
+        }
+
+        /// <summary>
+        /// Finalizer called when the object is collected by the garbage collector.
+        /// </summary>
+        ~AudioController() => Dispose(false);
+
+        #endregion
+
         #region Lifecycle Methods
 
         /// <summary>
         /// Updates the controller, cleaning up stopped sound instances to free memory.
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             // Iterate backwards to safely remove elements while looping
             for (int i = _activeSoundEffectInstances.Count - 1; i >= 0; i--)
@@ -120,7 +132,39 @@ namespace FreedomEngine.Audio
 
         #endregion
 
-        #region Public Methods (Playback)
+        #region Public Methods
+
+        /// <summary>
+        /// Pauses all audio.
+        /// </summary>
+        public void PauseAll()
+        {
+            MediaPlayer.Pause();
+
+            foreach (var instance in _activeSoundEffectInstances)
+                instance.Pause();
+        }
+
+        /// <summary>
+        /// Resumes play of all previous paused audio.
+        /// </summary>
+        public void ResumeAll()
+        {
+            MediaPlayer.Resume();
+
+            foreach (var instance in _activeSoundEffectInstances)
+                instance.Resume();
+        }
+
+        /// <summary>
+        /// Stops all active audio immediately.
+        /// </summary>
+        public void StopAll()
+        {
+            MediaPlayer.Stop();
+            foreach (var instance in _activeSoundEffectInstances)
+                instance.Stop();
+        }
 
         /// <summary>
         /// Plays the given sound effect.
@@ -172,32 +216,6 @@ namespace FreedomEngine.Audio
 
             MediaPlayer.Play(song);
             MediaPlayer.IsRepeating = isRepeating;
-        }
-
-        #endregion
-
-        #region Public Methods (Control)
-
-        /// <summary>
-        /// Pauses all audio.
-        /// </summary>
-        public void PauseAudio()
-        {
-            MediaPlayer.Pause();
-
-            foreach (var instance in _activeSoundEffectInstances)
-                instance.Pause();
-        }
-
-        /// <summary>
-        /// Resumes play of all previous paused audio.
-        /// </summary>
-        public void ResumeAudio()
-        {
-            MediaPlayer.Resume();
-
-            foreach (var instance in _activeSoundEffectInstances)
-                instance.Resume();
         }
 
         /// <summary>

@@ -4,21 +4,13 @@ using Microsoft.Xna.Framework;
 
 using FreedomEngine.Collections.Interfaces;
 
-namespace FreedomEngine.UI
+namespace FreedomEngine.Collections.Tweens
 {
     /// <summary>
     /// Interface allowing the TweenManager to update tweens of any generic type.
     /// </summary>
-    public interface ITween : IUpdate
+    public interface ITween : IControllableProcess
     {
-        bool IsComplete { get; }
-
-        bool IsKilled { get; }
-        
-        /// <summary>
-        /// Instantly stops the tween and marks it for removal from the TweenManager.
-        /// </summary>
-        void Kill();
     }
 
     public class Tween<T> : ITween
@@ -28,6 +20,16 @@ namespace FreedomEngine.UI
         private readonly Action<T> _setter;
 
         private readonly Func<T, T, float, T> _lerpFunc;
+
+        /// <summary>
+        /// Indicates whether this coroutine has completed execution.
+        /// </summary>
+        private bool _isFinished;
+
+        /// <summary>
+        /// Indicates whether this coroutine is currently paused.
+        /// </summary>
+        private bool _isPaused;
 
         #endregion
 
@@ -40,10 +42,21 @@ namespace FreedomEngine.UI
         public TimeSpan Duration { get; private set; }
 
         public TimeSpan Elapsed { get; private set; }
-        
-        public bool IsKilled { get; private set; }
-        
-        public bool IsComplete => Elapsed >= Duration || IsKilled;
+
+        /// <summary>
+        /// Gets whether this coroutine has finished executing.
+        /// </summary>
+        public bool IsFinished => _isFinished || Elapsed >= Duration;
+
+        /// <summary>
+        /// Gets whether this coroutine is currently paused.
+        /// </summary>
+        public bool IsPaused => _isPaused;
+
+        /// <summary>
+        /// Gets whether this coroutine is currently running (not paused and not finished).
+        /// </summary>
+        public bool IsRunning => !_isFinished && !_isPaused;
 
         #endregion
 
@@ -66,7 +79,6 @@ namespace FreedomEngine.UI
             To = to;
             Duration = duration;
             Elapsed = TimeSpan.Zero;
-            IsKilled = false;
         }
 
         #endregion
@@ -79,7 +91,7 @@ namespace FreedomEngine.UI
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public void Update(GameTime gameTime)
         {
-            if (IsComplete)
+            if (_isFinished || _isPaused)
                 return;
 
             Elapsed += gameTime.ElapsedGameTime;
@@ -96,9 +108,19 @@ namespace FreedomEngine.UI
 
         #region Public Methods
 
-        public void Kill()
+        public void Pause()
         {
-            IsKilled = true;
+            _isPaused = true;
+        }
+
+        public void Resume()
+        {
+            _isPaused = false;
+        }
+
+        public void Stop()
+        {
+            _isFinished = true;
         }
 
         #endregion
