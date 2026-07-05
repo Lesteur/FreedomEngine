@@ -11,6 +11,8 @@ namespace FreedomEngine.Components.Collisions
     {
         #region Properties
 
+        public static CollisionManager CollisionManager { get; set; }
+
         public Vector2 Position { get; set; }
 
         public ushort Tag { get; set; }

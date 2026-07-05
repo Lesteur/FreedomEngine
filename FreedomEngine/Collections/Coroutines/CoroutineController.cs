@@ -173,17 +173,8 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Disposes this coroutine controller and cleans up resources.
-        /// </summary>
-        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
-        {
             StopAll();
+            GC.SuppressFinalize(this);
         }
 
         #endregion

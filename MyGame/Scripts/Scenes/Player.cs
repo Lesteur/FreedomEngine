@@ -23,7 +23,7 @@ namespace MyGame.Scripts.Scenes
         private readonly int[] _jumpHoldFrames = [18, 10];
         private readonly float[] _jumpSpeed = [-3.4f, -3.1f];
 
-        public Player(Sprite sprite, int x, int y) : base(sprite, x, y)
+        public Player(Sprite sprite, Vector2 position) : base(sprite, position)
         {
         }
 

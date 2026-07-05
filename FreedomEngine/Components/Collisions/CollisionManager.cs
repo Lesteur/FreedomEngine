@@ -23,9 +23,32 @@ namespace FreedomEngine.Components.Collisions
 
         #region Public Methods
 
-        public void Add(CollisionMask mask)
+        public RectangleCollision AddRectangleCollision(Vector2 position, ushort tag, float width, float height)
         {
-            _collisionMasks.Add(mask);
+            var rectangleCollision = new RectangleCollision(position, tag, width, height);
+            _collisionMasks.Add(rectangleCollision);
+            return rectangleCollision;
+        }
+
+        public CircleCollision AddCircleCollision(Vector2 position, ushort tag, float radius)
+        {
+            var circleCollision = new CircleCollision(position, tag, radius);
+            _collisionMasks.Add(circleCollision);
+            return circleCollision;
+        }
+
+        public LineCollision AddLineCollision(Vector2 position, ushort tag, Vector2 positionEnd)
+        {
+            var lineCollision = new LineCollision(position, tag, positionEnd);
+            _collisionMasks.Add(lineCollision);
+            return lineCollision;
+        }
+
+        public PointCollision AddPointCollision(Vector2 position, ushort tag)
+        {
+            var pointCollision = new PointCollision(position, tag);
+            _collisionMasks.Add(pointCollision);
+            return pointCollision;
         }
 
         public void Remove(CollisionMask mask)
@@ -54,16 +77,6 @@ namespace FreedomEngine.Components.Collisions
         /// Disposes of this tween manager and cleans up resources.
         /// </summary>
         public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Disposes this tween manager and cleans up resources.
-        /// </summary>
-        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
         {
             _collisionMasks.Clear();
         }

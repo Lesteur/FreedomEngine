@@ -6,20 +6,9 @@ using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Tweens
 {
-    /// <summary>
-    /// Interface allowing the TweenManager to update tweens of any generic type.
-    /// </summary>
-    public interface ITween : IControllableProcess
-    {
-    }
-
-    public class Tween<T> : ITween
+    public class Tween : IControllableProcess
     {
         #region Fields
-
-        private readonly Action<T> _setter;
-
-        private readonly Func<T, T, float, T> _lerpFunc;
 
         /// <summary>
         /// Indicates whether this coroutine is currently paused.
@@ -31,13 +20,14 @@ namespace FreedomEngine.Collections.Tweens
         /// </summary>
         private bool _isFinished;
 
+        /// <summary>
+        /// The normalized progress of the tween, ranging from 0 to 1.
+        /// </summary>
+        protected float _progress;
+
         #endregion
 
         #region Properties
-
-        public T From { get; private set; }
-
-        public T To { get; private set; }
 
         public TimeSpan Duration { get; private set; }
 
@@ -65,18 +55,9 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// Creates a new tween for a specific value type.
         /// </summary>
-        /// <param name="from">Starting value.</param>
-        /// <param name="to">Target value.</param>
         /// <param name="duration">Duration of the tween.</param>
-        /// <param name="setter">Action to apply the interpolated value to the target property.</param>
-        /// <param name="lerpFunc">Function used to interpolate between the from and to values.</param>
-        public Tween(T from, T to, TimeSpan duration, Action<T> setter, Func<T, T, float, T> lerpFunc)
+        public Tween(TimeSpan duration)
         {
-            _setter = setter;
-            _lerpFunc = lerpFunc;
-
-            From = from;
-            To = to;
             Duration = duration;
             Elapsed = TimeSpan.Zero;
         }
@@ -89,7 +70,7 @@ namespace FreedomEngine.Collections.Tweens
         /// Updates the tween's state and applies the animation.
         /// </summary>
         /// <param name="gameTime">The time elapsed since the last update.</param>
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             if (_isFinished || _isPaused)
                 return;
@@ -97,11 +78,7 @@ namespace FreedomEngine.Collections.Tweens
             Elapsed += gameTime.ElapsedGameTime;
 
             // Calculate progress between 0 and 1
-            float t = MathHelper.Clamp((float)(Elapsed.TotalSeconds / Duration.TotalSeconds), 0f, 1f);
-
-            // Interpolate and apply the value
-            T currentValue = _lerpFunc(From, To, t);
-            _setter(currentValue);
+            _progress = MathHelper.Clamp((float)(Elapsed.TotalSeconds / Duration.TotalSeconds), 0f, 1f);
         }
 
         #endregion

@@ -30,17 +30,13 @@ namespace MyGame.Scripts.Scenes
 
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Player(_animation, 0, 0);
+            _entity = new Player(_animation, Vector2.Zero);
 
             _following = _entity;
 
-            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
-            _collision2 = new RectangleCollision(new Vector2(200, 300), 1, 50, 50);
-            _collision3 = new RectangleCollision(new Vector2(0, 350), 1, 700, 50);
-
-            Core.Collisions.Add(_collision1);
-            Core.Collisions.Add(_collision2);
-            Core.Collisions.Add(_collision3);
+            _collision1 = Core.Collisions.AddRectangleCollision(new Vector2(100, 100), 1, 50, 50);
+            _collision2 = Core.Collisions.AddRectangleCollision(new Vector2(200, 300), 1, 50, 50);
+            _collision3 = Core.Collisions.AddRectangleCollision(new Vector2(0, 350), 1, 700, 50);
         }
 
         public override void LoadContent()

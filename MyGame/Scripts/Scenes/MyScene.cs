@@ -19,6 +19,7 @@ using FreedomEngine.Graphics.Particles;
 
 using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
+using FreedomEngine.UI;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -33,6 +34,7 @@ namespace MyGame.Scripts.Scenes
         private Entity _entity;
         private Tilemap _tilemap;
         private Text _bitmapText;
+        private UIElement _uiElement;
         private ParticleEmitter<ParticleDefault> _particleEmitter;
 
         private CollisionMask _collision1;
@@ -49,7 +51,7 @@ namespace MyGame.Scripts.Scenes
         private readonly float _scrollSpeed = 50.0f;
 
         // Variable to hold the reference to our active tween
-        private ITween _tween;
+        private Tween _tween;
 
         public override void Initialize()
         {
@@ -61,14 +63,14 @@ namespace MyGame.Scripts.Scenes
             _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
             _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
 
-
             _particleEmitter = new ParticleEmitter<ParticleDefault>(Core.PixelTexture, 100, new Vector2(200, 200), texture => new ParticleDefault(texture));
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            RectangleCollision collision = new(new Vector2(0, 0), 1, 32, 32);
-            _entity = new Entity(_animation, 0, 0, collision);
 
-            Core.Collisions.Add(collision);
+            _uiElement = new UIElement(_animation, new Vector2(150, 150));
+
+            RectangleCollision collision = Core.Collisions.AddRectangleCollision(new Vector2(0, 0), 1, 32, 32);
+            _entity = new Entity(_animation, Vector2.Zero, collision);
 
             _following = _entity;
 
@@ -105,11 +107,8 @@ namespace MyGame.Scripts.Scenes
             // screen background.
             _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
 
-            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
-            _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
-
-            Core.Collisions.Add(_collision1);
-            Core.Collisions.Add(_collision2);
+            _collision1 = Core.Collisions.AddRectangleCollision(new Vector2(100, 100), 1, 50, 50);
+            _collision2 = Core.Collisions.AddRectangleCollision(new Vector2(200, 200), 1, 50, 50);
         }
 
         public override void LoadContent()
@@ -158,10 +157,10 @@ namespace MyGame.Scripts.Scenes
                     _tween.Stop();
                 }
 
-                // Core.Tweens.TweenColor(_entity, Color.White, Color.Red, TimeSpan.FromSeconds(2));//, TweenEasing.Linear, TweenLoopType.PingPong);
+                //_tween = Core.Tweens.TweenColor(_entity, Color.Blue, Color.Red, TimeSpan.FromSeconds(2), EasingFunctions.BounceOut);//, TweenEasing.Linear, TweenLoopType.PingPong);
                 //_tween = Core.Tweens.TweenScale(_entity, Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2));//, TweenEasing.BounceOut);//, TweenLoopType.PingPong);
-                //_tween = Core.Tweens.TweenPosition(_entity, _entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(1));
-                _tween = Core.Tweens.TweenRotation(_entity, 0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3));
+                _tween = Core.Tweens.TweenPosition(_entity, _entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), EasingFunctions.SineOut);
+                //_tween = Core.Tweens.TweenRotation(_entity, 0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), EasingFunctions.QuinticInOut);
             }
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
@@ -175,6 +174,8 @@ namespace MyGame.Scripts.Scenes
             _entity.Update(gameTime);
 
             _bitmapText.Update(gameTime);
+
+            _uiElement.Update(gameTime);
 
             // Update the offsets for the background pattern wrapping so that it
             // scrolls down and to the right.
@@ -234,6 +235,8 @@ namespace MyGame.Scripts.Scenes
 
             _bitmapText.Draw(spriteBatch);
 
+            _uiElement.Draw(spriteBatch);
+
             spriteBatch.End();
         }
 
@@ -241,7 +244,6 @@ namespace MyGame.Scripts.Scenes
         {
             base.UnloadContent();
         }
-
 
         private IEnumerator TestCoroutine()
         {

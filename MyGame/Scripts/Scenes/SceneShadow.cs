@@ -46,7 +46,7 @@ namespace MyGame.Scripts.Scenes
 
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Entity(_animation, 0, 0);
+            _entity = new Entity(_animation, Vector2.Zero);
 
             _following = _entity;
 

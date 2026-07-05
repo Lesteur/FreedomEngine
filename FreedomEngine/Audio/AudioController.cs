@@ -1,10 +1,11 @@
-﻿using FreedomEngine.Collections.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 
-using System;
-using System.Collections.Generic;
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Audio
 {
@@ -206,7 +207,7 @@ namespace FreedomEngine.Audio
         /// Plays the given song.
         /// </summary>
         /// <param name="song">The song to play.</param>
-        /// <param name="isRepeating">Optionally specify if the song should repeat.  Default is true.</param>
+        /// <param name="isRepeating">Optionally specify if the song should repeat. Default is true.</param>
         public void PlaySong(Song song, bool isRepeating = true)
         {
             if (MediaPlayer.State == MediaState.Playing)

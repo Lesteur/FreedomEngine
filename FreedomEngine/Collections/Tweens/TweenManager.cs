@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 
 using FreedomEngine.Collections.Interfaces;
 using FreedomEngine.Components;
-using FreedomEngine.Collections.Utilities;
 
 namespace FreedomEngine.Collections.Tweens
 {
@@ -19,12 +18,12 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// The list of all currently active tweens.
         /// </summary>
-        private readonly List<ITween> _tweens;
+        private readonly List<Tween> _tweens;
 
         /// <summary>
         /// Pending tweens to add, processed safely.
         /// </summary>
-        private readonly List<ITween> _pendingTweens; 
+        private readonly List<Tween> _pendingTweens; 
 
         #endregion
 
@@ -131,9 +130,9 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// Animates the position of an Entity or UIElement.
         /// </summary>
-        public ITween TweenPosition(Entity entity, Vector2 from, Vector2 to, TimeSpan duration)
+        public TweenVector2 TweenPosition(Entity entity, Vector2 from, Vector2 to, TimeSpan duration, Func<float, float> func)
         {
-            var tween = new Tween<Vector2>(from, to, duration, val => entity.Position = val, Vector2.Lerp);
+            var tween = new TweenVector2(from, to, duration, val => entity.Position = val, func);
             _pendingTweens.Add(tween);
             return tween;
         }
@@ -141,9 +140,9 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// Animates the scale of an Entity or UIElement.
         /// </summary>
-        public ITween TweenScale(Entity entity, Vector2 from, Vector2 to, TimeSpan duration)
+        public TweenVector2 TweenScale(Entity entity, Vector2 from, Vector2 to, TimeSpan duration, Func<float, float> func)
         {
-            var tween = new Tween<Vector2>(from, to, duration, val => entity.Scale = val, Vector2.Lerp);
+            var tween = new TweenVector2(from, to, duration, val => entity.Scale = val, func);
             _pendingTweens.Add(tween);
             return tween;
         }
@@ -151,9 +150,9 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// Animates the color of an Entity or UIElement.
         /// </summary>
-        public ITween TweenColor(Entity entity, Color from, Color to, TimeSpan duration)
+        public TweenColor TweenColor(Entity entity, Color from, Color to, TimeSpan duration, Func<float, float> func)
         {
-            var tween = new Tween<Color>(from, to, duration, val => entity.Color = val, Color.Lerp);
+            var tween = new TweenColor(from, to, duration, val => entity.Color = val, func);
             _pendingTweens.Add(tween);
             return tween;
         }
@@ -161,9 +160,9 @@ namespace FreedomEngine.Collections.Tweens
         /// <summary>
         /// Animates the rotation of an Entity or UIElement.
         /// </summary>
-        public ITween TweenRotation(Entity entity, float fromRadians, float toRadians, TimeSpan duration)
+        public TweenFloat TweenRotation(Entity entity, float fromRadians, float toRadians, TimeSpan duration, Func<float, float> func)
         {
-            var tween = new Tween<float>(fromRadians, toRadians, duration, val => entity.Rotation = val, MathHelper.Lerp);
+            var tween = new TweenFloat(fromRadians, toRadians, duration, val => entity.Rotation = val, func);
             _pendingTweens.Add(tween);
             return tween;
         }
@@ -177,17 +176,8 @@ namespace FreedomEngine.Collections.Tweens
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Disposes this tween manager and cleans up resources.
-        /// </summary>
-        /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
-        protected virtual void Dispose(bool disposing)
-        {
             StopAll();
+            GC.SuppressFinalize(this);
         }
 
         #endregion

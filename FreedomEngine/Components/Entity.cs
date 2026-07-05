@@ -179,19 +179,17 @@ namespace FreedomEngine.Components
         /// Creates a new instance of the <see cref="Entity"/> class with the specified sprite and initial position.
         /// </summary>
         /// <param name="sprite">The sprite associated with the entity.</param>
-        /// <param name="x">The starting X position.</param>
-        /// <param name="y">The starting Y position.</param>
+        /// <param name="position">The initial position of the entity in 2D space.</param>
         /// <param name="collisionMask">The collision mask associated with the entity.</param>
-        public Entity(Sprite sprite, int x = 0, int y = 0, CollisionMask collisionMask = null)
+        public Entity(Sprite sprite, Vector2 position, CollisionMask collisionMask = null)
         {
             Sprite = sprite;
-            X = x;
-            Y = y;
+            Position = position;
 
             if (collisionMask != null)
             {
                 Collision = collisionMask;
-                Collision.Position = new Vector2(X, Y);
+                Collision.Position = new Vector2(Position.X, Position.Y);
             }
         }
 
@@ -262,7 +260,6 @@ namespace FreedomEngine.Components
             }
         }
 
-        //public bool CollidesWith(CollisionMask other, Vector2 offset)
         public bool CollidesWith(ushort tag, Vector2 offset)
         {
             if (Collision == null)

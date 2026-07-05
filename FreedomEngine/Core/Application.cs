@@ -134,6 +134,8 @@ namespace FreedomEngine.Core
             Tweens          = new TweenManager();
             Collisions      = new CollisionManager();
 
+            CollisionMask.CollisionManager = Collisions;
+
             PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
             PixelTexture.SetData([Color.White]);
         }

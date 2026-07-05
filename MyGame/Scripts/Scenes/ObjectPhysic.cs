@@ -32,7 +32,7 @@ namespace MyGame.Scripts.Scenes
 
         #region Constructors
 
-        public ObjectPhysic(Sprite sprite, int x, int y) : base(sprite, x, y)
+        public ObjectPhysic(Sprite sprite, Vector2 position) : base(sprite, position)
         {
         }
 
