@@ -4,6 +4,7 @@ using System.Collections;
 using Microsoft.Xna.Framework;
 
 using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Core;
 
 namespace FreedomEngine.Collections.Coroutines
 {
@@ -14,6 +15,8 @@ namespace FreedomEngine.Collections.Coroutines
     public sealed class Coroutine : IControllableProcess
     {
         #region Fields
+
+        private static CoroutineController Controller => Application.Coroutines; 
 
         /// <summary>
         /// The underlying enumerator that represents the coroutine execution.
@@ -62,6 +65,8 @@ namespace FreedomEngine.Collections.Coroutines
             _enumerator = enumerator ?? throw new ArgumentNullException(nameof(enumerator));
             _isFinished = false;
             _isPaused = false;
+
+            Controller.Add(this);
         }
 
         #endregion

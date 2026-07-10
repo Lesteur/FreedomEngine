@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework;
 
+using FreedomEngine.Core;
 using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Tweens
@@ -9,6 +10,8 @@ namespace FreedomEngine.Collections.Tweens
     public class Tween : IControllableProcess
     {
         #region Fields
+
+        private static TweenManager Controller => Application.Tweens;
 
         /// <summary>
         /// Indicates whether this coroutine is currently paused.
@@ -60,6 +63,8 @@ namespace FreedomEngine.Collections.Tweens
         {
             Duration = duration;
             Elapsed = TimeSpan.Zero;
+
+            Controller.Add(this);
         }
 
         #endregion
@@ -72,7 +77,7 @@ namespace FreedomEngine.Collections.Tweens
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (_isFinished || _isPaused)
+            if (Elapsed >= Duration || _isFinished || _isPaused)
                 return;
 
             Elapsed += gameTime.ElapsedGameTime;

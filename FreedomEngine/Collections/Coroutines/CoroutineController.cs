@@ -1,4 +1,5 @@
 ﻿using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Collections.Tweens;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections;
@@ -21,12 +22,7 @@ namespace FreedomEngine.Collections.Coroutines
         /// <summary>
         /// Pending coroutines to add, processed at the end of the frame to avoid collection modification during iteration.
         /// </summary>
-        private readonly List<Coroutine> _coroutinesToAdd;
-
-        /// <summary>
-        /// Pending coroutines to remove, processed at the end of the frame to avoid collection modification during iteration.
-        /// </summary>
-        private readonly HashSet<Coroutine> _coroutinesToRemove;
+        private readonly List<Coroutine> _pendingCoroutines;
 
         #endregion
 
@@ -52,8 +48,7 @@ namespace FreedomEngine.Collections.Coroutines
         public CoroutineController()
         {
             _coroutines = [];
-            _coroutinesToAdd = [];
-            _coroutinesToRemove = [];
+            _pendingCoroutines = [];
         }
 
         #endregion
@@ -66,22 +61,28 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         public void Update(GameTime gameTime)
         {
-            // Update all active coroutines
-            int coroutineCount = _coroutines.Count;
-            for (int i = 0; i < coroutineCount; i++)
+            if (_pendingCoroutines.Count > 0)
+            {
+                _coroutines.AddRange(_pendingCoroutines);
+                _pendingCoroutines.Clear();
+            }
+
+            int aliveCount = 0;
+            for (int i = 0; i < _coroutines.Count; i++)
             {
                 var coroutine = _coroutines[i];
                 coroutine.Update(gameTime);
 
-                // Update returns false when coroutine is finished
-                if (coroutine.IsFinished)
+                if (!coroutine.IsFinished)
                 {
-                    _coroutinesToRemove.Add(coroutine);
+                    _coroutines[aliveCount++] = coroutine;
                 }
             }
 
-            // Process pending operations
-            ProcessPendingOperations();
+            if (aliveCount < _coroutines.Count)
+            {
+                _coroutines.RemoveRange(aliveCount, _coroutines.Count - aliveCount);
+            }
         }
 
         #endregion
@@ -121,47 +122,16 @@ namespace FreedomEngine.Collections.Coroutines
             }
 
             _coroutines.Clear();
-            _coroutinesToAdd.Clear();
-            _coroutinesToRemove.Clear();
-        }
-
-        /// <summary>
-        /// Starts a new coroutine from an IEnumerator.
-        /// </summary>
-        /// <param name="enumerator">The enumerator that defines the coroutine behavior.</param>
-        /// <returns>The created coroutine instance that can be used to control execution.</returns>
-        public Coroutine StartCoroutine(IEnumerator enumerator)
-        {
-            if (enumerator == null)
-            {
-                Logger.Error("Cannot start coroutine with null enumerator");
-                return null;
-            }
-
-            var coroutine = new Coroutine(enumerator);
-            _coroutinesToAdd.Add(coroutine);
-            return coroutine;
+            _pendingCoroutines.Clear();
         }
 
         #endregion
 
-        #region Private Methods
+        #region Internal Methods
 
-        private void ProcessPendingOperations()
+        internal void Add(Coroutine coroutine)
         {
-            if (_coroutinesToRemove.Count > 0)
-            {
-                foreach (var coroutine in _coroutinesToRemove)
-                    _coroutines.Remove(coroutine);
-
-                _coroutinesToRemove.Clear();
-            }
-
-            if (_coroutinesToAdd.Count > 0)
-            {
-                _coroutines.AddRange(_coroutinesToAdd);
-                _coroutinesToAdd.Clear();
-            }
+            _pendingCoroutines.Add(coroutine);
         }
 
         #endregion

@@ -23,7 +23,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public CircleCollision(Vector2 position, ushort tag, float radius) : base(position, tag)
+        public CircleCollision(Vector2 position, uint tag, float radius) : base(position, tag)
         {
             Radius = radius;
         }

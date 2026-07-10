@@ -53,6 +53,8 @@ namespace MyGame.Scripts.Scenes
         // Variable to hold the reference to our active tween
         private Tween _tween;
 
+        private Coroutine _coroutine;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -69,7 +71,7 @@ namespace MyGame.Scripts.Scenes
 
             _uiElement = new UIElement(_animation, new Vector2(150, 150));
 
-            RectangleCollision collision = Core.Collisions.AddRectangleCollision(new Vector2(0, 0), 1, 32, 32);
+            RectangleCollision collision = new RectangleCollision(new Vector2(0, 0), 1, 32, 32);
             _entity = new Entity(_animation, Vector2.Zero, collision);
 
             _following = _entity;
@@ -107,8 +109,8 @@ namespace MyGame.Scripts.Scenes
             // screen background.
             _backgroundDestination = Core.GraphicsDevice.PresentationParameters.Bounds;
 
-            _collision1 = Core.Collisions.AddRectangleCollision(new Vector2(100, 100), 1, 50, 50);
-            _collision2 = Core.Collisions.AddRectangleCollision(new Vector2(200, 200), 1, 50, 50);
+            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
+            _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
         }
 
         public override void LoadContent()
@@ -157,16 +159,24 @@ namespace MyGame.Scripts.Scenes
                     _tween.Stop();
                 }
 
-                //_tween = Core.Tweens.TweenColor(_entity, Color.Blue, Color.Red, TimeSpan.FromSeconds(2), EasingFunctions.BounceOut);//, TweenEasing.Linear, TweenLoopType.PingPong);
-                //_tween = Core.Tweens.TweenScale(_entity, Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2));//, TweenEasing.BounceOut);//, TweenLoopType.PingPong);
-                _tween = Core.Tweens.TweenPosition(_entity, _entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), EasingFunctions.SineOut);
-                //_tween = Core.Tweens.TweenRotation(_entity, 0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), EasingFunctions.QuinticInOut);
+                //_tween = new TweenColor(Color.Blue, Color.Red, TimeSpan.FromSeconds(2), val => _entity.Color = val, EasingFunctions.BounceOut);
+                
+                //_tween = new TweenVector2(Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2), val => _entity.Scale = val, EasingFunctions.BounceOut);
+                
+                //_tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
+                
+                //_tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
             }
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
                 Logger.Info("Coroutine");
-                Core.Coroutines.StartCoroutine(TestCoroutine());
+
+                if (_coroutine == null || _coroutine.IsFinished)
+                {
+                    _coroutine = new Coroutine(TestCoroutine());
+                }
+
                 //Application.ChangeScene(new SceneShadow());
             }
 

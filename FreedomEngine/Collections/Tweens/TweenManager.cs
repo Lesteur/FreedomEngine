@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using FreedomEngine.Collections.Interfaces;
 using FreedomEngine.Components;
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Tweens
 {
@@ -62,23 +62,27 @@ namespace FreedomEngine.Collections.Tweens
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public void Update(GameTime gameTime)
         {
-            // Add any newly created tweens since the last frame
             if (_pendingTweens.Count > 0)
             {
                 _tweens.AddRange(_pendingTweens);
                 _pendingTweens.Clear();
             }
 
-            // Iterate backwards to safely remove elements while looping
-            for (int i = _tweens.Count - 1; i >= 0; i--)
+            int aliveCount = 0;
+            for (int i = 0; i < _tweens.Count; i++)
             {
                 var tween = _tweens[i];
                 tween.Update(gameTime);
 
-                if (tween.IsFinished)
+                if (!tween.IsFinished)
                 {
-                    _tweens.RemoveAt(i);
+                    _tweens[aliveCount++] = tween;
                 }
+            }
+
+            if (aliveCount < _tweens.Count)
+            {
+                _tweens.RemoveRange(aliveCount, _tweens.Count - aliveCount);
             }
         }
 
@@ -127,44 +131,13 @@ namespace FreedomEngine.Collections.Tweens
             _pendingTweens.Clear();
         }
 
-        /// <summary>
-        /// Animates the position of an Entity or UIElement.
-        /// </summary>
-        public TweenVector2 TweenPosition(Entity entity, Vector2 from, Vector2 to, TimeSpan duration, Func<float, float> func)
-        {
-            var tween = new TweenVector2(from, to, duration, val => entity.Position = val, func);
-            _pendingTweens.Add(tween);
-            return tween;
-        }
+        #endregion
 
-        /// <summary>
-        /// Animates the scale of an Entity or UIElement.
-        /// </summary>
-        public TweenVector2 TweenScale(Entity entity, Vector2 from, Vector2 to, TimeSpan duration, Func<float, float> func)
-        {
-            var tween = new TweenVector2(from, to, duration, val => entity.Scale = val, func);
-            _pendingTweens.Add(tween);
-            return tween;
-        }
+        #region Internal Methods
 
-        /// <summary>
-        /// Animates the color of an Entity or UIElement.
-        /// </summary>
-        public TweenColor TweenColor(Entity entity, Color from, Color to, TimeSpan duration, Func<float, float> func)
+        internal void Add(Tween tween)
         {
-            var tween = new TweenColor(from, to, duration, val => entity.Color = val, func);
             _pendingTweens.Add(tween);
-            return tween;
-        }
-
-        /// <summary>
-        /// Animates the rotation of an Entity or UIElement.
-        /// </summary>
-        public TweenFloat TweenRotation(Entity entity, float fromRadians, float toRadians, TimeSpan duration, Func<float, float> func)
-        {
-            var tween = new TweenFloat(fromRadians, toRadians, duration, val => entity.Rotation = val, func);
-            _pendingTweens.Add(tween);
-            return tween;
         }
 
         #endregion

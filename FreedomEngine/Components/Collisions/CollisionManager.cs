@@ -9,7 +9,7 @@ namespace FreedomEngine.Components.Collisions
     {
         #region Fields
 
-        private readonly List<CollisionMask> _collisionMasks = [];
+        private readonly List<CollisionMask> _collisionMasks;
 
         #endregion
 
@@ -17,46 +17,19 @@ namespace FreedomEngine.Components.Collisions
 
         public CollisionManager()
         {
+            _collisionMasks = [];
         }
 
         #endregion
 
         #region Public Methods
 
-        public RectangleCollision AddRectangleCollision(Vector2 position, ushort tag, float width, float height)
-        {
-            var rectangleCollision = new RectangleCollision(position, tag, width, height);
-            _collisionMasks.Add(rectangleCollision);
-            return rectangleCollision;
-        }
-
-        public CircleCollision AddCircleCollision(Vector2 position, ushort tag, float radius)
-        {
-            var circleCollision = new CircleCollision(position, tag, radius);
-            _collisionMasks.Add(circleCollision);
-            return circleCollision;
-        }
-
-        public LineCollision AddLineCollision(Vector2 position, ushort tag, Vector2 positionEnd)
-        {
-            var lineCollision = new LineCollision(position, tag, positionEnd);
-            _collisionMasks.Add(lineCollision);
-            return lineCollision;
-        }
-
-        public PointCollision AddPointCollision(Vector2 position, ushort tag)
-        {
-            var pointCollision = new PointCollision(position, tag);
-            _collisionMasks.Add(pointCollision);
-            return pointCollision;
-        }
-
         public void Remove(CollisionMask mask)
         {
             _collisionMasks.Remove(mask);
         }
 
-        public bool CheckCollisions(CollisionMask mask, ushort tag, Vector2 offset)
+        public bool CheckCollisions(CollisionMask mask, uint tag, Vector2 offset)
         {
             foreach (var otherMask in _collisionMasks)
             {
@@ -67,6 +40,15 @@ namespace FreedomEngine.Components.Collisions
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal void Add(CollisionMask mask)
+        {
+            _collisionMasks.Add(mask);
         }
 
         #endregion

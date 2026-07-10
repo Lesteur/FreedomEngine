@@ -15,7 +15,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public RectangleCollision(Vector2 position, ushort tag, float width, float height) : base(position, tag)
+        public RectangleCollision(Vector2 position, uint tag, float width, float height) : base(position, tag)
         {
             Width = width;
             Height = height;

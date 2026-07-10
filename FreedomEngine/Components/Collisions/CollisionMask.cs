@@ -9,22 +9,28 @@ namespace FreedomEngine.Components.Collisions
 {
     public abstract class CollisionMask
     {
-        #region Properties
+        #region Fields
 
-        public static CollisionManager CollisionManager { get; set; }
+        private static CollisionManager Controller => Application.Collisions;
+
+        #endregion
+
+        #region Properties
 
         public Vector2 Position { get; set; }
 
-        public ushort Tag { get; set; }
+        public uint Tag { get; set; }
 
         #endregion
 
         #region Constructors
 
-        public CollisionMask(Vector2 position, ushort tag)
+        public CollisionMask(Vector2 position, uint tag)
         {
             Position = position;
             Tag = tag;
+
+            Controller.Add(this);
         }
 
         #endregion

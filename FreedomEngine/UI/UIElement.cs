@@ -104,11 +104,13 @@ namespace FreedomEngine.UI
 
             if (hovered)
             {
-                _hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition + new Vector2(20, 0), TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
+                //_hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition + new Vector2(20, 0), TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
+                _hoverTween = new TweenVector2(Position, _startPosition + new Vector2(20, 0), TimeSpan.FromSeconds(0.15), val => Position = val, EasingFunctions.SineInOut);
             }
             else
             {
-                _hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition, TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
+                //_hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition, TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
+                _hoverTween = new TweenVector2(Position, _startPosition, TimeSpan.FromSeconds(0.15), val => Position = val, EasingFunctions.SineInOut);
             }
         }
 

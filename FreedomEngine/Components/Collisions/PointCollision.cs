@@ -9,7 +9,7 @@ namespace FreedomEngine.Components.Collisions
     {
         #region Constructors
 
-        public PointCollision(Vector2 position, ushort tag) : base(position, tag)
+        public PointCollision(Vector2 position, uint tag) : base(position, tag)
         {
         }
 

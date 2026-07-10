@@ -15,7 +15,7 @@ namespace FreedomEngine.Components.Collisions
 
         #region Constructors
 
-        public LineCollision(Vector2 position, ushort tag, Vector2 positionEnd) : base(position, tag)
+        public LineCollision(Vector2 position, uint tag, Vector2 positionEnd) : base(position, tag)
         {
             PositionEnd = positionEnd;
         }
