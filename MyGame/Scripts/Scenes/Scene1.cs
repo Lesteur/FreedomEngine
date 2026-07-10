@@ -28,9 +28,10 @@ namespace MyGame.Scripts.Scenes
             _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
             _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
 
-
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Player(_animation, Vector2.Zero);
+
+            var collision = Core.Collisions.AddRectangleCollision(Vector2.Zero, 1, 32, 48);
+            _entity = new Player(_animation, Vector2.Zero, collision);
 
             _following = _entity;
 

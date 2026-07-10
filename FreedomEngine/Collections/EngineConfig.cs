@@ -21,6 +21,14 @@
 
         #endregion
 
+        #region UI Rendering Settings
+
+        public const int UIRenderWidth = 640;
+
+        public const int UIRenderHeight = 360;
+
+        #endregion
+
         #region Window Settings
 
         /// <summary>

@@ -1,9 +1,10 @@
-﻿using FreedomEngine.Collections;
-using FreedomEngine.Components;
-using FreedomEngine.Graphics;
+﻿using System;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System;
+
+using FreedomEngine.Components;
+using FreedomEngine.Components.Collisions;
+using FreedomEngine.Graphics;
 
 namespace MyGame.Scripts.Scenes
 {
@@ -32,7 +33,7 @@ namespace MyGame.Scripts.Scenes
 
         #region Constructors
 
-        public ObjectPhysic(Sprite sprite, Vector2 position) : base(sprite, position)
+        public ObjectPhysic(Sprite sprite, Vector2 position, CollisionMask collision = null) : base(sprite, position, collision)
         {
         }
 

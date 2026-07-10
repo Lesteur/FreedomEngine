@@ -1,11 +1,14 @@
-﻿using FreedomEngine.Collections.Tweens;
+﻿using FreedomEngine.Collections;
+using FreedomEngine.Collections.Tweens;
 using FreedomEngine.Collections.Utilities;
 using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
+using FreedomEngine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace FreedomEngine.UI
@@ -17,6 +20,8 @@ namespace FreedomEngine.UI
         private Vector2 _startPosition;
 
         private Tween _hoverTween;
+
+        private Rectangle _hoverRectangle;
 
         #endregion
 
@@ -36,8 +41,7 @@ namespace FreedomEngine.UI
 
         public UIElement(Sprite sprite, Vector2 position) : base(sprite, position)
         {
-            CollisionMask collision = Application.Collisions.AddRectangleCollision(new Vector2(Position.X, Position.Y), 0, Width, Height);
-            Collision = collision;
+            _hoverRectangle = new Rectangle((int)position.X, (int)position.Y, (int)Width, (int)Height);
 
             //_hoverTween = new Tween(0.2f, 0.0f, 1.0f, EaseInOut);
             _startPosition = new Vector2(position.X, position.Y);
@@ -52,14 +56,18 @@ namespace FreedomEngine.UI
             base.Update(gameTime);
 
             var mouse = Application.Input.Mouse;
-            var mousePosition = new Vector2(mouse.X, mouse.Y);
+            var mousePosition = new Vector2(mouse.Position.X / mouse.UIScale.X, mouse.Position.Y / mouse.UIScale.Y);
 
-            //if (Collision.Intersects(new PointCollision(mousePosition, 0), new Vector2(X, Y)))
-            if (Collision.Intersects(new PointCollision(mousePosition, 0), new Vector2(X, Y)))
+            if (_hoverRectangle.Contains(mousePosition))
             {
                 if (!IsHovered)
                 {
                     OnHovered(true);
+                }
+
+                if (mouse.WasButtonJustPressed(MouseButton.Left))
+                {
+                    OnPressed(true);
                 }
             }
             else
@@ -112,6 +120,8 @@ namespace FreedomEngine.UI
         protected virtual void OnPressed(bool pressed)
         {
             IsPressed = pressed;
+
+            Logger.Info($"UIElement {(pressed ? "Pressed" : "Released")} at Position: {Position}");
         }
 
         #endregion

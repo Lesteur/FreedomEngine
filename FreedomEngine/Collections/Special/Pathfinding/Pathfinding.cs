@@ -109,7 +109,7 @@ namespace FreedomEngine.Collections.Special.Pathfinding
             return results;
         }
 
-        private List<T> ReconstructPath(TileNode<T> node)
+        private static List<T> ReconstructPath(TileNode<T> node)
         {
             var path = new List<T>();
             var current = node;

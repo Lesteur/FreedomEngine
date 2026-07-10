@@ -176,6 +176,7 @@ namespace FreedomEngine.Core
             Coroutines.Dispose();
             Tweens.Dispose();
             Collisions.Dispose();
+
             base.UnloadContent();
         }
 

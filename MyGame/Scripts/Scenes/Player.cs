@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+
 using FreedomEngine.Collections;
-using FreedomEngine.Components;
 using FreedomEngine.Graphics;
-using FreedomEngine.Core;
 using FreedomEngine.Components.Collisions;
 
 namespace MyGame.Scripts.Scenes
@@ -23,8 +21,9 @@ namespace MyGame.Scripts.Scenes
         private readonly int[] _jumpHoldFrames = [18, 10];
         private readonly float[] _jumpSpeed = [-3.4f, -3.1f];
 
-        public Player(Sprite sprite, Vector2 position) : base(sprite, position)
+        public Player(Sprite sprite, Vector2 position, CollisionMask collision) : base(sprite, position, collision)
         {
+            // Initialize player-specific properties here if needed
         }
 
         public override void Update(GameTime gameTime)
