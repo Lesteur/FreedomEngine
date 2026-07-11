@@ -20,33 +20,30 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
         {
             base.Update(gameTime);
 
-            // In idle, gravity still applies
             _player.YSpeed = _player.HandleGravity();
-
-            // Try to jump
             _player.YSpeed = _player.HandlePlayerJump();
 
             var xSpeed = _player.HandlePlayerMovement();
-            var stateMachinePlayer = (StateMachinePlayer)_stateMachine;
+            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
 
             // Transition to Walk if moving horizontally
             if (Math.Abs(xSpeed) > 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._walkState);
+                StateMachine.ChangeState(stateMachinePlayer._walkState);
                 return;
             }
 
             // Transition to Fall if we are no longer on the ground and moving down
             if (!_player.OnGround && _player.YSpeed > 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._fallState);
+                StateMachine.ChangeState(stateMachinePlayer._fallState);
                 return;
             }
 
             // Transition to Jump if we are jumping (negative YSpeed or jump key pressed)
             if (!_player.OnGround && _player.YSpeed < 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._jumpState);
+                StateMachine.ChangeState(stateMachinePlayer._jumpState);
                 return;
             }
 

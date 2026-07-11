@@ -25,12 +25,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.YSpeed = _player.HandleGravity();
             _player.YSpeed = _player.HandlePlayerJump();
 
-            var stateMachinePlayer = (StateMachinePlayer)_stateMachine;
+            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
 
-            // Transition to Fall if we start moving down
             if (_player.YSpeed >= 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._fallState);
+                StateMachine.ChangeState(stateMachinePlayer._fallState);
                 return;
             }
 
@@ -39,11 +38,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             {
                 if (Math.Abs(_player.XSpeed) > 0)
                 {
-                    _stateMachine.ChangeState(stateMachinePlayer._walkState);
+                    StateMachine.ChangeState(stateMachinePlayer._walkState);
                 }
                 else
                 {
-                    _stateMachine.ChangeState(stateMachinePlayer._idleState);
+                    StateMachine.ChangeState(stateMachinePlayer._idleState);
                 }
             }
         }

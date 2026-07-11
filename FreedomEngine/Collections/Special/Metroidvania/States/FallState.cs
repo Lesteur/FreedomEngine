@@ -23,16 +23,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.XSpeed = _player.HandlePlayerMovement();
 
             _player.YSpeed = _player.HandleGravity();
-
-            // Allow double jumping or coyote jump while falling
             _player.YSpeed = _player.HandlePlayerJump();
 
-            var stateMachinePlayer = (StateMachinePlayer)_stateMachine;
+            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
 
             // If we double jumped, transition back to jump state
             if (_player.YSpeed < 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._jumpState);
+                StateMachine.ChangeState(stateMachinePlayer._jumpState);
                 return;
             }
 
@@ -41,11 +39,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             {
                 if (Math.Abs(_player.XSpeed) > 0)
                 {
-                    _stateMachine.ChangeState(stateMachinePlayer._walkState);
+                    StateMachine.ChangeState(stateMachinePlayer._walkState);
                 }
                 else
                 {
-                    _stateMachine.ChangeState(stateMachinePlayer._idleState);
+                    StateMachine.ChangeState(stateMachinePlayer._idleState);
                 }
             }
         }

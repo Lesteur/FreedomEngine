@@ -24,28 +24,25 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.YSpeed = _player.HandlePlayerJump();
 
             var xSpeed = _player.HandlePlayerMovement();
-            var stateMachinePlayer = (StateMachinePlayer)_stateMachine;
+            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
 
             _player.XSpeed = xSpeed;
 
-            // Transition to Idle if we stopped moving
             if (Math.Abs(xSpeed) == 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._idleState);
+                StateMachine.ChangeState(stateMachinePlayer._idleState);
                 return;
             }
 
-            // Transition to Fall if we are no longer on the ground and moving down
             if (!_player.OnGround && _player.YSpeed > 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._fallState);
+                StateMachine.ChangeState(stateMachinePlayer._fallState);
                 return;
             }
 
-            // Transition to Jump if we are jumping (negative YSpeed)
             if (!_player.OnGround && _player.YSpeed < 0)
             {
-                _stateMachine.ChangeState(stateMachinePlayer._jumpState);
+                StateMachine.ChangeState(stateMachinePlayer._jumpState);
                 return;
             }
         }

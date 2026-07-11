@@ -8,9 +8,9 @@ namespace FreedomEngine.Collections.States
 {
     public abstract class State<IState> : IUpdate where IState : State<IState>
     {
-        #region Internal Fields
+        #region Properties
 
-        internal StateMachine<IState> StateMachine;
+        public StateMachine<IState> StateMachine { get; private set; }
 
         #endregion
 

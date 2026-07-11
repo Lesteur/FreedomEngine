@@ -62,9 +62,9 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #endregion
 
-        #region Protected Methods
+        #region Public Methods
 
-        protected void SetOnGround(bool onGround = true)
+        public void SetOnGround(bool onGround = true)
         {
             if (onGround)
             {
@@ -78,7 +78,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
         }
 
-        protected float HandleGravity()
+        public float HandleGravity()
         {
             float ySpeed = _ySpeed;
 
@@ -99,7 +99,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             return ySpeed;
         }
 
-        protected void HandleXSpeed(ref float moveX)
+        public void HandleXSpeed(ref float moveX)
         {
             if (CollidesWith(_maskCollision, new Vector2(moveX, 0)))
             {
@@ -116,7 +116,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
         }
 
-        protected void HandleYSpeed(ref float moveY)
+        public void HandleYSpeed(ref float moveY)
         {
             if (CollidesWith(_maskCollision, new Vector2(0, moveY)))
             {
