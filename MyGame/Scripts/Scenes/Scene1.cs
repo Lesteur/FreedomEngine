@@ -1,6 +1,7 @@
 ﻿using FreedomEngine.Components.Collisions;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
+using FreedomEngine.Collections.Special.Metroidvania;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

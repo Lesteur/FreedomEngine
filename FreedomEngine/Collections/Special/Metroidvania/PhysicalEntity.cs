@@ -1,9 +1,10 @@
-﻿using FreedomEngine.Components;
+﻿using System;
+
+using Microsoft.Xna.Framework;
+
+using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
 using FreedomEngine.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
@@ -31,6 +32,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         protected int _jumpHoldTimer = 0;
 
+        protected uint _maskCollision = 1;
+
         #endregion
 
         #region Constructors
@@ -41,11 +44,19 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #endregion
 
-        #region Public Methods
+        #region Lifecycle Methods
 
         public override void Update(GameTime gameTime)
         {
-            // Implement physics update logic here
+            var dt = (float)gameTime.ElapsedGameTime.TotalSeconds * EngineConfig.TargetFPS;
+            var moveX = _xSpeed * dt;
+            var moveY = _ySpeed * dt;
+
+            HandleXSpeed(ref moveX);
+            HandleYSpeed(ref moveY);
+
+            Position += new Vector2(moveX, moveY);
+
             base.Update(gameTime);
         }
 
@@ -80,16 +91,21 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 ySpeed += _grav;
             }
 
+            if (ySpeed > _maxFallSpeed)
+            {
+                ySpeed = _maxFallSpeed;
+            }
+
             return ySpeed;
         }
 
         protected void HandleXSpeed(ref float moveX)
         {
-            if (CollidesWith(1, new Vector2(moveX, 0)))
+            if (CollidesWith(_maskCollision, new Vector2(moveX, 0)))
             {
                 float signX = Math.Sign(moveX);
 
-                while (!CollidesWith(1, new Vector2(signX, 0)))
+                while (!CollidesWith(_maskCollision, new Vector2(signX, 0)))
                 {
                     Position += new Vector2(signX, 0);
                     Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking issues
@@ -102,11 +118,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         protected void HandleYSpeed(ref float moveY)
         {
-            if (CollidesWith(1, new Vector2(0, moveY)))
+            if (CollidesWith(_maskCollision, new Vector2(0, moveY)))
             {
                 float signY = Math.Sign(moveY);
 
-                while (!CollidesWith(1, new Vector2(0, signY)))
+                while (!CollidesWith(_maskCollision, new Vector2(0, signY)))
                 {
                     Position += new Vector2(0, signY);
                 }
@@ -127,7 +143,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
-                if (_ySpeed >= 0 && CollidesWith(1, new Vector2(0, 1f)))
+                if (_ySpeed >= 0 && CollidesWith(_maskCollision, new Vector2(0, 1f)))
                 {
                     SetOnGround(true);
                 }

@@ -260,7 +260,7 @@ namespace FreedomEngine.Components
             }
         }
 
-        public bool CollidesWith(ushort tag, Vector2 offset)
+        public bool CollidesWith(uint tag, Vector2 offset)
         {
             if (Collision == null)
                 return false;
