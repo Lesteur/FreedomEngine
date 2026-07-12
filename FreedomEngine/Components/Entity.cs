@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -266,6 +267,22 @@ namespace FreedomEngine.Components
                 return false;
 
             return Application.Collisions.CheckCollisions(Collision, tag, offset);
+        }
+
+        public CollisionMask CollidesWithInstance(uint tag, Vector2 offset)
+        {
+            if (Collision == null)
+                return null;
+
+            return Application.Collisions.CheckCollisionsInstance(Collision, tag, offset);
+        }
+
+        public List<CollisionMask> CollidesWithInstances(uint tag, Vector2 offset)
+        {
+            if (Collision == null)
+                return [];
+
+            return Application.Collisions.GetCollisionsInstances(Collision, tag, offset);
         }
 
         #endregion

@@ -42,6 +42,34 @@ namespace FreedomEngine.Components.Collisions
             return false;
         }
 
+        public CollisionMask CheckCollisionsInstance(CollisionMask mask, uint tag, Vector2 offset)
+        {
+            foreach (var otherMask in _collisionMasks)
+            {
+                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset))
+                {
+                    return otherMask;
+                }
+            }
+
+            return null;
+        }
+
+        public List<CollisionMask> GetCollisionsInstances(CollisionMask mask, uint tag, Vector2 offset)
+        {
+            List<CollisionMask> collisions = [];
+
+            foreach (var otherMask in _collisionMasks)
+            {
+                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset))
+                {
+                    collisions.Add(otherMask);
+                }
+            }
+
+            return collisions;
+        }
+
         #endregion
 
         #region Internal Methods

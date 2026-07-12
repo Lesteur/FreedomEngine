@@ -9,18 +9,6 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 {
     public class Player : PhysicalEntity
     {
-        #region Internal Properties
-
-        internal float XSpeed { get => _xSpeed; set => _xSpeed = value; }
-
-        internal float YSpeed { get => _ySpeed; set => _ySpeed = value; }
-
-        internal bool OnGround => _onGround;
-
-        internal bool JumpKeyPressed => _jumpKeyPressed;
-
-        #endregion
-
         #region Internal Fields
 
         internal StateMachinePlayer _machine;
@@ -42,6 +30,26 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         internal readonly int[] _jumpHoldFrames = [18, 10];
 
         internal readonly float[] _jumpSpeed = [-3.4f, -3.1f];
+
+        #endregion
+
+        #region Internal Properties
+
+        internal float XSpeed
+        {
+            get => _xSpeed;
+            set => _xSpeed = value;
+        }
+
+        internal float YSpeed
+        {
+            get => _ySpeed;
+            set => _ySpeed = value;
+        }
+
+        internal bool OnGround => _onGround;
+
+        internal bool JumpKeyPressed => _jumpKeyPressed;
 
         #endregion
 

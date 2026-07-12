@@ -7,7 +7,9 @@ using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.States
 {
-    public abstract class StateMachine<IState> : IUpdate where IState : State<IState>
+    public abstract class StateMachine<IState, IMachine> : IUpdate 
+        where IState : State<IState, IMachine>
+        where IMachine : StateMachine<IState, IMachine>
     {
         #region Fields
 

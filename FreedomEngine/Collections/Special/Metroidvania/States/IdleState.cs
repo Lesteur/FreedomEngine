@@ -8,7 +8,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
     {
         #region Constructors
 
-        public IdleState(Player player, StateMachine<StatePlayer> stateMachine) : base(player, stateMachine)
+        public IdleState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
         {
         }
 
@@ -24,26 +24,25 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.YSpeed = _player.HandlePlayerJump();
 
             var xSpeed = _player.HandlePlayerMovement();
-            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
 
             // Transition to Walk if moving horizontally
             if (Math.Abs(xSpeed) > 0)
             {
-                StateMachine.ChangeState(stateMachinePlayer._walkState);
+                StateMachine.ChangeState(StateMachine.WalkState);
                 return;
             }
 
             // Transition to Fall if we are no longer on the ground and moving down
             if (!_player.OnGround && _player.YSpeed > 0)
             {
-                StateMachine.ChangeState(stateMachinePlayer._fallState);
+                StateMachine.ChangeState(StateMachine.FallState);
                 return;
             }
 
             // Transition to Jump if we are jumping (negative YSpeed or jump key pressed)
             if (!_player.OnGround && _player.YSpeed < 0)
             {
-                StateMachine.ChangeState(stateMachinePlayer._jumpState);
+                StateMachine.ChangeState(StateMachine.JumpState);
                 return;
             }
 

@@ -1,8 +1,9 @@
 ﻿using FreedomEngine.Collections.States;
+using System.Resources;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
-    public class StatePlayer : State<StatePlayer>
+    public class StatePlayer : State<StatePlayer, StateMachinePlayer>
     {
         #region Internal Fields
 
@@ -12,7 +13,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #region Constructors
 
-        public StatePlayer(Player player, StateMachine<StatePlayer> stateMachine) : base(stateMachine)
+        public StatePlayer(Player player, StateMachinePlayer stateMachine) : base(stateMachine)
         {
             _player = player;
         }

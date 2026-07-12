@@ -32,7 +32,9 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         protected int _jumpHoldTimer = 0;
 
-        protected uint _maskCollision = 1;
+        protected uint _maskCollisionSolid = 1;
+
+        protected uint _maskCollisionSemiSolid = 4;
 
         #endregion
 
@@ -52,10 +54,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             var moveX = _xSpeed * dt;
             var moveY = _ySpeed * dt;
 
+            HandleMovePlatforms();
+
             HandleXSpeed(ref moveX);
             HandleYSpeed(ref moveY);
 
             Position += new Vector2(moveX, moveY);
+
+            HandleFinalMovePlatforms();
 
             base.Update(gameTime);
         }
@@ -101,11 +107,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleXSpeed(ref float moveX)
         {
-            if (CollidesWith(_maskCollision, new Vector2(moveX, 0)))
+            if (CollidesWith(_maskCollisionSolid, new Vector2(moveX, 0)))
             {
                 float signX = Math.Sign(moveX);
 
-                while (!CollidesWith(_maskCollision, new Vector2(signX, 0)))
+                while (!CollidesWith(_maskCollisionSolid, new Vector2(signX, 0)))
                 {
                     Position += new Vector2(signX, 0);
                     Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking issues
@@ -118,11 +124,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleYSpeed(ref float moveY)
         {
-            if (CollidesWith(_maskCollision, new Vector2(0, moveY)))
+            if (CollidesWith(_maskCollisionSolid, new Vector2(0, moveY)))
             {
                 float signY = Math.Sign(moveY);
 
-                while (!CollidesWith(_maskCollision, new Vector2(0, signY)))
+                while (!CollidesWith(_maskCollisionSolid, new Vector2(0, signY)))
                 {
                     Position += new Vector2(0, signY);
                 }
@@ -143,7 +149,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
-                if (_ySpeed >= 0 && CollidesWith(_maskCollision, new Vector2(0, 1f)))
+                if (_ySpeed >= 0 && CollidesWith(_maskCollisionSolid, new Vector2(0, 1f)))
                 {
                     SetOnGround(true);
                 }
@@ -152,6 +158,15 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                     _onGround = false;
                 }
             }
+        }
+
+        public void HandleMovePlatforms()
+        {
+
+        }
+
+        public void HandleFinalMovePlatforms()
+        {
         }
 
         #endregion

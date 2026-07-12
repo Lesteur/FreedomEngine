@@ -3,7 +3,7 @@ using FreedomEngine.Collections.States;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
-    public class StateMachinePlayer : StateMachine<StatePlayer>
+    public class StateMachinePlayer : StateMachine<StatePlayer, StateMachinePlayer>
     {
         #region Fields
 
@@ -13,13 +13,13 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #region Internal Fields
 
-        internal IdleState _idleState;
+        internal IdleState IdleState;
 
-        internal WalkState _walkState;
+        internal WalkState WalkState;
 
-        internal JumpState _jumpState;
+        internal JumpState JumpState;
 
-        internal FallState _fallState;
+        internal FallState FallState;
 
         #endregion
 
@@ -29,12 +29,12 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         {
             _player = player;
 
-            _idleState = new IdleState(_player, this);
-            _walkState = new WalkState(_player, this);
-            _jumpState = new JumpState(_player, this);
-            _fallState = new FallState(_player, this);
+            IdleState = new IdleState(_player, this);
+            WalkState = new WalkState(_player, this);
+            JumpState = new JumpState(_player, this);
+            FallState = new FallState(_player, this);
 
-            ChangeState(_idleState);
+            ChangeState(IdleState);
         }
 
         #endregion

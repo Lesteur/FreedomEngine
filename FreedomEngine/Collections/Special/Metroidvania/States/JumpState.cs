@@ -8,7 +8,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
     {
         #region Constructors
 
-        public JumpState(Player player, StateMachine<StatePlayer> stateMachine) : base(player, stateMachine)
+        public JumpState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
         {
         }
 
@@ -25,11 +25,9 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.YSpeed = _player.HandleGravity();
             _player.YSpeed = _player.HandlePlayerJump();
 
-            var stateMachinePlayer = (StateMachinePlayer)StateMachine;
-
             if (_player.YSpeed >= 0)
             {
-                StateMachine.ChangeState(stateMachinePlayer._fallState);
+                StateMachine.ChangeState(StateMachine.FallState);
                 return;
             }
 
@@ -38,11 +36,11 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             {
                 if (Math.Abs(_player.XSpeed) > 0)
                 {
-                    StateMachine.ChangeState(stateMachinePlayer._walkState);
+                    StateMachine.ChangeState(StateMachine.WalkState);
                 }
                 else
                 {
-                    StateMachine.ChangeState(stateMachinePlayer._idleState);
+                    StateMachine.ChangeState(StateMachine.IdleState);
                 }
             }
         }

@@ -6,17 +6,17 @@ using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.States
 {
-    public abstract class State<IState> : IUpdate where IState : State<IState>
+    public abstract class State<IState, IMachine> : IUpdate where IState : State<IState, IMachine>
     {
         #region Properties
 
-        public StateMachine<IState> StateMachine { get; private set; }
+        public IMachine StateMachine { get; private set; }
 
         #endregion
 
         #region Constructors
 
-        public State(StateMachine<IState> stateMachine)
+        public State(IMachine stateMachine)
         {
             StateMachine = stateMachine;
         }
