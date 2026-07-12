@@ -11,11 +11,19 @@ namespace FreedomEngine.Components.Collisions
 
         public Vector2 PositionEnd { get; set; }
 
+        public override float BBoxLeft => MathF.Min(Position.X, PositionEnd.X);
+
+        public override float BBoxRight => MathF.Max(Position.X, PositionEnd.X);
+
+        public override float BBoxTop => MathF.Min(Position.Y, PositionEnd.Y);
+
+        public override float BBoxBottom => MathF.Max(Position.Y, PositionEnd.Y);
+
         #endregion
 
         #region Constructors
 
-        public LineCollision(Vector2 position, uint tag, Vector2 positionEnd) : base(position, tag)
+        public LineCollision(Vector2 position, uint tag, Vector2 positionEnd, OneWayCollision oneWayCollision = OneWayCollision.None) : base(position, tag, oneWayCollision)
         {
             PositionEnd = positionEnd;
         }
@@ -26,6 +34,9 @@ namespace FreedomEngine.Components.Collisions
 
         public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
+            if (!CheckOneWay(other, thisPosition))
+                return false;
+
             return other switch
             {
                 PointCollision point            => IntersectsPoint(point, thisPosition),

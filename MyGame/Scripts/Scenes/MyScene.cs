@@ -71,7 +71,7 @@ namespace MyGame.Scripts.Scenes
 
             _uiElement = new UIElement(_animation, new Vector2(150, 150));
 
-            RectangleCollision collision = new RectangleCollision(new Vector2(0, 0), 1, 32, 32);
+            RectangleCollision collision = new(new Vector2(0, 0), 1, 32, 32);
             _entity = new Entity(_animation, Vector2.Zero, collision);
 
             _following = _entity;

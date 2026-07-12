@@ -19,6 +19,8 @@ namespace MyGame.Scripts.Scenes
         private CollisionMask _collision2;
         private CollisionMask _collision3;
 
+        private MovingPlatform _movingPlatform;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -36,8 +38,14 @@ namespace MyGame.Scripts.Scenes
 
             _following = _entity;
 
-            _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
-            _collision2 = new RectangleCollision(new Vector2(200, 300), 1, 50, 50);
+            _collision1 = new RectangleCollision(new Vector2(100, 150), 1, 50, 50);
+
+            _collision2 = new RectangleCollision(Vector2.Zero, 1, 50, 50, OneWayCollision.Top);
+            //_collision2 = new RectangleCollision(new Vector2(200, 250), 1, 50, 50, OneWayCollision.Top);
+
+            _movingPlatform = new MovingPlatform(null, new Vector2(220, 250), _collision2);
+            //_movingPlatform = new MovingPlatform(null, new Vector2(0, 0), _collision2);
+
             _collision3 = new RectangleCollision(new Vector2(0, 350), 1, 700, 50);
         }
 
@@ -50,6 +58,8 @@ namespace MyGame.Scripts.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            _movingPlatform.Update(gameTime);
+
             _entity.Update(gameTime);
 
             base.Update(gameTime);
@@ -69,8 +79,10 @@ namespace MyGame.Scripts.Scenes
             _entity.Draw(spriteBatch);
 
             _collision1.Draw(spriteBatch);
-            _collision2.Draw(spriteBatch);
+            //_collision2.Draw(spriteBatch);
             _collision3.Draw(spriteBatch);
+
+            _movingPlatform.Draw(spriteBatch);
 
             spriteBatch.End();
         }

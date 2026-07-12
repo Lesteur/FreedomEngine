@@ -23,10 +23,7 @@ namespace FreedomEngine.Components
         /// </summary>
         private TimeSpan _elapsed = TimeSpan.Zero;
 
-        /// <summary>
-        /// Represents the position of the entity in 2D space.
-        /// </summary>
-        private Vector2 _position = Vector2.Zero;
+        private CollisionMask _collision;
 
         #endregion
 
@@ -119,21 +116,15 @@ namespace FreedomEngine.Components
         /// <summary>
         /// Gets or Sets the collision mask associated with this entity.
         /// </summary>
-        public CollisionMask Collision { get; set; }
-
-        /// <summary>
-        /// Gets or Sets the X position of the entity.
-        /// </summary>
-        public Vector2 Position
+        public CollisionMask Collision
         {
-            get => _position;
+            get => _collision;
             set
             {
-                _position = value;
-                
-                if (Collision != null)
+                _collision = value;
+                if (_collision != null)
                 {
-                    Collision.Position = _position;
+                    _collision.Collider = this;
                 }
             }
         }
@@ -141,18 +132,15 @@ namespace FreedomEngine.Components
         /// <summary>
         /// Gets or Sets the X position of the entity.
         /// </summary>
+        public Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the X position of the entity.
+        /// </summary>
         public float X
         {
-            get => _position.X;
-            set
-            {
-                _position.X = value;
-
-                if (Collision != null)
-                {
-                    Collision.Position = _position;
-                }
-            }
+            get => Position.X;
+            set => Position = new Vector2(value, Position.Y);
         }
 
         /// <summary>
@@ -160,16 +148,8 @@ namespace FreedomEngine.Components
         /// </summary>
         public float Y
         {
-            get => _position.Y;
-            set
-            {
-                _position.Y = value;
-
-                if (Collision != null)
-                {
-                    Collision.Position = _position;
-                }
-            }
+            get => Position.Y;
+            set => Position = new Vector2(Position.X, value);
         }
 
         #endregion
@@ -190,7 +170,7 @@ namespace FreedomEngine.Components
             if (collisionMask != null)
             {
                 Collision = collisionMask;
-                Collision.Position = new Vector2(Position.X, Position.Y);
+                Collision.Collider = this;
             }
         }
 
@@ -221,6 +201,8 @@ namespace FreedomEngine.Components
         /// <param name="spriteBatch">The rendering context.</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            Collision?.Draw(spriteBatch);
+
             if (!Visible || Sprite?.Animation.Frames == null)
                 return;
 
@@ -244,8 +226,6 @@ namespace FreedomEngine.Components
                 Effects,
                 LayerDepth
             );
-
-            Collision?.Draw(spriteBatch);
         }
 
         #endregion

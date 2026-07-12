@@ -19,11 +19,19 @@ namespace FreedomEngine.Components.Collisions
         /// </summary>
         public float Diameter => Radius * 2f;
 
+        public override float BBoxLeft => Position.X - Radius;
+
+        public override float BBoxRight => Position.X + Radius;
+
+        public override float BBoxTop => Position.Y - Radius;
+
+        public override float BBoxBottom => Position.Y + Radius;
+
         #endregion
 
         #region Constructors
 
-        public CircleCollision(Vector2 position, uint tag, float radius) : base(position, tag)
+        public CircleCollision(Vector2 position, uint tag, float radius, OneWayCollision oneWayCollision = OneWayCollision.None) : base(position, tag, oneWayCollision)
         {
             Radius = radius;
         }
@@ -34,6 +42,9 @@ namespace FreedomEngine.Components.Collisions
 
         public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
+            if (!CheckOneWay(other, thisPosition))
+                return false;
+
             return other switch
             {
                 PointCollision point            => IntersectsPoint(point, thisPosition),

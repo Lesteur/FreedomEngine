@@ -12,6 +12,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
     {
         #region Fields
 
+        protected CollisionMask _currentGround;
+
         protected float _xSpeed = 0f;
 
         protected float _ySpeed = 0f;
@@ -33,8 +35,6 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         protected int _jumpHoldTimer = 0;
 
         protected uint _maskCollisionSolid = 1;
-
-        protected uint _maskCollisionSemiSolid = 4;
 
         #endregion
 
@@ -70,17 +70,19 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #region Public Methods
 
-        public void SetOnGround(bool onGround = true)
+        public void SetOnGround(bool onGround = true, CollisionMask ground = null)
         {
             if (onGround)
             {
                 _onGround = true;
                 _coyoteHangTimer = _coyoteHangFrames;
+                _currentGround = ground;
             }
             else
             {
                 _onGround = false;
                 _coyoteHangTimer = 0;
+                _currentGround = null;
             }
         }
 
@@ -124,22 +126,29 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleYSpeed(ref float moveY)
         {
-            if (CollidesWith(_maskCollisionSolid, new Vector2(0, moveY)))
+            var collision = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, moveY));
+
+            if (collision != null)
             {
                 float signY = Math.Sign(moveY);
 
-                while (!CollidesWith(_maskCollisionSolid, new Vector2(0, signY)))
+                var col = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY));
+                while (col == null)
                 {
+                    collision = col;
                     Position += new Vector2(0, signY);
+
+                    col = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY));
                 }
 
                 Position = new Vector2(Position.X, (float)Math.Ceiling(Position.Y));
-
+                
                 if (signY > 0)
                 {
-                    SetOnGround(true);
+                    SetOnGround(true, collision);
                 }
-                else if (signY < 0)
+                else
+                if (signY < 0)
                 {
                     _jumpHoldTimer = 0;
                 }
@@ -149,12 +158,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
-                if (_ySpeed >= 0 && CollidesWith(_maskCollisionSolid, new Vector2(0, 1f)))
+                collision = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, 1f));
+                if (_ySpeed >= 0 && collision != null)
                 {
-                    SetOnGround(true);
+                    SetOnGround(true, collision);
                 }
                 else
                 {
+                    _currentGround = null;
                     _onGround = false;
                 }
             }
@@ -167,6 +178,36 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleFinalMovePlatforms()
         {
+            float movePlatXSpeed = 0f;
+            float movePlatMaxYSpeed = _maxFallSpeed;
+
+            if (_currentGround != null && _currentGround.Collider is MovingPlatform movingPlatform)
+            {
+                movePlatXSpeed = movingPlatform.XSpeed;
+            }
+
+            if (CollidesWith(_maskCollisionSolid, new Vector2(movePlatXSpeed, 0)))
+            {
+                float signX = Math.Sign(movePlatXSpeed);
+
+                while (!CollidesWith(_maskCollisionSolid, new Vector2(signX, 0)))
+                {
+                    Position += new Vector2(signX, 0);
+                    Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking issues
+                }
+            }
+            else
+            {
+                Position += new Vector2(movePlatXSpeed, 0);
+            }
+
+            if (_currentGround != null && _currentGround.Collider is MovingPlatform movingPlatformY)
+            {
+                if (_currentGround.BBoxTop >= Collision.BBoxBottom - movePlatMaxYSpeed)
+                {
+                    Y += movingPlatformY.YSpeed;
+                }
+            }
         }
 
         #endregion

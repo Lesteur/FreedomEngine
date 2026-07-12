@@ -7,9 +7,21 @@ namespace FreedomEngine.Components.Collisions
 {
     public class PointCollision : CollisionMask
     {
+        #region Properties
+
+        public override float BBoxLeft => Position.X;
+
+        public override float BBoxRight => Position.X;
+
+        public override float BBoxTop => Position.Y;
+
+        public override float BBoxBottom => Position.Y;
+
+        #endregion
+
         #region Constructors
 
-        public PointCollision(Vector2 position, uint tag) : base(position, tag)
+        public PointCollision(Vector2 position, uint tag, OneWayCollision oneWayCollision = OneWayCollision.None) : base(position, tag, oneWayCollision)
         {
         }
 
@@ -19,6 +31,9 @@ namespace FreedomEngine.Components.Collisions
 
         public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
+            if (!CheckOneWay(other, thisPosition))
+                return false;
+
             return other switch
             {
                 PointCollision point            => IntersectsPoint(point, thisPosition),

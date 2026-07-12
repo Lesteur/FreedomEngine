@@ -11,11 +11,19 @@ namespace FreedomEngine.Components.Collisions
 
         public float Height { get; set; }
 
+        public override float BBoxLeft => Position.X;
+
+        public override float BBoxRight => Position.X + Width;
+
+        public override float BBoxTop => Position.Y;
+
+        public override float BBoxBottom => Position.Y + Height;
+
         #endregion
 
         #region Constructors
 
-        public RectangleCollision(Vector2 position, uint tag, float width, float height) : base(position, tag)
+        public RectangleCollision(Vector2 position, uint tag, float width, float height, OneWayCollision oneWayCollision = OneWayCollision.None) : base(position, tag, oneWayCollision)
         {
             Width = width;
             Height = height;
@@ -27,6 +35,9 @@ namespace FreedomEngine.Components.Collisions
 
         public override bool Intersects(CollisionMask other, Vector2 thisPosition)
         {
+            if (!CheckOneWay(other, thisPosition))
+                return false;
+
             return other switch
             {
                 PointCollision point            => IntersectsPoint(point, thisPosition),
