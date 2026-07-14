@@ -56,6 +56,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
             HandleMovePlatforms();
 
+            HandleOverlaps();
+
             HandleXSpeed(ref moveX);
             HandleYSpeed(ref moveY);
 
@@ -132,24 +134,26 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             {
                 float signY = Math.Sign(moveY);
 
-                var col = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY));
-                while (col == null)
+                // On se colle au pixel près contre l'obstacle
+                while (CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY)) == null)
                 {
-                    collision = col;
                     Position += new Vector2(0, signY);
-
-                    col = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY));
                 }
 
                 Position = new Vector2(Position.X, (float)Math.Ceiling(Position.Y));
-                
+
                 if (signY > 0)
                 {
-                    SetOnGround(true, collision);
+                    // VERIFICATION CRUCIALE : On s'assure que le haut de la plateforme est bien 
+                    // sous nos pieds (avec une petite marge de 2 pixels pour l'imprécision)
+                    if (collision.BBoxTop >= Collision.BBoxBottom - Math.Abs(moveY) - 2f)
+                    {
+                        SetOnGround(true, collision);
+                    }
                 }
-                else
-                if (signY < 0)
+                else if (signY < 0)
                 {
+                    // On s'est cogné la tête
                     _jumpHoldTimer = 0;
                 }
 
@@ -158,10 +162,13 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
-                collision = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, 1f));
-                if (_ySpeed >= 0 && collision != null)
+                // Vérification du sol quand on marche ou qu'on glisse
+                var groundCheck = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, 1f));
+
+                // On vérifie à nouveau que c'est bien sous nos pieds
+                if (_ySpeed >= 0 && groundCheck != null && groundCheck.BBoxTop >= Collision.BBoxBottom - 2f)
                 {
-                    SetOnGround(true, collision);
+                    SetOnGround(true, groundCheck);
                 }
                 else
                 {
@@ -201,6 +208,35 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 if (platYSpeed != 0f)
                 {
                     Position += new Vector2(0, platYSpeed);
+                }
+            }
+        }
+
+        public void HandleOverlaps()
+        {
+            // Si on chevauche un objet solide dès le début de la frame, c'est qu'une 
+            // plateforme s'est déplacée SUR nous. On doit se faire repousser.
+            var overlap = CollidesWithInstance(_maskCollisionSolid, Vector2.Zero);
+            if (overlap != null && overlap.Collider is MovingPlatform movingPlatform)
+            {
+                // La plateforme monte et "rattrape" nos pieds
+                if (movingPlatform.YSpeed < 0 && Collision.BBoxBottom >= overlap.BBoxTop && Collision.BBoxBottom <= overlap.BBoxBottom)
+                {
+                    // On snap le personnage sur le haut de la plateforme
+                    float offset = overlap.BBoxTop - Collision.BBoxBottom;
+                    Position += new Vector2(0, offset);
+                    SetOnGround(true, overlap);
+                    _ySpeed = 0f;
+                }
+                // La plateforme descend et nous tape sur la tête
+                else if (movingPlatform.YSpeed > 0 && Collision.BBoxTop <= overlap.BBoxBottom && Collision.BBoxTop >= overlap.BBoxTop)
+                {
+                    // On snap la tête du personnage sous la plateforme
+                    float offset = overlap.BBoxBottom - Collision.BBoxTop;
+                    Position += new Vector2(0, offset);
+
+                    // On hérite de la vitesse de chute pour ne pas se refaire écraser à la frame suivante
+                    _ySpeed = movingPlatform.YSpeed;
                 }
             }
         }
