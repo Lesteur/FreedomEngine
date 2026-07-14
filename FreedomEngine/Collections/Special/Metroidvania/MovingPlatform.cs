@@ -50,7 +50,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             if (_elapsedTime >= _interval)
             {
                 _elapsedTime = TimeSpan.Zero;
-                _face = (_face + 1) % 2;
+                _face = (_face + 1) % 4;
                 switch (_face)
                 {
                     case 0:
@@ -58,8 +58,16 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                         _ySpeed = 1f;
                         break;
                     case 1:
+                        _xSpeed = 1f;
+                        _ySpeed = 0f;
+                        break;
+                    case 2:
                         _xSpeed = 0f;
                         _ySpeed = -1f;
+                        break;
+                    case 3:
+                        _xSpeed = -1f;
+                        _ySpeed = 0f;
                         break;
                 }
             }

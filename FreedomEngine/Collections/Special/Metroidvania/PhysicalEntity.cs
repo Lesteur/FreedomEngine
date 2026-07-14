@@ -54,16 +54,18 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             var moveX = _xSpeed * dt;
             var moveY = _ySpeed * dt;
 
+            // 1. Inherit movement from the platform we are currently standing on
             HandleMovePlatforms();
 
+            // 2. Handle cases where a moving platform overlapped us during its update loop
             HandleOverlaps();
 
+            // 3. Process inputs, gravity, and apply standard collision checks
             HandleXSpeed(ref moveX);
             HandleYSpeed(ref moveY);
 
+            // 4. Commit final calculated movement
             Position += new Vector2(moveX, moveY);
-
-            //HandleFinalMovePlatforms();
 
             base.Update(gameTime);
         }
@@ -134,7 +136,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             {
                 float signY = Math.Sign(moveY);
 
-                // On se colle au pixel près contre l'obstacle
+                // Move pixel-by-pixel until precise collision contact
                 while (CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY)) == null)
                 {
                     Position += new Vector2(0, signY);
@@ -144,8 +146,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
                 if (signY > 0)
                 {
-                    // VERIFICATION CRUCIALE : On s'assure que le haut de la plateforme est bien 
-                    // sous nos pieds (avec une petite marge de 2 pixels pour l'imprécision)
+                    // CRITICAL CHECK: Ensure the platform's top edge is actually underneath the entity's feet
+                    // adding a tiny 2-pixel tolerance buffer for sub-pixel inaccuracies
                     if (collision.BBoxTop >= Collision.BBoxBottom - Math.Abs(moveY) - 2f)
                     {
                         SetOnGround(true, collision);
@@ -153,7 +155,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 }
                 else if (signY < 0)
                 {
-                    // On s'est cogné la tête
+                    // Head bonk / Ceiling collision
                     _jumpHoldTimer = 0;
                 }
 
@@ -162,10 +164,10 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
-                // Vérification du sol quand on marche ou qu'on glisse
+                // Standard ground check performed when moving horizontally or idling
                 var groundCheck = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, 1f));
 
-                // On vérifie à nouveau que c'est bien sous nos pieds
+                // Verify the detected ground is strictly underneath our feet
                 if (_ySpeed >= 0 && groundCheck != null && groundCheck.BBoxTop >= Collision.BBoxBottom - 2f)
                 {
                     SetOnGround(true, groundCheck);
@@ -214,29 +216,49 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleOverlaps()
         {
-            // Si on chevauche un objet solide dès le début de la frame, c'est qu'une 
-            // plateforme s'est déplacée SUR nous. On doit se faire repousser.
+            // If we are overlapping a solid object right at the start of the frame,
+            // it means a moving platform shifted into our bounding box during its own update phase.
             var overlap = CollidesWithInstance(_maskCollisionSolid, Vector2.Zero);
             if (overlap != null && overlap.Collider is MovingPlatform movingPlatform)
             {
-                // La plateforme monte et "rattrape" nos pieds
-                if (movingPlatform.YSpeed < 0 && Collision.BBoxBottom >= overlap.BBoxTop && Collision.BBoxBottom <= overlap.BBoxBottom)
+                if (movingPlatform.XSpeed > 0)
                 {
-                    // On snap le personnage sur le haut de la plateforme
-                    float offset = overlap.BBoxTop - Collision.BBoxBottom;
-                    Position += new Vector2(0, offset);
-                    SetOnGround(true, overlap);
-                    _ySpeed = 0f;
+                    float offset = overlap.BBoxRight - Collision.BBoxLeft;
+                    Position += new Vector2(offset, 0);
+                    _xSpeed = 0f;
                 }
-                // La plateforme descend et nous tape sur la tête
+                else if (movingPlatform.XSpeed < 0)
+                {
+                    float offset = overlap.BBoxLeft - Collision.BBoxRight;
+                    Position += new Vector2(offset, 0);
+                    _xSpeed = 0f;
+                }
+
+                // Case A: Platform is moving UP and catching up to our feet
+                // FIX: Only trigger this if we are NOT intentionally moving upwards faster than the platform (jumping)
+                if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed)
+                {
+                    if (Collision.BBoxBottom >= overlap.BBoxTop && Collision.BBoxBottom <= overlap.BBoxBottom)
+                    {
+                        // Snap the entity to the top edge of the platform
+                        float offset = overlap.BBoxTop - Collision.BBoxBottom;
+                        Position += new Vector2(0, offset);
+                        SetOnGround(true, overlap);
+                        _ySpeed = 0f;
+                    }
+                }
+                // Case B: Platform is moving DOWN and hitting the top of our head
                 else if (movingPlatform.YSpeed > 0 && Collision.BBoxTop <= overlap.BBoxBottom && Collision.BBoxTop >= overlap.BBoxTop)
                 {
-                    // On snap la tête du personnage sous la plateforme
-                    float offset = overlap.BBoxBottom - Collision.BBoxTop;
-                    Position += new Vector2(0, offset);
+                    if (Collision.BBoxTop <= overlap.BBoxBottom && Collision.BBoxTop >= overlap.BBoxTop)
+                    {
+                        // Snap the entity's head right beneath the platform's bottom edge
+                        float offset = overlap.BBoxBottom - Collision.BBoxTop;
+                        Position += new Vector2(0, offset);
 
-                    // On hérite de la vitesse de chute pour ne pas se refaire écraser à la frame suivante
-                    _ySpeed = movingPlatform.YSpeed;
+                        // Inherit the platform's downward velocity so it doesn't crush/overlap us again next frame
+                        _ySpeed = movingPlatform.YSpeed;
+                    }
                 }
             }
         }
