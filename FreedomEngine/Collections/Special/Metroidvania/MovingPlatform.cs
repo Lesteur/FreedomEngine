@@ -70,8 +70,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
             Position += new Vector2(moveX, moveY);
 
-            XSpeed = _xSpeed;
-            YSpeed = _ySpeed;
+            XSpeed = moveX;
+            YSpeed = moveY;
 
             _elapsedTime += gameTime.ElapsedGameTime;
 

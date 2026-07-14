@@ -61,7 +61,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
             Position += new Vector2(moveX, moveY);
 
-            HandleFinalMovePlatforms();
+            //HandleFinalMovePlatforms();
 
             base.Update(gameTime);
         }
@@ -173,39 +173,34 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleMovePlatforms()
         {
-
-        }
-
-        public void HandleFinalMovePlatforms()
-        {
-            float movePlatXSpeed = 0f;
-            float movePlatMaxYSpeed = _maxFallSpeed;
-
             if (_currentGround != null && _currentGround.Collider is MovingPlatform movingPlatform)
             {
-                movePlatXSpeed = movingPlatform.XSpeed;
-            }
+                float platXSpeed = movingPlatform.XSpeed;
+                float platYSpeed = movingPlatform.YSpeed;
 
-            if (CollidesWith(_maskCollisionSolid, new Vector2(movePlatXSpeed, 0)))
-            {
-                float signX = Math.Sign(movePlatXSpeed);
-
-                while (!CollidesWith(_maskCollisionSolid, new Vector2(signX, 0)))
+                // --- Handle Horizontal (X) Platform Movement ---
+                if (platXSpeed != 0f)
                 {
-                    Position += new Vector2(signX, 0);
-                    Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking issues
+                    // Move horizontally with the platform, stopping if it pushes us into a wall
+                    if (CollidesWith(_maskCollisionSolid, new Vector2(platXSpeed, 0)))
+                    {
+                        float signX = Math.Sign(platXSpeed);
+                        while (!CollidesWith(_maskCollisionSolid, new Vector2(signX, 0)))
+                        {
+                            Position += new Vector2(signX, 0);
+                            Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking
+                        }
+                    }
+                    else
+                    {
+                        Position += new Vector2(platXSpeed, 0);
+                    }
                 }
-            }
-            else
-            {
-                Position += new Vector2(movePlatXSpeed, 0);
-            }
 
-            if (_currentGround != null && _currentGround.Collider is MovingPlatform movingPlatformY)
-            {
-                if (_currentGround.BBoxTop >= Collision.BBoxBottom - movePlatMaxYSpeed)
+                // --- Handle Vertical (Y) Platform Movement ---
+                if (platYSpeed != 0f)
                 {
-                    Y += movingPlatformY.YSpeed;
+                    Position += new Vector2(0, platYSpeed);
                 }
             }
         }
