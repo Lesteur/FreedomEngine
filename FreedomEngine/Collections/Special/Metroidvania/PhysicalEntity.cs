@@ -279,8 +279,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
                 if (oneWay == OneWayCollision.None)
                 {
-                    if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed) shouldSnapTop = true;
-                    else if (movingPlatform.YSpeed > 0 && _ySpeed <= 0f) shouldSnapBottom = true;
+                    if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed)
+                    {
+                        shouldSnapTop = true;
+                    }
+                    else if (movingPlatform.YSpeed > 0)
+                    {
+                        shouldSnapBottom = true;
+                    }
                 }
                 else if (oneWay == OneWayCollision.Top)
                 {

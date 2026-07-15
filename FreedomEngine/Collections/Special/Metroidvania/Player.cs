@@ -29,7 +29,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         internal readonly int[] _jumpHoldFrames = [18, 10];
 
-        internal readonly float[] _jumpSpeed = [-3.4f, -3.1f];
+        internal readonly float[] _jumpSpeed = [-6.4f, -3.1f];//[-3.4f, -3.1f];
 
         #endregion
 
