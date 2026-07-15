@@ -90,11 +90,28 @@ namespace FreedomEngine.Components.Collisions
 
         #endregion
 
-        #region Public Methods
-
-        public abstract bool Intersects(CollisionMask other, Vector2 thisPosition);
+        #region Lifecycle Methods
 
         public abstract void Draw(SpriteBatch spriteBatch);
+
+        #endregion
+
+        #region Public Methods
+
+        public bool Intersects(CollisionMask other, Vector2 thisPosition, bool ignoreOneWay = false)
+        {
+            if (!ignoreOneWay && !CheckOneWay(other, thisPosition))
+                return false;
+
+            return other switch
+            {
+                PointCollision point            => IntersectsPoint(point, thisPosition),
+                LineCollision line              => IntersectsLine(line, thisPosition),
+                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition),
+                CircleCollision circle          => IntersectsCircle(circle, thisPosition),
+                _ => false
+            };
+        }
 
         #endregion
 
@@ -121,6 +138,7 @@ namespace FreedomEngine.Components.Collisions
             float otherB = other.BBoxBottom;
 
             bool isOverlapping = !(thisR <= otherL || thisL >= otherR || thisB <= otherT || thisT >= otherB);
+
             if (isOverlapping)
                 return false;
 

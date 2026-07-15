@@ -40,7 +40,7 @@ namespace MyGame.Scripts.Scenes
 
             _collision1 = new RectangleCollision(new Vector2(100, 150), 1, 50, 50);
 
-            _collision2 = new RectangleCollision(Vector2.Zero, 1, 50, 50, OneWayCollision.None);
+            _collision2 = new RectangleCollision(Vector2.Zero, 1, 50, 50, OneWayCollision.Left);
             //_collision2 = new RectangleCollision(new Vector2(200, 250), 1, 50, 50, OneWayCollision.Top);
 
             _movingPlatform = new MovingPlatform(null, new Vector2(220, 250), _collision2);

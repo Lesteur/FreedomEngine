@@ -241,28 +241,28 @@ namespace FreedomEngine.Components
             }
         }
 
-        public bool CollidesWith(uint tag, Vector2 offset)
+        public bool CollidesWith(uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             if (Collision == null)
                 return false;
 
-            return Application.Collisions.CheckCollisions(Collision, tag, offset);
+            return Application.Collisions.CheckCollisions(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
-        public CollisionMask CollidesWithInstance(uint tag, Vector2 offset)
+        public CollisionMask CollidesWithInstance(uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             if (Collision == null)
                 return null;
 
-            return Application.Collisions.CheckCollisionsInstance(Collision, tag, offset);
+            return Application.Collisions.CheckCollisionsInstance(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
-        public List<CollisionMask> CollidesWithInstances(uint tag, Vector2 offset)
+        public List<CollisionMask> CollidesWithInstances(uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             if (Collision == null)
                 return [];
 
-            return Application.Collisions.GetCollisionsInstances(Collision, tag, offset);
+            return Application.Collisions.GetCollisionsInstances(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
         #endregion

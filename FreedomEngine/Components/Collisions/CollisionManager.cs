@@ -29,11 +29,11 @@ namespace FreedomEngine.Components.Collisions
             _collisionMasks.Remove(mask);
         }
 
-        public bool CheckCollisions(CollisionMask mask, uint tag, Vector2 offset)
+        public bool CheckCollisions(CollisionMask mask, uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             foreach (var otherMask in _collisionMasks)
             {
-                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset))
+                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset, ignoreOneWayCollisions))
                 {
                     return true;
                 }
@@ -42,26 +42,25 @@ namespace FreedomEngine.Components.Collisions
             return false;
         }
 
-        public CollisionMask CheckCollisionsInstance(CollisionMask mask, uint tag, Vector2 offset)
+        public CollisionMask CheckCollisionsInstance(CollisionMask mask, uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             foreach (var otherMask in _collisionMasks)
             {
-                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset))
+                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset, ignoreOneWayCollisions))
                 {
                     return otherMask;
                 }
             }
-
             return null;
         }
 
-        public List<CollisionMask> GetCollisionsInstances(CollisionMask mask, uint tag, Vector2 offset)
+        public List<CollisionMask> GetCollisionsInstances(CollisionMask mask, uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
         {
             List<CollisionMask> collisions = [];
 
             foreach (var otherMask in _collisionMasks)
             {
-                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset))
+                if ((mask != otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset, ignoreOneWayCollisions))
                 {
                     collisions.Add(otherMask);
                 }

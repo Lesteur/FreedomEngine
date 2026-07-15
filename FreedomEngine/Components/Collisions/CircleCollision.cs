@@ -38,22 +38,7 @@ namespace FreedomEngine.Components.Collisions
 
         #endregion
 
-        #region Public Methods
-
-        public override bool Intersects(CollisionMask other, Vector2 thisPosition)
-        {
-            if (!CheckOneWay(other, thisPosition))
-                return false;
-
-            return other switch
-            {
-                PointCollision point            => IntersectsPoint(point, thisPosition),
-                LineCollision line              => IntersectsLine(line, thisPosition),
-                RectangleCollision rectangle    => IntersectsRectangle(rectangle, thisPosition),
-                CircleCollision circle          => IntersectsCircle(circle, thisPosition),
-                _ => false
-            };
-        }
+        #region Lifecycle Methods
 
         public override void Draw(SpriteBatch spriteBatch)
         {
