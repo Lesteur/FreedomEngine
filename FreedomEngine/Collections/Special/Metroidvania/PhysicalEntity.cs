@@ -136,6 +136,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             {
                 float signY = Math.Sign(moveY);
 
+                // Move pixel-by-pixel until precise collision contact
                 while (CollidesWithInstance(_maskCollisionSolid, new Vector2(0, signY)) == null)
                 {
                     Position += new Vector2(0, signY);
@@ -145,6 +146,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
                 if (signY > 0)
                 {
+                    // CRITICAL CHECK: Ensure the platform's top edge is actually underneath the entity's feet
+                    // adding a tiny 2-pixel tolerance buffer for sub-pixel inaccuracies
                     if (collision.BBoxTop >= Collision.BBoxBottom - Math.Abs(moveY) - 2f)
                     {
                         SetOnGround(true, collision);
@@ -152,6 +155,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 }
                 else if (signY < 0)
                 {
+                    // Head bonk / Ceiling collision
                     _jumpHoldTimer = 0;
                 }
 
@@ -160,8 +164,10 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             }
             else
             {
+                // Standard ground check performed when moving horizontally or idling
                 var groundCheck = CollidesWithInstance(_maskCollisionSolid, new Vector2(0, 1f));
 
+                // Verify the detected ground is strictly underneath our feet
                 if (_ySpeed >= 0 && groundCheck != null && groundCheck.BBoxTop >= Collision.BBoxBottom - 2f)
                 {
                     SetOnGround(true, groundCheck);
@@ -181,15 +187,17 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 float platXSpeed = movingPlatform.XSpeed;
                 float platYSpeed = movingPlatform.YSpeed;
 
+                // --- Handle Horizontal (X) Platform Movement ---
                 if (platXSpeed != 0f)
                 {
+                    // Move horizontally with the platform, stopping if it pushes us into a wall
                     if (CollidesWith(_maskCollisionSolid, new Vector2(platXSpeed, 0)))
                     {
                         float signX = Math.Sign(platXSpeed);
                         while (!CollidesWith(_maskCollisionSolid, new Vector2(signX, 0)))
                         {
                             Position += new Vector2(signX, 0);
-                            Position = new Vector2((float)Math.Round(Position.X), Position.Y);
+                            Position = new Vector2((float)Math.Round(Position.X), Position.Y); // Prevent sub-pixel sticking
                         }
                     }
                     else
@@ -198,6 +206,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                     }
                 }
 
+                // --- Handle Vertical (Y) Platform Movement ---
                 if (platYSpeed != 0f)
                 {
                     Position += new Vector2(0, platYSpeed);
@@ -207,41 +216,112 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         public void HandleOverlaps()
         {
-            var overlap = CollidesWithInstance(_maskCollisionSolid, Vector2.Zero);
+            // Query for overlapping solid masks at the current position.
+            // We set 'ignoreOneWayCollisions' to TRUE to force the detection of One-Way platforms 
+            // that shifted into our bounding box during their own update phase.
+            var overlap = CollidesWithInstance(_maskCollisionSolid, Vector2.Zero, true);
+
             if (overlap != null && overlap.Collider is MovingPlatform movingPlatform)
             {
-                if (movingPlatform.XSpeed > 0)
+                var oneWay = overlap.OneWayCollision;
+
+                // --- 1. Horizontal Overlap Resolution ---
+                bool shouldPushLeft = false;
+                bool shouldPushRight = false;
+
+                if (oneWay == OneWayCollision.None)
+                {
+                    if (movingPlatform.XSpeed > 0) shouldPushRight = true;
+                    else if (movingPlatform.XSpeed < 0) shouldPushLeft = true;
+                }
+                else if (oneWay == OneWayCollision.Left)
+                {
+                    // Left-solid platform moving left: pushes us left only if we were already on its left last frame
+                    if (movingPlatform.XSpeed < 0)
+                    {
+                        float prevPlatLeft = overlap.BBoxLeft - movingPlatform.XSpeed;
+                        if (Collision.BBoxRight <= prevPlatLeft + 2f)
+                        {
+                            shouldPushLeft = true;
+                        }
+                    }
+                }
+                else if (oneWay == OneWayCollision.Right)
+                {
+                    // Right-solid platform moving right: pushes us right only if we were already on its right last frame
+                    if (movingPlatform.XSpeed > 0)
+                    {
+                        float prevPlatRight = overlap.BBoxRight - movingPlatform.XSpeed;
+                        if (Collision.BBoxLeft >= prevPlatRight - 2f)
+                        {
+                            shouldPushRight = true;
+                        }
+                    }
+                }
+
+                // Apply horizontal push resolution
+                if (shouldPushRight)
                 {
                     float offset = overlap.BBoxRight - Collision.BBoxLeft;
                     Position += new Vector2(offset, 0);
                     _xSpeed = 0f;
                 }
-                else if (movingPlatform.XSpeed < 0)
+                else if (shouldPushLeft)
                 {
                     float offset = overlap.BBoxLeft - Collision.BBoxRight;
                     Position += new Vector2(offset, 0);
                     _xSpeed = 0f;
                 }
 
-                if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed)
+                // --- 2. Vertical Overlap Resolution ---
+                bool shouldSnapTop = false;
+                bool shouldSnapBottom = false;
+
+                if (oneWay == OneWayCollision.None)
                 {
-                    if (Collision.BBoxBottom >= overlap.BBoxTop && Collision.BBoxBottom <= overlap.BBoxBottom)
+                    if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed) shouldSnapTop = true;
+                    else if (movingPlatform.YSpeed > 0 && _ySpeed <= 0f) shouldSnapBottom = true;
+                }
+                else if (oneWay == OneWayCollision.Top)
+                {
+                    // Top-solid platform moving up: snaps us to its top if we were above it last frame
+                    if (movingPlatform.YSpeed < 0 && _ySpeed >= movingPlatform.YSpeed)
                     {
-                        float offset = overlap.BBoxTop - Collision.BBoxBottom;
-                        Position += new Vector2(0, offset);
-                        SetOnGround(true, overlap);
-                        _ySpeed = 0f;
+                        float prevPlatTop = overlap.BBoxTop - movingPlatform.YSpeed;
+                        if (Collision.BBoxBottom <= prevPlatTop + 2f)
+                        {
+                            shouldSnapTop = true;
+                        }
                     }
                 }
-                else if (movingPlatform.YSpeed > 0 && Collision.BBoxTop <= overlap.BBoxBottom && Collision.BBoxTop >= overlap.BBoxTop)
+                else if (oneWay == OneWayCollision.Bottom)
                 {
-                    if (Collision.BBoxTop <= overlap.BBoxBottom && Collision.BBoxTop >= overlap.BBoxTop)
+                    // Bottom-solid platform moving down: snaps us below its bottom if we were below it last frame
+                    if (movingPlatform.YSpeed > 0 && _ySpeed <= 0f)
                     {
-                        float offset = overlap.BBoxBottom - Collision.BBoxTop;
-                        Position += new Vector2(0, offset);
-
-                        _ySpeed = movingPlatform.YSpeed;
+                        float prevPlatBottom = overlap.BBoxBottom - movingPlatform.YSpeed;
+                        if (Collision.BBoxTop >= prevPlatBottom - 2f)
+                        {
+                            shouldSnapBottom = true;
+                        }
                     }
+                }
+
+                // Apply vertical resolution (snapping)
+                if (shouldSnapTop)
+                {
+                    float offset = overlap.BBoxTop - Collision.BBoxBottom;
+                    Position += new Vector2(0, offset);
+                    SetOnGround(true, overlap);
+                    _ySpeed = 0f;
+                }
+                else if (shouldSnapBottom)
+                {
+                    float offset = overlap.BBoxBottom - Collision.BBoxTop;
+                    Position += new Vector2(0, offset);
+
+                    // Inherit the platform's downward velocity so it doesn't overlap us again next frame
+                    _ySpeed = movingPlatform.YSpeed;
                 }
             }
         }
