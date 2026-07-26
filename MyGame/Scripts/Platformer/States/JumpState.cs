@@ -1,14 +1,14 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
-using FreedomEngine.Collections.States;
 
 namespace FreedomEngine.Collections.Special.Metroidvania.States
 {
-    internal class FallState : StatePlayer
+    internal class JumpState : StatePlayer
     {
         #region Constructors
 
-        public FallState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
+        public JumpState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
         {
         }
 
@@ -25,15 +25,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             _player.YSpeed = _player.HandleGravity();
             _player.YSpeed = _player.HandlePlayerJump();
 
-            // If we double jumped, transition back to jump state
-            if (_player.YSpeed < 0)
+            if (_player.YSpeed >= 0)
             {
-                StateMachine.ChangeState(StateMachine.JumpState);
+                StateMachine.ChangeState(StateMachine.FallState);
                 return;
             }
 
-            // Transition to ground states when landing
-            if (_player.OnGround)
+            // In some cases, player might land while ascending if they hit their head
+            if (_player.IsGrounded)
             {
                 if (Math.Abs(_player.XSpeed) > 0)
                 {

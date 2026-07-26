@@ -1,14 +1,14 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
-using FreedomEngine.Collections.States;
 
 namespace FreedomEngine.Collections.Special.Metroidvania.States
 {
-    internal class JumpState : StatePlayer
+    internal class WalkState : StatePlayer
     {
         #region Constructors
 
-        public JumpState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
+        public WalkState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
         {
         }
 
@@ -20,28 +20,29 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
         {
             base.Update(gameTime);
 
-            _player.XSpeed = _player.HandlePlayerMovement();
-
             _player.YSpeed = _player.HandleGravity();
             _player.YSpeed = _player.HandlePlayerJump();
 
-            if (_player.YSpeed >= 0)
+            var xSpeed = _player.HandlePlayerMovement();
+
+            _player.XSpeed = xSpeed;
+
+            if (Math.Abs(xSpeed) == 0)
+            {
+                StateMachine.ChangeState(StateMachine.IdleState);
+                return;
+            }
+
+            if (!_player.IsGrounded && _player.YSpeed > 0)
             {
                 StateMachine.ChangeState(StateMachine.FallState);
                 return;
             }
 
-            // In some cases, player might land while ascending if they hit their head
-            if (_player.OnGround)
+            if (!_player.IsGrounded && _player.YSpeed < 0)
             {
-                if (Math.Abs(_player.XSpeed) > 0)
-                {
-                    StateMachine.ChangeState(StateMachine.WalkState);
-                }
-                else
-                {
-                    StateMachine.ChangeState(StateMachine.IdleState);
-                }
+                StateMachine.ChangeState(StateMachine.JumpState);
+                return;
             }
         }
 

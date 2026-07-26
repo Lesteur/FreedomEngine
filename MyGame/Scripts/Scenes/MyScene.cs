@@ -163,7 +163,7 @@ namespace MyGame.Scripts.Scenes
                 
                 //_tween = new TweenVector2(Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2), val => _entity.Scale = val, EasingFunctions.BounceOut);
                 
-                //_tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
+                _tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
                 
                 //_tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
             }

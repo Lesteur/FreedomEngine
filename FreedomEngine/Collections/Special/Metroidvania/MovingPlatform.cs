@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using FreedomEngine.Components;
 using FreedomEngine.Graphics;
+using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
-using System.ComponentModel;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
@@ -17,7 +16,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         private TimeSpan _elapsedTime = TimeSpan.Zero;
 
-        private TimeSpan _interval = TimeSpan.FromSeconds(1.0);
+        private TimeSpan _interval = TimeSpan.FromSeconds(2.0);
 
         private float _xSpeed = 0f;
 
@@ -50,7 +49,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             if (_elapsedTime >= _interval)
             {
                 _elapsedTime = TimeSpan.Zero;
-                _face = (_face + 1) % 4;
+                _face = (_face + 1) % 2;
                 switch (_face)
                 {
                     case 0:
@@ -58,16 +57,8 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                         _ySpeed = 1f;
                         break;
                     case 1:
-                        _xSpeed = 1f;
-                        _ySpeed = 0f;
-                        break;
-                    case 2:
                         _xSpeed = 0f;
                         _ySpeed = -1f;
-                        break;
-                    case 3:
-                        _xSpeed = -1f;
-                        _ySpeed = 0f;
                         break;
                 }
             }
@@ -87,5 +78,5 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         }
 
         #endregion
-        }
+    }
 }

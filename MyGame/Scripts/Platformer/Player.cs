@@ -35,20 +35,6 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         #region Internal Properties
 
-        internal float XSpeed
-        {
-            get => _xSpeed;
-            set => _xSpeed = value;
-        }
-
-        internal float YSpeed
-        {
-            get => _ySpeed;
-            set => _ySpeed = value;
-        }
-
-        internal bool OnGround => _onGround;
-
         internal bool JumpKeyPressed => _jumpKeyPressed;
 
         #endregion
@@ -71,11 +57,6 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             _machine.Update(gameTime);
 
             base.Update(gameTime);
-
-            if (Application.Input.Keyboard.IsKeyDown(Keys.Enter))
-            {
-                Logger.Info($"Position: {Position}");
-            }
         }
 
         #endregion
@@ -107,7 +88,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         {
             float ySpeed = _ySpeed;
 
-            if (_onGround)
+            if (_isGrounded)
             {
                 _jumpCount = 0;
                 _jumpHoldTimer = 0;

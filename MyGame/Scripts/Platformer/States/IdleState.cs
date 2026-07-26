@@ -1,6 +1,6 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
-using FreedomEngine.Collections.States;
 
 namespace FreedomEngine.Collections.Special.Metroidvania.States
 {
@@ -33,14 +33,14 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
             }
 
             // Transition to Fall if we are no longer on the ground and moving down
-            if (!_player.OnGround && _player.YSpeed > 0)
+            if (!_player.IsGrounded && _player.YSpeed > 0)
             {
                 StateMachine.ChangeState(StateMachine.FallState);
                 return;
             }
 
             // Transition to Jump if we are jumping (negative YSpeed or jump key pressed)
-            if (!_player.OnGround && _player.YSpeed < 0)
+            if (!_player.IsGrounded && _player.YSpeed < 0)
             {
                 StateMachine.ChangeState(StateMachine.JumpState);
                 return;

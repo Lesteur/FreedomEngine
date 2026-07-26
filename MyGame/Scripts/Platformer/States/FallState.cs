@@ -4,11 +4,11 @@ using FreedomEngine.Collections.States;
 
 namespace FreedomEngine.Collections.Special.Metroidvania.States
 {
-    internal class WalkState : StatePlayer
+    internal class FallState : StatePlayer
     {
         #region Constructors
 
-        public WalkState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
+        public FallState(Player player, StateMachinePlayer stateMachine) : base(player, stateMachine)
         {
         }
 
@@ -20,29 +20,29 @@ namespace FreedomEngine.Collections.Special.Metroidvania.States
         {
             base.Update(gameTime);
 
+            _player.XSpeed = _player.HandlePlayerMovement();
+
             _player.YSpeed = _player.HandleGravity();
             _player.YSpeed = _player.HandlePlayerJump();
 
-            var xSpeed = _player.HandlePlayerMovement();
-
-            _player.XSpeed = xSpeed;
-
-            if (Math.Abs(xSpeed) == 0)
-            {
-                StateMachine.ChangeState(StateMachine.IdleState);
-                return;
-            }
-
-            if (!_player.OnGround && _player.YSpeed > 0)
-            {
-                StateMachine.ChangeState(StateMachine.FallState);
-                return;
-            }
-
-            if (!_player.OnGround && _player.YSpeed < 0)
+            // If we double jumped, transition back to jump state
+            if (_player.YSpeed < 0)
             {
                 StateMachine.ChangeState(StateMachine.JumpState);
                 return;
+            }
+
+            // Transition to ground states when landing
+            if (_player.IsGrounded)
+            {
+                if (Math.Abs(_player.XSpeed) > 0)
+                {
+                    StateMachine.ChangeState(StateMachine.WalkState);
+                }
+                else
+                {
+                    StateMachine.ChangeState(StateMachine.IdleState);
+                }
             }
         }
 

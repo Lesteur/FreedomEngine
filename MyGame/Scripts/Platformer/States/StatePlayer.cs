@@ -1,7 +1,6 @@
 ﻿using FreedomEngine.Collections.States;
-using System.Resources;
 
-namespace FreedomEngine.Collections.Special.Metroidvania
+namespace FreedomEngine.Collections.Special.Metroidvania.States
 {
     public class StatePlayer : State<StatePlayer, StateMachinePlayer>
     {

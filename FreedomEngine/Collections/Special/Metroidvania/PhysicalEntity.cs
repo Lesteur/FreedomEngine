@@ -22,7 +22,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
 
         protected float _maxFallSpeed = 4f;
 
-        protected bool _onGround = false;
+        protected bool _isGrounded = false;
 
         protected int _coyoteHangFrames = 10;
 
@@ -35,6 +35,24 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         protected int _jumpHoldTimer = 0;
 
         protected uint _maskCollisionSolid = 1;
+
+        #endregion
+
+        #region Properties
+
+        public bool IsGrounded => _isGrounded;
+
+        public float XSpeed
+        {
+            get => _xSpeed;
+            set => _xSpeed = value;
+        }
+
+        public float YSpeed
+        {
+            get => _ySpeed;
+            set => _ySpeed = value;
+        }
 
         #endregion
 
@@ -78,13 +96,13 @@ namespace FreedomEngine.Collections.Special.Metroidvania
         {
             if (onGround)
             {
-                _onGround = true;
+                _isGrounded = true;
                 _coyoteHangTimer = _coyoteHangFrames;
                 _currentGround = ground;
             }
             else
             {
-                _onGround = false;
+                _isGrounded = false;
                 _coyoteHangTimer = 0;
                 _currentGround = null;
             }
@@ -98,7 +116,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
             {
                 _coyoteHangTimer--;
             }
-            else if (!_onGround)
+            else if (!_isGrounded)
             {
                 ySpeed += _grav;
             }
@@ -175,7 +193,7 @@ namespace FreedomEngine.Collections.Special.Metroidvania
                 else
                 {
                     _currentGround = null;
-                    _onGround = false;
+                    _isGrounded = false;
                 }
             }
         }
