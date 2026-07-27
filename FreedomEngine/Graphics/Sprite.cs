@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
@@ -15,14 +15,9 @@ namespace FreedomEngine.Graphics
         public Animation Animation { get; }
 
         /// <summary>
-        /// Gets the local X offset indicating drawing origin center.
+        /// Gets the origin offset for rendering this sprite.
         /// </summary>
-        public ushort XOrigin { get; }
-
-        /// <summary>
-        /// Gets the local Y offset indicating drawing origin center.
-        /// </summary>
-        public ushort YOrigin { get; }
+        public Vector2 Origin { get; }
 
         #endregion
 
@@ -32,13 +27,11 @@ namespace FreedomEngine.Graphics
         /// Creates a new instance of the <see cref="Sprite"/> class using a single texture as a static image.
         /// </summary>
         /// <param name="texture">The base source texture applied initially to form this Sprite.</param>
-        /// <param name="xOrigin">X starting origin of rendering operations on this sprite bounds.</param>
-        /// <param name="yOrigin">Y starting origin of rendering operations on this sprite bounds.</param>
-        public Sprite(Texture2D texture, ushort xOrigin = 0, ushort yOrigin = 0) : this(
+        /// <param name="origin">The origin offset for rendering this sprite.</param>
+        public Sprite(Texture2D texture, Vector2 origin) : this(
                 [new TextureRegion(texture ?? throw new ArgumentNullException(nameof(texture)), 0, 0, (ushort)texture.Width, (ushort)texture.Height)],
                 TimeSpan.Zero,
-                xOrigin,
-                yOrigin)
+                origin)
         {
             // Logic is handled by the primary animation constructor via chaining
         }
@@ -48,9 +41,8 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="frames">Ordered segment regions functioning sequentially as animation frames.</param>
         /// <param name="delay">Configured structural playback speed timing value applied across frames globally.</param>
-        /// <param name="xOrigin">The offset applied during frame calculation along X plane relative natively to origin offset constraints.</param>
-        /// <param name="yOrigin">The offset applied during frame calculation along Y plane relative natively to origin offset constraints.</param>
-        public Sprite(TextureRegion[] frames, TimeSpan delay, ushort xOrigin = 0, ushort yOrigin = 0)
+        /// <param name="origin">The origin offset for rendering this sprite.</param>
+        public Sprite(TextureRegion[] frames, TimeSpan delay, Vector2 origin = default)
         {
             if (frames == null || frames.Length == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
@@ -60,8 +52,7 @@ namespace FreedomEngine.Graphics
                 throw new ArgumentException("Delay cannot be negative.", nameof(delay));
 
             Animation = new Animation(frames, delay);
-            XOrigin = xOrigin;
-            YOrigin = yOrigin;
+            Origin = origin;
         }
 
         /// <summary>
@@ -70,9 +61,8 @@ namespace FreedomEngine.Graphics
         /// <param name="texture2D">Source layout sheet holding structured frame cells across length linearly.</param>
         /// <param name="frameCount">Defines total valid contiguous split iterations mapping sequential valid region definitions initially across given texture axis horizontally.</param>
         /// <param name="delay">Length definition representing the internal frame offset rate timing constraints uniformly across animation scope lifetime iterations internally natively dynamically initially.</param>
-        /// <param name="xOrigin">Start offset local X-constraint axis offset mappings.</param>
-        /// <param name="yOrigin">Start offset local Y-constraint axis offset mappings.</param>
-        public Sprite(Texture2D texture2D, ushort frameCount, TimeSpan delay, ushort xOrigin = 0, ushort yOrigin = 0)
+        /// <param name="origin">The origin offset for rendering this sprite.</param>
+        public Sprite(Texture2D texture2D, ushort frameCount, TimeSpan delay, Vector2 origin = default)
         {
             if (texture2D == null)
                 throw new ArgumentNullException(nameof(texture2D), "Texture cannot be null.");
@@ -95,8 +85,30 @@ namespace FreedomEngine.Graphics
             }
 
             Animation = new Animation(frames, delay);
-            XOrigin = xOrigin;
-            YOrigin = yOrigin;
+            Origin = origin;
+        }
+
+        public Sprite(Texture2D texture2D, ushort frameCount, Vector2 origin, TimeSpan delay, ushort x, ushort y, ushort width, ushort height, ushort xMargin, ushort yMargin)
+        {
+            if (texture2D == null)
+                throw new ArgumentNullException(nameof(texture2D), "Texture cannot be null.");
+
+            if (frameCount <= 0)
+                throw new ArgumentException("Frame count must be greater than zero.", nameof(frameCount));
+
+            if (delay < TimeSpan.Zero)
+                throw new ArgumentException("Delay must be greater than or equal to zero.", nameof(delay));
+
+            TextureRegion[] frames = new TextureRegion[frameCount];
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                TextureRegion region = new(texture2D, x + i * (width + xMargin), y + yMargin, width, height);
+                frames[i] = region;
+            }
+
+            Animation = new Animation(frames, delay);
+            Origin = origin;
         }
 
         #endregion

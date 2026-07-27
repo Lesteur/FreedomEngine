@@ -207,7 +207,7 @@ namespace FreedomEngine.Components
                 return;
 
             // Factorize recurring calculations
-            var origin      = new Vector2(Sprite.XOrigin, Sprite.YOrigin);
+            var origin      = Sprite.Origin;
             var position    = new Vector2(X + origin.X, Y + origin.Y);
 
             if (Camera != null)
@@ -218,7 +218,7 @@ namespace FreedomEngine.Components
 
             Sprite.Animation.Frames[CurrentFrame].Draw(
                 spriteBatch,
-                position,
+                Position, // position,
                 Color,
                 Rotation,
                 origin,

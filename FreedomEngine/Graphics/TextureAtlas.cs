@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Graphics
@@ -103,9 +104,18 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="spriteName">The name of the sprite to add.</param>
         /// <param name="sprite">The sprite to add.</param>
-        public void AddSprite(string spriteName, Sprite sprite)
+        public void AddSprite(string name, Sprite sprite)
         {
-            _sprites.Add(spriteName, sprite);
+            _sprites.Add(name, sprite);
+        }
+
+        public void AddSprite(string name, ushort frameCount, Vector2 origin, TimeSpan delay, ushort x, ushort y, ushort width, ushort height, ushort xMargin = 0, ushort yMargin = 0)
+        {
+            if (_sprites.ContainsKey(name))
+                throw new ArgumentException("A sprite with the specified name already exists.", nameof(name));
+
+            Sprite sprite = new(Texture, frameCount, origin, delay, x, y, width, height, xMargin, yMargin);
+            _sprites.Add(name, sprite);
         }
 
         /// <summary>

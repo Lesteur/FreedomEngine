@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using FreedomEngine.Graphics;
 using FreedomEngine.Components.Collisions;
 using FreedomEngine.Collections.Special.Metroidvania;
+using Microsoft.Xna.Framework.Graphics;
+using FreedomEngine.Collections;
 
 namespace MyGame.Scripts.Metroid
 {
@@ -29,9 +31,29 @@ namespace MyGame.Scripts.Metroid
             public PhysicsConfig() { }
         }
 
+        public struct Sprites
+        {
+            public Sprite StandCenter;
+            public Sprite StandLeft;
+            public Sprite StandRight;
+
+            public Sprite RunLeg;
+            public Sprite RunLeft;
+            public Sprite RunRight;
+
+            public Sprite JumpLeft;
+            public Sprite JumpRight;
+
+            public Sprites() { }
+        }
+
         #endregion
 
         #region Fields
+
+        private Texture2D _texture;
+
+        private TextureAtlas _textureAtlas;
 
         private StateMachineSamus _machine;
 
@@ -48,14 +70,37 @@ namespace MyGame.Scripts.Metroid
         public bool InputRun { get; private set; }
         public bool InputJumpPressed { get; private set; }
         public bool InputJumpReleased { get; private set; }
+        public Sprite SpriteTop { get; set; }
+        public Sprite SpriteBottom { get; set; }
 
         #endregion
 
         #region Constructors
 
-        public PlayerSamus(Sprite sprite, Vector2 position, CollisionMask collisionMask = null) : base(sprite, position, collisionMask)
+        public PlayerSamus(Vector2 position, CollisionMask collisionMask = null) : base(null, position, collisionMask)
         {
             _machine = new StateMachineSamus(this);
+
+            _texture = Core.Content.Load<Texture2D>("Assets/Textures/spr_samus");
+            _textureAtlas = new TextureAtlas(_texture);
+
+            // Load sprites from the texture atlas
+            _textureAtlas.AddSprite("StandCenter", 1, Vector2.Zero, TimeSpan.Zero, 4, 16, 25, 48, 0, 0);
+            _textureAtlas.AddSprite("StandRight", 6, Vector2.Zero, TimeSpan.FromMilliseconds(150), 4, 68, 29, 43, 2, 0);
+            _textureAtlas.AddSprite("StandLeft", 6, Vector2.Zero, TimeSpan.FromMilliseconds(150), 4, 115, 29, 43, 2, 0);
+
+            // _textureAtlas.AddSprite("RunLeg", 22, 18, 2, TimeSpan.FromMilliseconds(30), 4, 162, 36, 29, 2, 0);
+            _textureAtlas.AddSprite("RunLeg", 22, new Vector2(18, 2), TimeSpan.FromMilliseconds(30), 4, 162, 36, 29, 2, 0);
+
+            // _textureAtlas.AddSprite("RunRight", 22, 10, 15, TimeSpan.FromMilliseconds(30), 4, 245, 26, 25, 2, 0);
+            // _textureAtlas.AddSprite("RunLeft", 22, 9, 15, TimeSpan.FromMilliseconds(30), 4, 274, 25, 23, 2, 0);
+            _textureAtlas.AddSprite("RunRight", 22, new Vector2(10, 18), TimeSpan.FromMilliseconds(30), 4, 245, 26, 25, 2, 0);
+            _textureAtlas.AddSprite("RunLeft", 22, new Vector2(10, 19), TimeSpan.FromMilliseconds(30), 4, 274, 25, 23, 2, 0);
+
+            SpriteBottom = _textureAtlas.GetSprite("RunLeg");
+            SpriteTop = _textureAtlas.GetSprite("RunLeft");
+
+            ChangeSprite(SpriteBottom);
         }
 
         #endregion
@@ -69,6 +114,28 @@ namespace MyGame.Scripts.Metroid
             _machine.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            if (SpriteTop != null)
+            {
+                var originTop = SpriteTop.Origin;
+                var positionTop = new Vector2(X + originTop.X, Y + originTop.Y);
+
+                SpriteTop.Animation.Frames[CurrentFrame].Draw(
+                    spriteBatch,
+                    Position,//positionTop,
+                    Color,
+                    Rotation,
+                    originTop,
+                    Scale,
+                    Effects,
+                    LayerDepth
+                );
+            }
         }
 
         #endregion

@@ -101,6 +101,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/spr_jonathan.png;Assets/Textures/spr_jonathan
 
+#begin Assets/Textures/spr_samus.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/spr_samus.png;Assets/Textures/spr_samus
+
 #begin Assets/Textures/Tileset.png
 /importer:TextureImporter
 /processor:TextureProcessor

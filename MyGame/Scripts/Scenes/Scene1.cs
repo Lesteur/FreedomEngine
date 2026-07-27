@@ -36,7 +36,7 @@ namespace MyGame.Scripts.Scenes
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
 
             var collision = new RectangleCollision(Vector2.Zero, 1, 32, 48);
-            _entity = new PlayerSamus(_animation, Vector2.Zero, collision);
+            _entity = new PlayerSamus(Vector2.Zero, collision);
 
             _following = _entity;
 
