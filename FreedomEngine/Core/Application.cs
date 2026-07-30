@@ -126,6 +126,7 @@ namespace FreedomEngine.Core
         protected override void Initialize()
         {
             base.Initialize();
+
             GraphicsDevice  = base.GraphicsDevice;
             SpriteBatch     = new SpriteBatch(GraphicsDevice);
             Input           = new InputManager();

@@ -5,10 +5,13 @@
         <TargetFramework>net8.0</TargetFramework>
         <RollForward>Major</RollForward>
 
-        <PublishReadyToRun>true</PublishReadyToRun>
+	    <PublishReadyToRun>false</PublishReadyToRun>
+	    <PublishAot>true</PublishAot>
+	    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	    <IlcUseEnvironmentalTools>true</IlcUseEnvironmentalTools>
 
-        <TieredCompilation>true</TieredCompilation>
-        <TieredPGO>true</TieredPGO>
+        <TieredCompilation>false</TieredCompilation>
+        <TieredPGO>false</TieredPGO>
     </PropertyGroup>
 
     <PropertyGroup>

@@ -98,7 +98,7 @@ namespace MyGame.Scripts.Metroid
             _textureAtlas.AddSprite("RunLeft", 22, new Vector2(10, 19), TimeSpan.FromMilliseconds(30), 4, 274, 25, 23, 2, 0);
 
             SpriteBottom = _textureAtlas.GetSprite("RunLeg");
-            SpriteTop = _textureAtlas.GetSprite("RunLeft");
+            SpriteTop = _textureAtlas.GetSprite("RunRight");
 
             ChangeSprite(SpriteBottom);
         }
@@ -123,8 +123,6 @@ namespace MyGame.Scripts.Metroid
             if (SpriteTop != null)
             {
                 var originTop = SpriteTop.Origin;
-                var positionTop = new Vector2(X + originTop.X, Y + originTop.Y);
-
                 SpriteTop.Animation.Frames[CurrentFrame].Draw(
                     spriteBatch,
                     Position,//positionTop,
