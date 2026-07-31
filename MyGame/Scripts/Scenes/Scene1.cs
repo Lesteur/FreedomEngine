@@ -54,7 +54,7 @@ namespace MyGame.Scripts.Scenes
             _movingPlatform.Update(gameTime);
             _entity.Update(gameTime);
 
-	    if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
+	        if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
                 Application.ChangeScene(new MyScene());
             }

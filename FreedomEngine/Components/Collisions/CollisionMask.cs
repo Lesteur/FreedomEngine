@@ -12,13 +12,13 @@ namespace FreedomEngine.Components.Collisions
     {
         #region Fields
 
-        private static CollisionManager Controller => Application.Collisions;
-
         private Vector2 _position;
 
         #endregion
 
         #region Properties
+
+        public static CollisionManager Controller {  get; set; }
 
         public Vector2 Position
         {
@@ -60,6 +60,11 @@ namespace FreedomEngine.Components.Collisions
             Tag = tag;
             OneWayCollision = oneWayCollision;
             Collider = null;
+
+            if (Controller == null)
+            {
+                throw new InvalidOperationException("CollisionManager is not set. Please set CollisionMask.Controller before creating instances.");
+            }
 
             Controller.Add(this);
         }

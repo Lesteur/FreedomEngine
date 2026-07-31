@@ -101,11 +101,6 @@ namespace FreedomEngine.Audio
             _activeSoundEffectInstances = [];
         }
 
-        /// <summary>
-        /// Finalizer called when the object is collected by the garbage collector.
-        /// </summary>
-        ~AudioController() => Dispose(false);
-
         #endregion
 
         #region Lifecycle Methods
@@ -253,6 +248,17 @@ namespace FreedomEngine.Audio
                 UnmuteAudio();
             else
                 MuteAudio();
+        }
+
+        public void Clear()
+        {
+            foreach (var instance in _activeSoundEffectInstances)
+            {
+                if (!instance.IsDisposed)
+                    instance.Dispose();
+            }
+
+            _activeSoundEffectInstances.Clear();
         }
 
         #endregion

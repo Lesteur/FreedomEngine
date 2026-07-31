@@ -79,17 +79,5 @@ namespace FreedomEngine.Components.Collisions
         }
 
         #endregion
-
-        #region IDisposable Implementation
-
-        /// <summary>
-        /// Disposes of this tween manager and cleans up resources.
-        /// </summary>
-        public void Dispose()
-        {
-            _collisionMasks.Clear();
-        }
-
-        #endregion
     }
 }

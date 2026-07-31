@@ -16,8 +16,6 @@ namespace FreedomEngine.Collections.Coroutines
     {
         #region Fields
 
-        private static CoroutineController Controller => Application.Coroutines; 
-
         /// <summary>
         /// The underlying enumerator that represents the coroutine execution.
         /// </summary>
@@ -36,6 +34,8 @@ namespace FreedomEngine.Collections.Coroutines
         #endregion
 
         #region Properties
+
+        public static CoroutineController Controller { get; set; }
 
         /// <summary>
         /// Gets whether this coroutine is currently paused.
@@ -65,6 +65,11 @@ namespace FreedomEngine.Collections.Coroutines
             _enumerator = enumerator ?? throw new ArgumentNullException(nameof(enumerator));
             _isFinished = false;
             _isPaused = false;
+
+            if (Controller == null)
+            {
+                throw new InvalidOperationException("CoroutineController must be assigned before starting the coroutine.");
+            }
 
             Controller.Add(this);
         }

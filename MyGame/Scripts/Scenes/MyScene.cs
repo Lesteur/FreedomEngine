@@ -152,32 +152,30 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Space))
             {
-                // Core.Audio.PlaySoundEffect(_soundEffect);
-
                 if (_tween != null && !_tween.IsFinished)
                 {
                     _tween.Stop();
                 }
 
                 //_tween = new TweenColor(Color.Blue, Color.Red, TimeSpan.FromSeconds(2), val => _entity.Color = val, EasingFunctions.BounceOut);
-                
                 //_tween = new TweenVector2(Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2), val => _entity.Scale = val, EasingFunctions.BounceOut);
-                
                 _tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
-                
                 //_tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
-            }
 
-            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
-            {
                 Logger.Info("Coroutine");
 
                 if (_coroutine == null || _coroutine.IsFinished)
                 {
                     _coroutine = new Coroutine(TestCoroutine());
                 }
+            }
 
-                //Application.ChangeScene(new SceneShadow());
+            if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
+            {
+                /*
+                
+                */
+                Application.ChangeScene(new SceneShadow());
             }
 
             _tilemap.Update(gameTime);

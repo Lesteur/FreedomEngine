@@ -29,6 +29,8 @@ namespace FreedomEngine.Components
 
         #region Properties
 
+        public static Scene Scene { get; set; }
+
         public static Camera Camera { get; set; }
 
         /// <summary>
@@ -246,7 +248,7 @@ namespace FreedomEngine.Components
             if (Collision == null)
                 return false;
 
-            return Application.Collisions.CheckCollisions(Collision, tag, offset, ignoreOneWayCollisions);
+            return Scene.Collisions.CheckCollisions(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
         public CollisionMask CollidesWithInstance(uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
@@ -254,7 +256,7 @@ namespace FreedomEngine.Components
             if (Collision == null)
                 return null;
 
-            return Application.Collisions.CheckCollisionsInstance(Collision, tag, offset, ignoreOneWayCollisions);
+            return Scene.Collisions.CheckCollisionsInstance(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
         public List<CollisionMask> CollidesWithInstances(uint tag, Vector2 offset, bool ignoreOneWayCollisions = false)
@@ -262,7 +264,7 @@ namespace FreedomEngine.Components
             if (Collision == null)
                 return [];
 
-            return Application.Collisions.GetCollisionsInstances(Collision, tag, offset, ignoreOneWayCollisions);
+            return Scene.Collisions.GetCollisionsInstances(Collision, tag, offset, ignoreOneWayCollisions);
         }
 
         #endregion

@@ -1,12 +1,13 @@
-﻿using System;
-
+﻿using FreedomEngine.Collections;
+using FreedomEngine.Collections.Coroutines;
+using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Collections.Tweens;
+using FreedomEngine.Components;
+using FreedomEngine.Components.Collisions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
-using FreedomEngine.Collections;
-using FreedomEngine.Collections.Interfaces;
-using FreedomEngine.Components;
+using System;
 
 namespace FreedomEngine.Core
 {
@@ -63,6 +64,12 @@ namespace FreedomEngine.Core
         /// </summary>
         public Camera UICamera { get; protected set; }
 
+        public CoroutineController Coroutines { get; protected set; }
+
+        public TweenManager Tweens { get; protected set; }
+
+        public CollisionManager Collisions { get; protected set; }
+
         /// <summary>
         /// Gets a value that indicates if the scene has been disposed of.
         /// </summary>
@@ -111,6 +118,10 @@ namespace FreedomEngine.Core
             _scalingMatrix = Matrix.CreateScale(scale, scale, 1f);
 
             _following = null;
+
+            Coroutines = new CoroutineController();
+            Tweens = new TweenManager();
+            Collisions = new CollisionManager();
         }
 
         #endregion
@@ -142,6 +153,9 @@ namespace FreedomEngine.Core
         /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
         public virtual void Update(GameTime gameTime)
         {
+            Coroutines.Update(gameTime);
+            Tweens.Update(gameTime);
+
             if (_following != null)
             {
                 var x = Math.Clamp(_following.X, _cameraLimitsMin.X, _cameraLimitsMax.X);
@@ -166,6 +180,11 @@ namespace FreedomEngine.Core
         /// </summary>
         public virtual void UnloadContent()
         {
+            Application.Audio.Clear();
+
+            Coroutines.Dispose();
+            Tweens.Dispose();
+
             Content.Unload();
         }
 

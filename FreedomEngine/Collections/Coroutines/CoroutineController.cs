@@ -125,6 +125,11 @@ namespace FreedomEngine.Collections.Coroutines
             _pendingCoroutines.Clear();
         }
 
+        public void Clear()
+        {
+            StopAll();
+        }
+
         #endregion
 
         #region Internal Methods

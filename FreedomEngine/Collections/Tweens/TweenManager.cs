@@ -131,6 +131,11 @@ namespace FreedomEngine.Collections.Tweens
             _pendingTweens.Clear();
         }
 
+        public void Clear()
+        {
+            StopAll();
+        }
+
         #endregion
 
         #region Internal Methods

@@ -14,6 +14,7 @@ using FreedomEngine.Collections.Coroutines;
 using FreedomEngine.Collections.Tweens;
 
 using FreedomEngine.Components.Collisions;
+using FreedomEngine.Components;
 
 namespace FreedomEngine.Core
 {
@@ -66,21 +67,6 @@ namespace FreedomEngine.Core
         public static AudioController Audio { get; private set; }
 
         /// <summary>
-        /// Gets the global coroutine controller responsible for managing all active coroutines across scenes.
-        /// </summary>
-        public static CoroutineController Coroutines { get; private set; }
-
-        /// <summary>
-        /// Gets the global tween manager for handling tween animations.
-        /// </summary>
-        public static TweenManager Tweens { get; private set; }
-
-        /// <summary>
-        /// Gets the global collision manager responsible for handling collision detection and response.
-        /// </summary>
-        public static CollisionManager Collisions { get; private set; }
-
-        /// <summary>
         /// Gets the currently executing scene.
         /// </summary>
         public static Scene CurrentScene { get; private set; }
@@ -131,9 +117,6 @@ namespace FreedomEngine.Core
             SpriteBatch     = new SpriteBatch(GraphicsDevice);
             Input           = new InputManager();
             Audio           = new AudioController();
-            Coroutines      = new CoroutineController();
-            Tweens          = new TweenManager();
-            Collisions      = new CollisionManager();
 
             PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
             PixelTexture.SetData([Color.White]);
@@ -144,8 +127,6 @@ namespace FreedomEngine.Core
         {
             Input.Update(gameTime);
             Audio.Update(gameTime);
-            Coroutines.Update(gameTime);
-            Tweens.Update(gameTime);
 
             if (ExitOnEscape && Input.Keyboard.WasKeyJustPressed(Keys.Escape))
                 Exit();
@@ -170,11 +151,7 @@ namespace FreedomEngine.Core
         protected override void UnloadContent()
         {
             PixelTexture.Dispose();
-
             Audio.Dispose();
-            Coroutines.Dispose();
-            Tweens.Dispose();
-            Collisions.Dispose();
 
             base.UnloadContent();
         }
@@ -189,7 +166,14 @@ namespace FreedomEngine.Core
         public static void ChangeScene(Scene next)
         {
             if (NextScene != next)
+            {
                 NextScene = next;
+
+                Entity.Scene = next;
+                Coroutine.Controller = next.Coroutines;
+                Tween.Controller = next.Tweens;
+                CollisionMask.Controller = next.Collisions;
+            }
         }
 
         #endregion

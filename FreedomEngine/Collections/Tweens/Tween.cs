@@ -11,8 +11,6 @@ namespace FreedomEngine.Collections.Tweens
     {
         #region Fields
 
-        private static TweenManager Controller => Application.Tweens;
-
         /// <summary>
         /// Indicates whether this coroutine is currently paused.
         /// </summary>
@@ -31,6 +29,8 @@ namespace FreedomEngine.Collections.Tweens
         #endregion
 
         #region Properties
+
+        public static TweenManager Controller { get; set; }
 
         public TimeSpan Duration { get; private set; }
 
@@ -63,6 +63,11 @@ namespace FreedomEngine.Collections.Tweens
         {
             Duration = duration;
             Elapsed = TimeSpan.Zero;
+
+            if (Controller == null)
+            {
+                throw new InvalidOperationException("TweenManager is not set. Please assign a TweenManager instance to the Controller property before creating tweens.");
+            }
 
             Controller.Add(this);
         }

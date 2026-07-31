@@ -31,5 +31,10 @@ namespace FreedomEngine.Collections.Interfaces
         /// Stops all managed processes immediately.
         /// </summary>
         void StopAll();
+
+        /// <summary>
+        /// Clears all managed processes, releasing any resources they may hold for next scene or state transitions.
+        /// </summary>
+        void Clear();
     }
 }
