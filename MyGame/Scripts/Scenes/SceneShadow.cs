@@ -26,7 +26,7 @@ namespace MyGame.Scripts.Scenes
 
         private SoundEffect _soundEffect;
 
-        private Entity _entity;
+        private GameObject _entity;
         private Tilemap _tilemap;
         private Text _bitmapText;
 
@@ -46,7 +46,7 @@ namespace MyGame.Scripts.Scenes
 
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
-            _entity = new Entity(_animation, Vector2.Zero);
+            _entity = new GameObject(_animation, Vector2.Zero);
 
             _following = _entity;
 
@@ -65,7 +65,7 @@ namespace MyGame.Scripts.Scenes
             }
 
             Tilemap.Camera = WorldCamera;
-            Entity.Camera = WorldCamera;
+            GameObject.Camera = WorldCamera;
 
             _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))
@@ -144,7 +144,7 @@ namespace MyGame.Scripts.Scenes
             // Set the render target to draw our lights and shadows
             Application.GraphicsDevice.SetRenderTarget(_lightMap);
             // Clear with an ambient dark color (e.g., dark gray/blue).
-            Application.GraphicsDevice.Clear(new Color(20, 20, 30, 255));
+            Application.GraphicsDevice.Clear(new Color(00, 0, 100, 255));
 
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,

@@ -1,31 +1,20 @@
-﻿using FreedomEngine.Collections;
-using FreedomEngine.Collections.Tweens;
-using FreedomEngine.Collections.Utilities;
-using FreedomEngine.Components;
-using FreedomEngine.Components.Collisions;
+﻿using FreedomEngine.Components;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace FreedomEngine.UI
 {
-    public class UIElement : Entity
+    public class UIElement : DrawableEntity
     {
-        #region Fields
-
-        private Vector2 _startPosition;
-
-        private Tween _hoverTween;
-
-        private Rectangle _hoverRectangle;
-
-        #endregion
-
         #region Properties
+
+        public UIElement Parent { get; set; } = null;
+
+        public Vector2 PositionDraw { get; set; } = Vector2.Zero;
 
         public bool IsFocused { get; set; } = false;
 
@@ -37,14 +26,19 @@ namespace FreedomEngine.UI
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// Triggered when the button is successfully clicked and released while hovered.
+        /// </summary>
+        public event Action OnClick;
+
+        #endregion
+
         #region Constructors
 
         public UIElement(Sprite sprite, Vector2 position) : base(sprite, position)
         {
-            _hoverRectangle = new Rectangle((int)position.X, (int)position.Y, (int)Width, (int)Height);
-
-            //_hoverTween = new Tween(0.2f, 0.0f, 1.0f, EaseInOut);
-            _startPosition = new Vector2(position.X, position.Y);
         }
 
         #endregion
@@ -57,8 +51,9 @@ namespace FreedomEngine.UI
 
             var mouse = Application.Input.Mouse;
             var mousePosition = new Vector2(mouse.Position.X / mouse.UIScale.X, mouse.Position.Y / mouse.UIScale.Y);
+            var hoverRectangle = new Rectangle((int)(X + (Parent?.Position.X ?? 0)), (int)(Y + (Parent?.Position.Y ?? 0)), (int)Width, (int)Height);
 
-            if (_hoverRectangle.Contains(mousePosition))
+            if (hoverRectangle.Contains(mousePosition))
             {
                 if (!IsHovered)
                 {
@@ -81,12 +76,27 @@ namespace FreedomEngine.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
+            if (!Visible || Sprite?.Animation.Frames == null)
+                return;
+
+            var origin = Sprite.Origin;
+            var position = new Vector2(X + PositionDraw.X + (Parent?.Position.X ?? 0), Y + PositionDraw.Y + (Parent?.Position.Y ?? 0));
+
+            Sprite.Animation.Frames[CurrentFrame].Draw(
+                spriteBatch,
+                position,
+                Color,
+                Rotation,
+                origin,
+                Scale,
+                Effects,
+                LayerDepth
+            );
         }
 
         #endregion
 
-        #region Public Methods
+        #region Protected Methods
 
         protected virtual void OnFocus(bool focus)
         {
@@ -96,22 +106,6 @@ namespace FreedomEngine.UI
         protected virtual void OnHovered(bool hovered)
         {
             IsHovered = hovered;
-
-            if (_hoverTween != null && !_hoverTween.IsFinished)
-            {
-                _hoverTween.Stop();
-            }
-
-            if (hovered)
-            {
-                //_hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition + new Vector2(20, 0), TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
-                _hoverTween = new TweenVector2(Position, _startPosition + new Vector2(20, 0), TimeSpan.FromSeconds(0.15), val => Position = val, EasingFunctions.SineInOut);
-            }
-            else
-            {
-                //_hoverTween = Application.Tweens.TweenPosition(this, Position, _startPosition, TimeSpan.FromSeconds(0.15), EasingFunctions.SineInOut);
-                _hoverTween = new TweenVector2(Position, _startPosition, TimeSpan.FromSeconds(0.15), val => Position = val, EasingFunctions.SineInOut);
-            }
         }
 
         protected virtual void OnEnabled(bool enabled)
@@ -123,7 +117,10 @@ namespace FreedomEngine.UI
         {
             IsPressed = pressed;
 
-            Logger.Info($"UIElement {(pressed ? "Pressed" : "Released")} at Position: {Position}");
+            if (pressed)
+            {
+                OnClick?.Invoke();
+            }
         }
 
         #endregion

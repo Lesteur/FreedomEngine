@@ -40,7 +40,7 @@ namespace FreedomEngine.Components.Collisions
 
         public OneWayCollision OneWayCollision { get; set; }
 
-        public Entity Collider { get; set; }
+        public GameObject Collider { get; set; }
 
         public abstract float BBoxLeft { get; }
 

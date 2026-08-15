@@ -32,7 +32,7 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Represents the entity that is currently being followed.
         /// </summary>
-        protected Entity _following;
+        protected GameObject _following;
 
         /// <summary>
         /// Pre-calculated scaling matrix to adapt the virtual resolution to the actual window size, maintaining aspect ratio.

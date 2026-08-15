@@ -10,7 +10,7 @@ using FreedomEngine.Components.Collisions;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
-    public class MovingPlatform : Entity
+    public class MovingPlatform : GameObject
     {
         #region Fields
 

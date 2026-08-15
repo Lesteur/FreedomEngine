@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using FreedomEngine.Components.Collisions; // Assuming this is where CollisionMask is
+
+using FreedomEngine.Collections.Utilities;
+using FreedomEngine.Components.Collisions;
 
 namespace MyGame.Scripts.Metroid.States
 {
@@ -89,7 +91,7 @@ namespace MyGame.Scripts.Metroid.States
                         _animState = AnimState.Brake;
 
                         // Fast deceleration during brake
-                        _player.XSpeed = Approach(_player.XSpeed, 0, _player.Physics.BrakeFriction);
+                        _player.XSpeed = MathUtil.Approach(_player.XSpeed, 0, _player.Physics.BrakeFriction);
 
                         // Once stopped, officially change direction
                         if (Math.Abs(_player.XSpeed) < 0.1f)
@@ -102,13 +104,13 @@ namespace MyGame.Scripts.Metroid.States
                         // Normal acceleration
                         _player.Direction = _player.InputMoveX;
                         _animState = AnimState.Run;
-                        _player.XSpeed = Approach(_player.XSpeed, _player.InputMoveX * maxSpeed, _player.Physics.GroundAccel);
+                        _player.XSpeed = MathUtil.Approach(_player.XSpeed, _player.InputMoveX * maxSpeed, _player.Physics.GroundAccel);
                     }
                 }
                 else
                 {
                     // No input: decelerate to a stop
-                    _player.XSpeed = Approach(_player.XSpeed, 0, _player.Physics.GroundDecel);
+                    _player.XSpeed = MathUtil.Approach(_player.XSpeed, 0, _player.Physics.GroundDecel);
 
                     if (Math.Abs(_player.XSpeed) < 0.05f)
                     {
@@ -122,11 +124,11 @@ namespace MyGame.Scripts.Metroid.States
                 // Airborne horizontal physics
                 if (_player.InputMoveX != 0)
                 {
-                    _player.XSpeed = Approach(_player.XSpeed, _player.InputMoveX * maxSpeed, _player.Physics.AirAccel);
+                    _player.XSpeed = MathUtil.Approach(_player.XSpeed, _player.InputMoveX * maxSpeed, _player.Physics.AirAccel);
                 }
                 else
                 {
-                    _player.XSpeed = Approach(_player.XSpeed, 0, _player.Physics.AirFriction);
+                    _player.XSpeed = MathUtil.Approach(_player.XSpeed, 0, _player.Physics.AirFriction);
                 }
             }
         }
@@ -213,15 +215,6 @@ namespace MyGame.Scripts.Metroid.States
                     StateMachine.ChangeState(StateMachine.GripState);
                 }
             }
-        }
-
-        // Math utility to move a value towards a target by a maximum step
-        private float Approach(float current, float target, float maxStep)
-        {
-            if (current < target)
-                return Math.Min(current + maxStep, target);
-            else
-                return Math.Max(current - maxStep, target);
         }
 
         #endregion

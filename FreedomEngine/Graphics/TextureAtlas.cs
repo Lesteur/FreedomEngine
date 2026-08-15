@@ -114,7 +114,7 @@ namespace FreedomEngine.Graphics
             if (_sprites.ContainsKey(name))
                 throw new ArgumentException("A sprite with the specified name already exists.", nameof(name));
 
-            Sprite sprite = new(Texture, frameCount, origin, delay, x, y, width, height, xMargin, yMargin);
+            Sprite sprite = new(Texture, frameCount, delay, origin, x, y, width, height, xMargin, yMargin);
             _sprites.Add(name, sprite);
         }
 

@@ -8,7 +8,7 @@ using FreedomEngine.Graphics;
 
 namespace FreedomEngine.Collections.Special.Metroidvania
 {
-    public abstract class PhysicalEntity : Entity
+    public abstract class PhysicalEntity : GameObject
     {
         #region Fields
 

@@ -2,7 +2,6 @@
 using System.Collections;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -31,10 +30,10 @@ namespace MyGame.Scripts.Scenes
         private Sprite _animation;
         private Tileset _tileset;
 
-        private Entity _entity;
+        private GameObject _entity;
         private Tilemap _tilemap;
         private Text _bitmapText;
-        private UIElement _uiElement;
+        private UIList _uiElement;
         private ParticleEmitter<ParticleDefault> _particleEmitter;
 
         private CollisionMask _collision1;
@@ -69,10 +68,31 @@ namespace MyGame.Scripts.Scenes
 
             _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
 
-            _uiElement = new UIElement(_animation, new Vector2(150, 150));
+            _uiElement = new UIList(new Vector2(150, 150), 10f);
+
+            var _but1 = new MyButton(_animation, new Vector2(0, 0), "Click Me!", _font);
+            _but1.OnClick += () =>
+            {
+                Logger.Info("Button 1 clicked!");
+            };
+            _uiElement.AddItem(_but1);
+
+            var _but2 = new MyButton(_animation, new Vector2(0, 0), "Click Me Too!", _font);
+            _but2.OnClick += () =>
+            {
+                Logger.Info("Button 2 clicked!");
+            };
+            _uiElement.AddItem(_but2);
+
+            var _but3 = new MyButton(_animation, new Vector2(0, 0), "Click Me Three!", _font);
+            _but3.OnClick += () =>
+            {
+                Logger.Info("Button 3 clicked!");
+            };
+            _uiElement.AddItem(_but3);
 
             RectangleCollision collision = new(new Vector2(0, 0), 1, 32, 32);
-            _entity = new Entity(_animation, Vector2.Zero, collision);
+            _entity = new GameObject(_animation, Vector2.Zero, collision);
 
             _following = _entity;
 
@@ -91,7 +111,7 @@ namespace MyGame.Scripts.Scenes
             }
 
             Tilemap.Camera = WorldCamera;
-            Entity.Camera = WorldCamera;
+            GameObject.Camera = WorldCamera;
 
             _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))
@@ -159,8 +179,8 @@ namespace MyGame.Scripts.Scenes
 
                 //_tween = new TweenColor(Color.Blue, Color.Red, TimeSpan.FromSeconds(2), val => _entity.Color = val, EasingFunctions.BounceOut);
                 //_tween = new TweenVector2(Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2), val => _entity.Scale = val, EasingFunctions.BounceOut);
-                _tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
-                //_tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(3), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
+                //_tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
+                _tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(4), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
 
                 Logger.Info("Coroutine");
 

@@ -169,7 +169,7 @@ namespace FreedomEngine.Core
             {
                 NextScene = next;
 
-                Entity.Scene = next;
+                GameObject.Scene = next;
                 Coroutine.Controller = next.Coroutines;
                 Tween.Controller = next.Tweens;
                 CollisionMask.Controller = next.Collisions;

@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace FreedomEngine.Collections.Special.RPG
 {
-    public abstract class Battler
+    public class BattlerAlly : Battler
     {
-        public BattlerData Data { get; set; }
     }
 }

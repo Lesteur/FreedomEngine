@@ -8,22 +8,26 @@ namespace FreedomEngine.Collections.Special.RPG
 {
     public struct Stats
     {
-        public uint HP { get; set; }
+        public int HP { get; set; }
 
-        public uint SP { get; set; }
+        public int SP { get; set; }
 
-        public uint Attack { get; set; }
+        public int Attack { get; set; }
 
-        public uint Magic { get; set; }
+        public int Magic { get; set; }
 
-        public uint Defense { get; set; }
+        public int Defense { get; set; }
 
-        public uint MagicDefense { get; set; }
+        public int MagicDefense { get; set; }
 
-        public uint Precision { get; set; }
+        public int Precision { get; set; }
 
-        public uint Dodge { get; set; }
+        public int Dodge { get; set; }
 
-        public uint Speed { get; set; }
+        public int Speed { get; set; }
+
+        public float CriticalRate { get; set; }
+
+        public float CriticalPower { get; set; }
     }
 }

@@ -494,18 +494,6 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class with specific X and Y coordinates.
-        /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
-        /// <param name="x">The X position of the text.</param>
-        /// <param name="y">The Y position of the text.</param>
-        public Text(BitmapFont font, string text, int x, int y)
-            : this(font, text, new Vector2(x, y))
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Text"/> class at the given position.
         /// </summary>
         /// <param name="font">The bitmap font used for rendering.</param>

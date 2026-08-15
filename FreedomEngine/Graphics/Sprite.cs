@@ -19,6 +19,10 @@ namespace FreedomEngine.Graphics
         /// </summary>
         public Vector2 Origin { get; }
 
+        public float Width => Animation.Frames[0].Width;
+
+        public float Height => Animation.Frames[0].Height;
+
         #endregion
 
         #region Constructors
@@ -88,7 +92,7 @@ namespace FreedomEngine.Graphics
             Origin = origin;
         }
 
-        public Sprite(Texture2D texture2D, ushort frameCount, Vector2 origin, TimeSpan delay, ushort x, ushort y, ushort width, ushort height, ushort xMargin, ushort yMargin)
+        public Sprite(Texture2D texture2D, ushort frameCount, TimeSpan delay, Vector2 origin, ushort x, ushort y, ushort width, ushort height, ushort xMargin, ushort yMargin)
         {
             if (texture2D == null)
                 throw new ArgumentNullException(nameof(texture2D), "Texture cannot be null.");
