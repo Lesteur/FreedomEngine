@@ -47,6 +47,8 @@ namespace MyGame.Scripts.Scenes
         public override void LoadContent()
         {
             base.LoadContent();
+
+            PlayerSamus.LoadContent(Content);
         }
 
         public override void Update(GameTime gameTime)

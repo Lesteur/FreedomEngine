@@ -4,6 +4,6 @@ namespace FreedomEngine.Collections.Interfaces
 {
     public interface IDraw : IUpdate
     {
-        void Draw(SpriteBatch spriteBatch);
+        public void Draw(SpriteBatch spriteBatch);
     }
 }

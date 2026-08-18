@@ -10,31 +10,31 @@ namespace FreedomEngine.Collections.Interfaces
         /// <summary>
         /// Gets the number of active processes managed by this instance.
         /// </summary>
-        int ActiveCount { get; }
+        public int ActiveCount { get; }
 
         /// <summary>
         /// Gets whether the manager currently tracks at least one process.
         /// </summary>
-        bool HasActiveProcesses { get; }
+        public bool HasActiveProcesses { get; }
 
         /// <summary>
         /// Pauses all managed processes.
         /// </summary>
-        void PauseAll();
+        public void PauseAll();
 
         /// <summary>
         /// Resumes all managed processes.
         /// </summary>
-        void ResumeAll();
+        public void ResumeAll();
 
         /// <summary>
         /// Stops all managed processes immediately.
         /// </summary>
-        void StopAll();
+        public void StopAll();
 
         /// <summary>
         /// Clears all managed processes, releasing any resources they may hold for next scene or state transitions.
         /// </summary>
-        void Clear();
+        public void Clear();
     }
 }

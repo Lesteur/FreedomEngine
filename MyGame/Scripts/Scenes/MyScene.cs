@@ -66,7 +66,13 @@ namespace MyGame.Scripts.Scenes
 
             _particleEmitter = new ParticleEmitter<ParticleDefault>(Core.PixelTexture, 100, new Vector2(200, 200), texture => new ParticleDefault(texture));
 
-            _animation = new Sprite(_texture, 14, TimeSpan.FromSeconds(0.05));
+            TextureRegion[] frames = new TextureRegion[14];
+            for (int i = 0; i < 14; i++)
+            {
+                TextureRegion region = new(_texture, i * 28, 0, 28, 45);
+                frames[i] = region;
+            }
+            _animation = new Sprite(frames, TimeSpan.FromSeconds(0.05));
 
             _uiElement = new UIList(new Vector2(150, 150), 10f);
 

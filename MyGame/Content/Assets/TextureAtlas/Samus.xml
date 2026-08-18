@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas>
+    <Texture>Assets/Textures/Samus</Texture>
+    <Sprites>
+	<Sprite name="StandCenter" xorigin="0" yorigin="0" width="25" height="48" x="4" y="16" framecount="1" delay="0" xspace="0" />
+	<Sprite name="StandRight" xorigin="0" yorigin="0" width="29" height="43" x="4" y="68" framecount="6" delay="150" xspace="2" />
+	<Sprite name="StandLeft" xorigin="0" yorigin="0" width="29" height="43" x="4" y="115" framecount="6" delay="150" xspace="2" />
+	<Sprite name="RunLeg" xorigin="18" yorigin="2" width="36" height="29" x="4" y="162" framecount="22" delay="30" xspace="2" />
+	<Sprite name="RunRight" xorigin="10" yorigin="18" width="26" height="25" x="4" y="245" framecount="22" delay="30" xspace="2" />
+	<Sprite name="RunLeft" xorigin="10" yorigin="19" width="25" height="23" x="4" y="274" framecount="22" delay="30" xspace="2" />
+    </Sprites>
+</TextureAtlas>

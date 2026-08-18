@@ -37,21 +37,18 @@ namespace FreedomEngine.Graphics
         #region Constructors
 
         /// <summary>
-        /// Creates a new instance of the <see cref="TextureAtlas"/> class with no source texture.
-        /// </summary>
-        public TextureAtlas()
-        {
-            _regions = [];
-            _sprites = [];
-        }
-
-        /// <summary>
         /// Creates a new instance of the <see cref="TextureAtlas"/> class using the specified source texture.
         /// </summary>
         /// <param name="texture">The source texture to be used for this texture atlas.</param>
-        public TextureAtlas(Texture2D texture) : this()
+        public TextureAtlas(Texture2D texture)
         {
+            if (texture == null)
+                throw new ArgumentNullException(nameof(texture), "The source texture cannot be null.");
+
             Texture = texture;
+
+            _regions = [];
+            _sprites = [];
         }
 
         #endregion
@@ -62,16 +59,15 @@ namespace FreedomEngine.Graphics
         /// Creates a new region and adds it to this texture atlas.
         /// </summary>
         /// <param name="name">The name to give the texture region.</param>
-        /// <param name="x">The top-left x-coordinate position of the region boundary relative to the top-left corner of the source texture boundary.</param>
-        /// <param name="y">The top-left y-coordinate position of the region boundary relative to the top-left corner of the source texture boundary.</param>
-        /// <param name="width">The width, in pixels, of the region.</param>
-        /// <param name="height">The height, in pixels, of the region.</param>
-        public void AddRegion(string name, ushort x, ushort y, ushort width, ushort height)
+        /// <param name="region">The texture region to add.</param>
+        public void AddRegion(string name, TextureRegion region)
         {
-            if (Texture == null)
-                throw new InvalidOperationException("Cannot add a region to an atlas without a source texture.");
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name), "The name cannot be null or empty.");
 
-            TextureRegion region = new(Texture, x, y, width, height);
+            if (region == null)
+                throw new ArgumentNullException(nameof(region), "The region cannot be null.");
+
             _regions.Add(name, region);
         }
 
@@ -106,15 +102,12 @@ namespace FreedomEngine.Graphics
         /// <param name="sprite">The sprite to add.</param>
         public void AddSprite(string name, Sprite sprite)
         {
-            _sprites.Add(name, sprite);
-        }
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name), "The name cannot be null or empty.");
 
-        public void AddSprite(string name, ushort frameCount, Vector2 origin, TimeSpan delay, ushort x, ushort y, ushort width, ushort height, ushort xMargin = 0, ushort yMargin = 0)
-        {
-            if (_sprites.ContainsKey(name))
-                throw new ArgumentException("A sprite with the specified name already exists.", nameof(name));
+            if (sprite == null)
+                throw new ArgumentNullException(nameof(sprite), "The sprite cannot be null.");
 
-            Sprite sprite = new(Texture, frameCount, delay, origin, x, y, width, height, xMargin, yMargin);
             _sprites.Add(name, sprite);
         }
 

@@ -10,31 +10,31 @@ namespace FreedomEngine.Collections.Interfaces
         /// <summary>
         /// Gets whether the process is currently paused.
         /// </summary>
-        bool IsPaused { get; }
+        public bool IsPaused { get; }
 
         /// <summary>
         /// Gets whether the process has stopped or finished.
         /// </summary>
-        bool IsFinished { get; }
+        public bool IsFinished { get; }
 
         /// <summary>
         /// Gets whether the process is currently running.
         /// </summary>
-        bool IsRunning { get; }
+        public bool IsRunning { get; }
 
         /// <summary>
         /// Pauses the process execution.
         /// </summary>
-        void Pause();
+        public void Pause();
 
         /// <summary>
         /// Resumes the process execution.
         /// </summary>
-        void Resume();
+        public void Resume();
 
         /// <summary>
         /// Stops the process execution immediately.
         /// </summary>
-        void Stop();
+        public void Stop();
     }
 }

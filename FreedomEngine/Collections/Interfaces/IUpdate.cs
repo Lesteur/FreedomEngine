@@ -4,6 +4,6 @@ namespace FreedomEngine.Collections.Interfaces
 {
     public interface IUpdate
     {
-        void Update(GameTime gameTime);
+        public void Update(GameTime gameTime);
     }
 }

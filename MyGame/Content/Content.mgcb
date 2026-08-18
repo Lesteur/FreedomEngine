@@ -77,19 +77,12 @@
 /processor:BitmapFontProcessor
 /build:Assets/Fonts/ZeldaFont.fnt;Assets/Fonts/ZeldaFont
 
-#begin Assets/Textures/background-pattern.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Assets/Textures/background-pattern.png;Assets/Textures/background-pattern
+#begin Assets/TextureAtlas/Samus.xml
+/importer:TextureAtlasImporter
+/processor:TextureAtlasProcessor
+/build:Assets/TextureAtlas/Samus.xml;Assets/TextureAtlas/Samus
 
-#begin Assets/Textures/spr_jonathan.png
+#begin Assets/Textures/Background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -99,9 +92,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/spr_jonathan.png;Assets/Textures/spr_jonathan
+/build:Assets/Textures/Background.png;Assets/Textures/Background
 
-#begin Assets/Textures/spr_samus.png
+#begin Assets/Textures/Jonathan.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -111,9 +104,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/spr_samus.png;Assets/Textures/spr_samus
+/build:Assets/Textures/Jonathan.png;Assets/Textures/Jonathan
 
-#begin Assets/Textures/Tileset.png
+#begin Assets/Textures/Samus.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -123,7 +116,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Assets/Textures/Tileset.png;Assets/Textures/Tileset
+/build:Assets/Textures/Samus.png;Assets/Textures/Samus
+
+#begin Assets/Textures/Tilesets/Tileset.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/Tilesets/Tileset.png;Assets/Textures/Tilesets/Tileset
 
 #begin Assets/Textures/Tilesets/TilesetMario.png
 /importer:TextureImporter
