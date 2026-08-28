@@ -11,15 +11,15 @@ namespace FreedomEngine.Collections.Special.RPG
 
         public string IDDescription { get; set; }
 
-        public Func<IEnumerator> Function { get; set; }
+        public Func<BattleSystem> Function { get; set; }
+
+        public ContextTypeEnum ContextType { get; set; }
+
+        public TargetTypeEnum TargetType { get; set; }
 
         public int SPCost { get; set; }
 
         public int Power { get; set; }
-
-        public TargetTypeEnum TargetType { get; set; }
-
-        public bool CanTargetSelf { get; set; }
 
         public bool RequiresLineOfSight { get; set; }
     }

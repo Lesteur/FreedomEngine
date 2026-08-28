@@ -62,9 +62,6 @@ namespace FreedomEngine.Graphics
         /// <param name="ySpacing">The vertical spacing in pixels between adjacent tiles.</param>
         public Tileset(TextureRegion textureRegion, ushort tileWidth, ushort tileHeight, ushort xMargin = 0, ushort yMargin = 0, ushort xSpacing = 0, ushort ySpacing = 0)
         {
-            if (textureRegion == null)
-                throw new ArgumentNullException(nameof(textureRegion), "Texture region cannot be null.");
-
             Animations = new Dictionary<ushort, TileAnimation>();
             TileWidth = tileWidth;
             TileHeight = tileHeight;

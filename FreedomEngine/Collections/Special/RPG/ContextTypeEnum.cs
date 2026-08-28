@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace FreedomEngine.Collections.Special.RPG
 {
-    public class BattlerData
+    public enum ContextTypeEnum
     {
-        public Stats BaseStats { get; set; }
+        Battle,
+        Exploration,
+        All,
+        None
     }
 }

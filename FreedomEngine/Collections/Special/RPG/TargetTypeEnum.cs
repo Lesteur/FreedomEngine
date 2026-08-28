@@ -10,10 +10,12 @@ namespace FreedomEngine.Collections.Special.RPG
     {
         Self,
         Tile,
-        Enemy,
         Ally,
-        AllEnemies,
+        AllyExceptSelf,
         AllAllies,
+        AllAlliesExceptSelf,
+        Enemy,
+        AllEnemies,
         All
     }
 }

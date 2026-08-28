@@ -198,9 +198,6 @@ namespace MyGame.Scripts.Scenes
 
             if (Core.Input.Keyboard.WasKeyJustPressed(Keys.Enter))
             {
-                /*
-                
-                */
                 Application.ChangeScene(new SceneShadow());
             }
 

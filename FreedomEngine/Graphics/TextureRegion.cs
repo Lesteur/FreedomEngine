@@ -7,7 +7,7 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents a rectangular region within a texture.
     /// </summary>
-    public sealed class TextureRegion
+    public readonly struct TextureRegion
     {
         #region Properties
 

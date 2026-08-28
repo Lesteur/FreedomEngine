@@ -65,9 +65,6 @@ namespace FreedomEngine.Graphics
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException(nameof(name), "The name cannot be null or empty.");
 
-            if (region == null)
-                throw new ArgumentNullException(nameof(region), "The region cannot be null.");
-
             _regions.Add(name, region);
         }
 

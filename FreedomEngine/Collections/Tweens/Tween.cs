@@ -65,9 +65,7 @@ namespace FreedomEngine.Collections.Tweens
             Elapsed = TimeSpan.Zero;
 
             if (Controller == null)
-            {
                 throw new InvalidOperationException("TweenManager is not set. Please assign a TweenManager instance to the Controller property before creating tweens.");
-            }
 
             Controller.Add(this);
         }
