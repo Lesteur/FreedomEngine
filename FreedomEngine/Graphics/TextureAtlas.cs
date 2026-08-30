@@ -14,11 +14,6 @@ namespace FreedomEngine.Graphics
         #region Fields
 
         /// <summary>
-        /// Stores the mapping of texture region names to their corresponding <see cref="TextureRegion"/> objects.
-        /// </summary>
-        private readonly Dictionary<string, TextureRegion> _regions;
-
-        /// <summary>
         /// Stores the mapping of sprite names to their corresponding <see cref="Sprite"/> objects.
         /// </summary>
         private readonly Dictionary<string, Sprite> _sprites;
@@ -47,50 +42,12 @@ namespace FreedomEngine.Graphics
 
             Texture = texture;
 
-            _regions = [];
             _sprites = [];
         }
 
         #endregion
 
-        #region Public Methods (Regions)
-
-        /// <summary>
-        /// Creates a new region and adds it to this texture atlas.
-        /// </summary>
-        /// <param name="name">The name to give the texture region.</param>
-        /// <param name="region">The texture region to add.</param>
-        public void AddRegion(string name, TextureRegion region)
-        {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException(nameof(name), "The name cannot be null or empty.");
-
-            _regions.Add(name, region);
-        }
-
-        /// <summary>
-        /// Gets the region from this texture atlas with the specified name.
-        /// </summary>
-        /// <param name="name">The name of the region to retrieve.</param>
-        /// <returns>The TextureRegion with the specified name.</returns>
-        public TextureRegion GetRegion(string name)
-        {
-            return _regions[name];
-        }
-
-        /// <summary>
-        /// Removes the region from this texture atlas with the specified name.
-        /// </summary>
-        /// <param name="name">The name of the region to remove.</param>
-        /// <returns></returns>
-        public bool RemoveRegion(string name)
-        {
-            return _regions.Remove(name);
-        }
-
-        #endregion
-
-        #region Public Methods (Sprites)
+        #region Public Methods
 
         /// <summary>
         /// Adds the given sprite to this texture atlas with the specified name.
@@ -137,7 +94,6 @@ namespace FreedomEngine.Graphics
         /// </summary>
         public void Clear()
         {
-            _regions.Clear();
             _sprites.Clear();
         }
 

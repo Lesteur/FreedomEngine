@@ -12,6 +12,8 @@ namespace FreedomEngine.Graphics
     {
         #region Properties
 
+        public Texture2D Texture { get; }
+
         public Animation Animation { get; }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace FreedomEngine.Graphics
         /// <param name="frames">Ordered segment regions functioning sequentially as animation frames.</param>
         /// <param name="delay">Configured structural playback speed timing value applied across frames globally.</param>
         /// <param name="origin">The origin offset for rendering this sprite.</param>
-        public Sprite(TextureRegion[] frames, TimeSpan delay, Vector2 origin = default)
+        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan delay, Vector2 origin = default)
         {
             if (frames == null || frames.Length == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
@@ -42,11 +44,12 @@ namespace FreedomEngine.Graphics
             if (delay < TimeSpan.Zero)
                 throw new ArgumentException("Delay cannot be negative.", nameof(delay));
 
+            Texture = texture ?? throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
             Animation = new Animation(frames, delay);
             Origin = origin;
         }
 
-        public Sprite(TextureRegion[] frames, TimeSpan[] delays, Vector2 origin = default)
+        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan[] delays, Vector2 origin = default)
         {
             if (frames == null || frames.Length == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
@@ -60,6 +63,7 @@ namespace FreedomEngine.Graphics
                     throw new ArgumentException("Delays cannot contain negative values.", nameof(delays));
             }
 
+            Texture = texture ?? throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
             Animation = new Animation(frames, delays);
             Origin = origin;
         }

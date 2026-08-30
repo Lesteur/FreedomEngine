@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace FreedomEngine.Graphics
@@ -10,10 +12,12 @@ namespace FreedomEngine.Graphics
     {
         #region Properties
 
+        public Texture2D Texture { get; }
+
         /// <summary>
         /// Gets the collection of texture regions that represent the individual tiles in the tileset.
         /// </summary>
-        public TextureRegion[] Tiles { get; }
+        public Rectangle[] Tiles { get; }
 
         /// <summary>
         /// Gets the dictionary containing tile animations, mapped by their ID.
@@ -50,7 +54,7 @@ namespace FreedomEngine.Graphics
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Tileset"/> class using a base <see cref="TextureRegion"/>.
+        /// Initializes a new instance of the <see cref="Tileset"/> class using a base <see cref="Texture2D"/>.
         /// Parses the texture into a grid of tiles based on provided dimensions and margins.
         /// </summary>
         /// <param name="textureRegion">The texture region that contains the tiles for the tileset.</param>
@@ -60,20 +64,22 @@ namespace FreedomEngine.Graphics
         /// <param name="yMargin">The vertical margin in pixels between the edge of the texture and the first row of tiles.</param>
         /// <param name="xSpacing">The horizontal spacing in pixels between adjacent tiles.</param>
         /// <param name="ySpacing">The vertical spacing in pixels between adjacent tiles.</param>
-        public Tileset(TextureRegion textureRegion, ushort tileWidth, ushort tileHeight, ushort xMargin = 0, ushort yMargin = 0, ushort xSpacing = 0, ushort ySpacing = 0)
+        public Tileset(Texture2D texture, ushort tileWidth, ushort tileHeight, ushort xMargin = 0, ushort yMargin = 0, ushort xSpacing = 0, ushort ySpacing = 0)
         {
-            Animations = new Dictionary<ushort, TileAnimation>();
+            Animations = [];
+
+            Texture = texture;
             TileWidth = tileWidth;
             TileHeight = tileHeight;
 
-            int availableWidth = textureRegion.Width - (2 * xMargin);
-            int availableHeight = textureRegion.Height - (2 * yMargin);
+            int availableWidth = texture.Width - (2 * xMargin);
+            int availableHeight = texture.Height - (2 * yMargin);
 
             Columns = (ushort)((availableWidth + xSpacing) / (tileWidth + xSpacing));
             Rows = (ushort)((availableHeight + ySpacing) / (tileHeight + ySpacing));
             Count = (ushort)(Columns * Rows);
 
-            Tiles = new TextureRegion[Count];
+            Tiles = new Rectangle[Count];
 
             int index = 0;
             for (int row = 0; row < Rows; row++)
@@ -83,7 +89,7 @@ namespace FreedomEngine.Graphics
                     int x = xMargin + col * (tileWidth + xSpacing);
                     int y = yMargin + row * (tileHeight + ySpacing);
 
-                    Tiles[index] = new TextureRegion(textureRegion.Texture, x, y, tileWidth, tileHeight);
+                    Tiles[index] = new Rectangle(x, y, tileWidth, tileHeight);
                     index++;
                 }
             }
@@ -98,7 +104,7 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="index">The index of the texture region in this tile set.</param>
         /// <returns>The texture region for the tile form this tileset at the given index.</returns>
-        public TextureRegion GetTile(int index) => Tiles[index];
+        public Rectangle GetTile(int index) => Tiles[index];
 
         /// <summary>
         /// Gets the texture region for the tile from this tileset at the given location.
@@ -106,7 +112,7 @@ namespace FreedomEngine.Graphics
         /// <param name="column">The column in this tileset of the texture region.</param>
         /// <param name="row">The row in this tileset of the texture region.</param>
         /// <returns>The texture region for the tile from this tileset at given location.</returns>
-        public TextureRegion GetTile(int column, int row)
+        public Rectangle GetTile(int column, int row)
         {
             int index = row * Columns + column;
             return GetTile(index);

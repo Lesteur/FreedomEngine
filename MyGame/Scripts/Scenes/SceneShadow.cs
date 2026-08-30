@@ -44,13 +44,13 @@ namespace MyGame.Scripts.Scenes
             _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
             _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
 
-            TextureRegion[] frames = new TextureRegion[14];
+            Rectangle[] frames = new Rectangle[14];
             for (int i = 0; i < 14; i++)
             {
-                TextureRegion region = new(_texture, i * 28, 0, 28, 45);
+                Rectangle region = new(i * 28, 0, 28, 45);
                 frames[i] = region;
             }
-            _animation = new Sprite(frames, TimeSpan.FromSeconds(0.05));
+            _animation = new Sprite(_texture, frames, TimeSpan.FromSeconds(0.05));
 
             _entity = new GameObject(_animation, Vector2.Zero);
 

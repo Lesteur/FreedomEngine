@@ -183,7 +183,7 @@ namespace FreedomEngine.Components
                 ushort tilesetIndex = _animationRemap[_tiles[i]];
                 var tile = _tileset.GetTile(tilesetIndex);
 
-                tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
+                spriteBatch.Draw(_tileset.Texture, position, tile, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
             }
         }
 
@@ -218,7 +218,7 @@ namespace FreedomEngine.Components
         /// </summary>
         /// <param name="index">The index of the tile to retrieve. Must be a valid index within the tile collection.</param>
         /// <returns>The texture region corresponding to the specified tile index.</returns>
-        public TextureRegion GetTile(ushort index)
+        public Rectangle GetTile(ushort index)
         {
             return _tileset.GetTile(_tiles[index]);
         }

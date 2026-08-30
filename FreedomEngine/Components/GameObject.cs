@@ -85,16 +85,7 @@ namespace FreedomEngine.Components
                     return;
             }
 
-            Sprite.Animation.Frames[CurrentFrame].Draw(
-                spriteBatch,
-                Position,
-                Color,
-                Rotation,
-                origin,
-                Scale,
-                Effects,
-                LayerDepth
-            );
+            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
         }
 
         #endregion

@@ -182,16 +182,7 @@ namespace FreedomEngine.Components
             if (!Visible || Sprite?.Animation.Frames == null)
                 return;
 
-            Sprite.Animation.Frames[CurrentFrame].Draw(
-                spriteBatch,
-                Position,
-                Color,
-                Rotation,
-                Sprite.Origin,
-                Scale,
-                Effects,
-                LayerDepth
-            );
+            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
         }
 
         #endregion

@@ -2,6 +2,7 @@
 
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 using FreedomEngine.Graphics;
 using FreedomEngine.Graphics.BitmapFonts;
@@ -44,9 +45,7 @@ namespace FreedomEngine.Content
 
                 byte page = reader.ReadByte();
 
-                var region = new TextureRegion(textures[page], x, y, w, h);
-
-                var c = new BitmapFontCharacter(id, region, xo, yo, xa);
+                var c = new BitmapFontCharacter(id, textures[page], new Rectangle(x, y, w, h), xo, yo, xa);
 
                 characters[i] = c;
                 lookup[id] = c;

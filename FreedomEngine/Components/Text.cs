@@ -572,9 +572,9 @@ namespace FreedomEngine.Components
                     localPosition = Vector2.Transform(localPosition - Origin, rotationMatrix) + Origin;
 
                 spriteBatch.Draw(
-                    glyph.Character.TextureRegion.Texture,
+                    glyph.Character.Texture,
                     Position + localPosition,
-                    glyph.Character.TextureRegion.SourceRectangle,
+                    glyph.Character.Rectangle,
                     localColor,
                     Rotation,
                     Vector2.Zero,
@@ -876,7 +876,7 @@ namespace FreedomEngine.Components
                     float glyphBaselineOffset = Font.Baseline - character.YOffset;
                     float y = currentLineBaseline - glyphBaselineOffset * scaleY;
                     
-                    float width = character.TextureRegion.Width * scaleX;
+                    float width = character.Rectangle.Width * scaleX;
 
                     // Automatic word-wrapping (transfer word to a new line)
                     if (!isWhitespace && x + width > _maxWidth && wordStartPenX > 0f)
@@ -951,7 +951,7 @@ namespace FreedomEngine.Components
                 hasVisibleGlyphs = true;
 
                 float top = _glyphs[i].Position.Y;
-                float bottom = top + _glyphs[i].Character.TextureRegion.Height * _glyphs[i].Scale.Y;
+                float bottom = top + _glyphs[i].Character.Rectangle.Height * _glyphs[i].Scale.Y;
 
                 if (top < globalMinY) globalMinY = top;
                 if (bottom > globalMaxY) globalMaxY = bottom;
@@ -1002,7 +1002,7 @@ namespace FreedomEngine.Components
                     lineHasVisibleGlyphs = true;
 
                     float left = g.Position.X;
-                    float right = left + g.Character.TextureRegion.Width * g.Scale.X;
+                    float right = left + g.Character.Rectangle.Width * g.Scale.X;
 
                     if (left < lineMinX) lineMinX = left;
                     if (right > lineMaxX) lineMaxX = right;
@@ -1041,8 +1041,8 @@ namespace FreedomEngine.Components
 
                     float left = g.Position.X;
                     float top = g.Position.Y;
-                    float right = left + g.Character.TextureRegion.Width * g.Scale.X;
-                    float bottom = top + g.Character.TextureRegion.Height * g.Scale.Y;
+                    float right = left + g.Character.Rectangle.Width * g.Scale.X;
+                    float bottom = top + g.Character.Rectangle.Height * g.Scale.Y;
 
                     if (left < minX) minX = left;
                     if (top < minY) minY = top;

@@ -11,8 +11,8 @@ namespace FreedomEngine.Content
     {
         protected override Tileset Read(ContentReader reader, Tileset existingInstance)
         {
-            var imageHeight = reader.ReadInt32();
-            var imageWidth = reader.ReadInt32();
+            reader.ReadInt32();
+            reader.ReadInt32();
             var margin = reader.ReadUInt16();
             var name = reader.ReadString();
             var spacing = reader.ReadUInt16();
@@ -21,9 +21,8 @@ namespace FreedomEngine.Content
             var count = reader.ReadInt32();
 
             Texture2D texture = reader.ContentManager.Load<Texture2D>($"Assets/Textures/Tilesets/{name}");
-            TextureRegion region = new(texture, 0, 0, imageWidth, imageHeight);
 
-            Tileset tileset = new(region, tileWidth, tileHeight, margin, margin, spacing, spacing);
+            Tileset tileset = new(texture, tileWidth, tileHeight, margin, margin, spacing, spacing);
 
             for (int i = 0; i < count; i++)
             {

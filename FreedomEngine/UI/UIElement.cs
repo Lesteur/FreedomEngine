@@ -82,16 +82,7 @@ namespace FreedomEngine.UI
             var origin = Sprite.Origin;
             var position = new Vector2(X + PositionDraw.X + (Parent?.Position.X ?? 0), Y + PositionDraw.Y + (Parent?.Position.Y ?? 0));
 
-            Sprite.Animation.Frames[CurrentFrame].Draw(
-                spriteBatch,
-                position,
-                Color,
-                Rotation,
-                origin,
-                Scale,
-                Effects,
-                LayerDepth
-            );
+            spriteBatch.Draw(Sprite.Texture, position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, origin, Scale, Effects, LayerDepth);
         }
 
         #endregion

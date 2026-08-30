@@ -196,8 +196,8 @@ namespace FreedomEngine.Graphics.BitmapFonts
 
                 float left = x + character.XOffset;
                 float top = y + character.YOffset;
-                float right = left + character.TextureRegion.Width;
-                float bottom = top + character.TextureRegion.Height;
+                float right = left + character.Rectangle.Width;
+                float bottom = top + character.Rectangle.Height;
 
                 minX = Math.Min(minX, left);
                 minY = Math.Min(minY, top);

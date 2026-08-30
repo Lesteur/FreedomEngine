@@ -119,16 +119,8 @@ namespace MyGame.Scripts.Metroid
             if (SpriteTop != null)
             {
                 var originTop = SpriteTop.Origin;
-                SpriteTop.Animation.Frames[CurrentFrame].Draw(
-                    spriteBatch,
-                    Position,
-                    Color,
-                    Rotation,
-                    originTop,
-                    Scale,
-                    Effects,
-                    LayerDepth
-                );
+
+                spriteBatch.Draw(SpriteTop.Texture, Position, SpriteTop.Animation.Frames[CurrentFrame], Color, Rotation, originTop, Scale, Effects, LayerDepth);
             }
         }
 

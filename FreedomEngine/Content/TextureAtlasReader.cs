@@ -29,17 +29,17 @@ namespace FreedomEngine.Content
                 var delay = reader.ReadSingle();
                 var xSpace = reader.ReadInt32();
 
-                var frames = new TextureRegion[frameCount];
+                var frames = new Rectangle[frameCount];
 
                 for (int j = 0; j < frameCount; j++)
                 {
                     var frameX = x + (j * (width + xSpace));
                     var frameY = y;
-                    var region = new TextureRegion(texture, frameX, frameY, width, height);
+                    var region = new Rectangle(frameX, frameY, width, height);
                     frames[j] = region;
                 }
 
-                var sprite = new Sprite(frames, TimeSpan.FromMilliseconds(delay), new Vector2(xOrigin, yOrigin));
+                var sprite = new Sprite(texture, frames, TimeSpan.FromMilliseconds(delay), new Vector2(xOrigin, yOrigin));
                 textureAtlas.AddSprite(name, sprite);
             }
 

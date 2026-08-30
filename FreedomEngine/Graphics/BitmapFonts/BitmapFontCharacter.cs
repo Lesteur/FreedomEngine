@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace FreedomEngine.Graphics.BitmapFonts
 {
@@ -14,10 +16,9 @@ namespace FreedomEngine.Graphics.BitmapFonts
         /// </summary>
         public int Character { get; }
 
-        /// <summary>
-        /// Gets the texture region that contains the character's image.
-        /// </summary>
-        public TextureRegion TextureRegion { get; }
+        public Texture2D Texture { get; }
+
+        public Rectangle Rectangle { get; }
 
         /// <summary>
         /// Gets the horizontal offset for rendering the character.
@@ -51,10 +52,11 @@ namespace FreedomEngine.Graphics.BitmapFonts
         /// <param name="xOffset">The horizontal offset for rendering the character.</param>
         /// <param name="yOffset">The vertical offset for rendering the character.</param>
         /// <param name="xAdvance">The horizontal advance value for rendering the next character.</param>
-        public BitmapFontCharacter(int character, TextureRegion textureRegion, int xOffset, int yOffset, int xAdvance)
+        public BitmapFontCharacter(int character, Texture2D texture, Rectangle rectangle, int xOffset, int yOffset, int xAdvance)
         {
             Character = character;
-            TextureRegion = textureRegion;
+            Texture = texture;
+            Rectangle = rectangle;
             XOffset = xOffset;
             YOffset = yOffset;
             XAdvance = xAdvance;

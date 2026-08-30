@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace FreedomEngine.Graphics
 {
-    public class Animation
+    public readonly struct Animation
     {
         #region Properties
 
         /// <summary>
         /// Gets the collection of texture regions that make up the frames of this sprite.
         /// </summary>
-        public TextureRegion[] Frames { get; }
+        public Rectangle[] Frames { get; }
 
         /// <summary>
         /// Gets the amount of time to delay before moving to the next frame.
@@ -35,7 +36,7 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="frames">The collection of texture regions that make up the frames of this animation.</param>
         /// <param name="delay">The amount of time to delay before moving to the next frame.</param>
-        public Animation(TextureRegion[] frames, TimeSpan delay) : this(frames, delay, true)
+        public Animation(Rectangle[] frames, TimeSpan delay) : this(frames, delay, true)
         {
         }
 
@@ -44,7 +45,7 @@ namespace FreedomEngine.Graphics
         /// </summary>
         /// <param name="frames">The collection of texture regions that make up the frames of this animation.</param>
         /// <param name="delays">The array of delays for each frame in the animation, allowing for variable frame timing.</param>
-        public Animation(TextureRegion[] frames, TimeSpan[] delays) : this(frames, TimeSpan.Zero, false)
+        public Animation(Rectangle[] frames, TimeSpan[] delays) : this(frames, TimeSpan.Zero, false)
         {
             if (frames.Length != delays.Length)
                 throw new ArgumentException("The number of frames must match the number of delays.", nameof(delays));
@@ -52,7 +53,7 @@ namespace FreedomEngine.Graphics
             Delays = delays;
         }
 
-        private Animation(TextureRegion[] frames, TimeSpan delay, bool monoFrameDelay)
+        private Animation(Rectangle[] frames, TimeSpan delay, bool monoFrameDelay)
         {
             Frames = frames ?? throw new ArgumentNullException(nameof(frames));
             Delay = delay;

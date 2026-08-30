@@ -6,7 +6,7 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents an animation sequence for a specific tile.
     /// </summary>
-    public class TileAnimation
+    public readonly struct TileAnimation
     {
         #region Properties
 
