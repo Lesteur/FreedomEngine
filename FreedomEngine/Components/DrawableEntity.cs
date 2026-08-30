@@ -99,7 +99,7 @@ namespace FreedomEngine.Components
         /// <remarks>
         /// Width is calculated by multiplying the width of the source texture region by the x-axis scale factor.
         /// </remarks>
-        public virtual float Width => Sprite.Animation.Frames[CurrentFrame].Width * Scale.X;
+        public virtual float Width => Sprite.Frames[CurrentFrame].Width * Scale.X;
 
         /// <summary>
         /// Gets the height, in pixels, of this sprite.
@@ -107,7 +107,7 @@ namespace FreedomEngine.Components
         /// <remarks>
         /// Height is calculated by multiplying the height of the source texture region by the y-axis scale factor.
         /// </remarks>
-        public virtual float Height => Sprite.Animation.Frames[CurrentFrame].Height * Scale.Y;
+        public virtual float Height => Sprite.Frames[CurrentFrame].Height * Scale.Y;
 
         /// <summary>
         /// Gets or Sets the current animation frame index.
@@ -162,12 +162,10 @@ namespace FreedomEngine.Components
         /// <param name="gameTime">The time elapsed since the last update.</param>
         public virtual void Update(GameTime gameTime)
         {
-            if (Sprite?.Animation == null)
+            if (Sprite == null)
                 return;
 
-            var animation = Sprite.Animation;
-
-            CurrentFrame = animation.GetNextFrame(CurrentFrame, _elapsed, out TimeSpan newElapsedTime);
+            CurrentFrame = Sprite.GetNextFrame(CurrentFrame, _elapsed, out TimeSpan newElapsedTime);
             _elapsed = newElapsedTime;
 
             _elapsed += gameTime.ElapsedGameTime;
@@ -179,10 +177,10 @@ namespace FreedomEngine.Components
         /// <param name="spriteBatch">The rendering context.</param>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible || Sprite?.Animation.Frames == null)
+            if (!Visible || Sprite?.Frames == null)
                 return;
 
-            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
+            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
         }
 
         #endregion

@@ -76,13 +76,13 @@ namespace FreedomEngine.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible || Sprite?.Animation.Frames == null)
+            if (!Visible || Sprite?.Frames == null)
                 return;
 
             var origin = Sprite.Origin;
             var position = new Vector2(X + PositionDraw.X + (Parent?.Position.X ?? 0), Y + PositionDraw.Y + (Parent?.Position.Y ?? 0));
 
-            spriteBatch.Draw(Sprite.Texture, position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, origin, Scale, Effects, LayerDepth);
+            spriteBatch.Draw(Sprite.Texture, position, Sprite.Frames[CurrentFrame], Color, Rotation, origin, Scale, Effects, LayerDepth);
         }
 
         #endregion

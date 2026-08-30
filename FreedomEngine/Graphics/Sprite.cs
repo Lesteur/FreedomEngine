@@ -8,22 +8,21 @@ namespace FreedomEngine.Graphics
     /// <summary>
     /// Represents a 2D sprite, which can be either a static image or an animated sequence of frames.
     /// </summary>
-    public class Sprite
+    public class Sprite : AnimatedResource
     {
         #region Properties
 
         public Texture2D Texture { get; }
 
-        public Animation Animation { get; }
+        public Rectangle[] Frames { get; }
 
-        /// <summary>
-        /// Gets the origin offset for rendering this sprite.
-        /// </summary>
         public Vector2 Origin { get; }
 
-        public float Width => Animation.Frames[0].Width;
+        public float Width => Frames[0].Width;
 
-        public float Height => Animation.Frames[0].Height;
+        public float Height => Frames[0].Height;
+
+        public override int Length => Frames.Length;
 
         #endregion
 
@@ -35,7 +34,7 @@ namespace FreedomEngine.Graphics
         /// <param name="frames">Ordered segment regions functioning sequentially as animation frames.</param>
         /// <param name="delay">Configured structural playback speed timing value applied across frames globally.</param>
         /// <param name="origin">The origin offset for rendering this sprite.</param>
-        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan delay, Vector2 origin = default)
+        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan delay, Vector2 origin = default) : base(delay)
         {
             if (frames == null || frames.Length == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
@@ -45,11 +44,11 @@ namespace FreedomEngine.Graphics
                 throw new ArgumentException("Delay cannot be negative.", nameof(delay));
 
             Texture = texture ?? throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
-            Animation = new Animation(frames, delay);
+            Frames = frames;
             Origin = origin;
         }
 
-        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan[] delays, Vector2 origin = default)
+        public Sprite(Texture2D texture, Rectangle[] frames, TimeSpan[] delays, Vector2 origin = default) : base(delays)
         {
             if (frames == null || frames.Length == 0)
                 throw new ArgumentException("Frames collection cannot be null or empty.", nameof(frames));
@@ -64,7 +63,7 @@ namespace FreedomEngine.Graphics
             }
 
             Texture = texture ?? throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
-            Animation = new Animation(frames, delays);
+            Frames = frames;
             Origin = origin;
         }
 

@@ -120,7 +120,7 @@ namespace MyGame.Scripts.Metroid
             {
                 var originTop = SpriteTop.Origin;
 
-                spriteBatch.Draw(SpriteTop.Texture, Position, SpriteTop.Animation.Frames[CurrentFrame], Color, Rotation, originTop, Scale, Effects, LayerDepth);
+                spriteBatch.Draw(SpriteTop.Texture, Position, SpriteTop.Frames[CurrentFrame], Color, Rotation, originTop, Scale, Effects, LayerDepth);
             }
         }
 

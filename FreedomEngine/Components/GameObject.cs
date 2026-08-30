@@ -71,7 +71,7 @@ namespace FreedomEngine.Components
         /// <param name="spriteBatch">The rendering context.</param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!Visible || Sprite?.Animation.Frames == null)
+            if (!Visible || Sprite?.Frames == null)
                 return;
 
             Collision?.Draw(spriteBatch);
@@ -85,7 +85,7 @@ namespace FreedomEngine.Components
                     return;
             }
 
-            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Animation.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
+            spriteBatch.Draw(Sprite.Texture, Position, Sprite.Frames[CurrentFrame], Color, Rotation, Sprite.Origin, Scale, Effects, LayerDepth);
         }
 
         #endregion
