@@ -20,6 +20,11 @@
 /processorParam:Quality=Best
 /build:Assets/Audio/sfx_chest.wav;Assets/Audio/sfx_chest
 
+#begin Assets/Cutscenes/scene.cutscene
+/importer:CutsceneImporter
+/processor:CutsceneProcessor
+/build:Assets/Cutscenes/scene.cutscene
+
 #begin Assets/Effects/SolidColor.fx
 /importer:EffectImporter
 /processor:EffectProcessor

@@ -1,0 +1,30 @@
+@text "Hello World!"
+@text "Salut. Tout va bien ?!"
+
+@var gold 5
+@var amount 10
+
+@if (gold > 6)
+	@text "Enough gold."
+@else
+	@text "Not enough!"
+@endif
+
+@label point1
+
+@for (i 5)
+	@add gold 1
+@endfor
+
+@if (gold > 6)
+	@text "Enough gold."
+
+	@if (amount < 20)
+		@text "Hello World!"
+	@endif
+@else
+	@text "Not enough!"
+	@jumplabel point1
+@endif
+
+@text "End condition."

@@ -1,9 +1,9 @@
-﻿using System;
-
+﻿using FreedomEngine.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
-using FreedomEngine.Graphics;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System;
 
 namespace FreedomEngine.Content
 {
@@ -18,11 +18,33 @@ namespace FreedomEngine.Content
             var spacing = reader.ReadUInt16();
             var tileHeight = reader.ReadUInt16();
             var tileWidth = reader.ReadUInt16();
+
+            var texture = reader.ContentManager.Load<Texture2D>($"Assets/Textures/Tilesets/{name}");
+
+            int availableWidth = texture.Width - (2 * margin);
+            int availableHeight = texture.Height - (2 * margin);
+
+            var columns = (ushort)((availableWidth + spacing) / (tileWidth + spacing));
+            var rows = (ushort)((availableHeight + spacing) / (tileHeight + spacing));
+            var countGrid = (ushort)(columns * rows);
+
+            var tiles = new Rectangle[countGrid];
+
+            int index = 0;
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < columns; col++)
+                {
+                    int x = margin + col * (tileWidth + spacing);
+                    int y = margin + row * (tileHeight + spacing);
+
+                    tiles[index] = new Rectangle(x, y, tileWidth, tileHeight);
+                    index++;
+                }
+            }
+
+            var dictionary = new Dictionary<ushort, TileAnimation>();
             var count = reader.ReadInt32();
-
-            Texture2D texture = reader.ContentManager.Load<Texture2D>($"Assets/Textures/Tilesets/{name}");
-
-            Tileset tileset = new(texture, tileWidth, tileHeight, margin, margin, spacing, spacing);
 
             for (int i = 0; i < count; i++)
             {
@@ -44,7 +66,7 @@ namespace FreedomEngine.Content
                             listFrames[j] = reader.ReadUInt16();
                         }
 
-                        tileset.AddAnimation(id, listFrames, sharedDelay);
+                        dictionary.Add(id, new TileAnimation(listFrames, sharedDelay));
                     }
                     else
                     {
@@ -56,10 +78,13 @@ namespace FreedomEngine.Content
                             delays[j] = TimeSpan.FromMilliseconds(reader.ReadUInt16());
                         }
 
-                        tileset.AddAnimation(id, listFrames, delays);
+                        dictionary.Add(id, new TileAnimation(listFrames, delays));
                     }
                 }
             }
+
+            // Create the tileset with the loaded data
+            var tileset = new Tileset(texture, tiles, dictionary);
 
             return tileset;
         }

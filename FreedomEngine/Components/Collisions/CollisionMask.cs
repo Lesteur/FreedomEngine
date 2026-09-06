@@ -38,9 +38,9 @@ namespace FreedomEngine.Components.Collisions
 
         public uint Tag { get; set; }
 
-        public OneWayCollision OneWayCollision { get; set; }
-
         public GameObject Collider { get; set; }
+
+        public OneWayCollision OneWayCollision { get; set; }
 
         public abstract float BBoxLeft { get; }
 
@@ -56,17 +56,15 @@ namespace FreedomEngine.Components.Collisions
 
         public CollisionMask(Vector2 position, uint tag, OneWayCollision oneWayCollision = OneWayCollision.None)
         {
-            Position = position;
-            Tag = tag;
-            OneWayCollision = oneWayCollision;
-            Collider = null;
-
             if (Controller == null)
-            {
                 throw new InvalidOperationException("CollisionManager is not set. Please set CollisionMask.Controller before creating instances.");
-            }
 
             Controller.Add(this);
+
+            Position = position;
+            Tag = tag;
+            Collider = null;
+            OneWayCollision = oneWayCollision;
         }
 
         #endregion
@@ -82,7 +80,7 @@ namespace FreedomEngine.Components.Collisions
 
             spriteBatch.Draw(
                 Application.PixelTexture,
-                new Vector2(positionStart.X, positionStart.Y),
+                positionStart,
                 null,
                 Color.Red,
                 angle,

@@ -67,9 +67,7 @@ namespace FreedomEngine.Collections.Coroutines
             _isPaused = false;
 
             if (Controller == null)
-            {
                 throw new InvalidOperationException("CoroutineController must be assigned before starting the coroutine.");
-            }
 
             Controller.Add(this);
         }

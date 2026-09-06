@@ -1,0 +1,40 @@
+=== CUTSCENE DEBUG OUPUT ===
+
+--- String Table ---
+[0] "Hello World!"
+[1] "Salut. Tout va bien ?!"
+[2] "Enough gold."
+[3] "Not enough!"
+[4] "End condition."
+
+--- Instructions ---
+[0000] SetVar          | Params: 2, 6
+[0001] SetVar          | Params: 4, 5
+[0002] SetVar          | Params: 5, 1
+[0003] SetVar          | Params: 6, 20
+[0004] PrintText       | Params: 0
+[0005] PrintText       | Params: 1
+[0006] SetVar          | Params: 0, 5
+[0007] SetVar          | Params: 1, 10
+[0008] CheckVar        | Params: 0, 0, 2
+[0009] JumpIfNot       | Params: 12
+[0010] PrintText       | Params: 2
+[0011] Jump            | Params: 13
+[0012] PrintText       | Params: 3
+[0013] SetVar          | Params: 3, 0
+[0014] CheckVar        | Params: 3, 1, 4
+[0015] JumpIfNot       | Params: 19
+[0016] Add             | Params: 0, 5
+[0017] Add             | Params: 3, 5
+[0018] Jump            | Params: 14
+[0019] CheckVar        | Params: 0, 0, 2
+[0020] JumpIfNot       | Params: 26
+[0021] PrintText       | Params: 2
+[0022] CheckVar        | Params: 1, 1, 6
+[0023] JumpIfNot       | Params: 25
+[0024] PrintText       | Params: 0
+[0025] Jump            | Params: 28
+[0026] PrintText       | Params: 3
+[0027] Jump            | Params: 13
+[0028] PrintText       | Params: 4
+[0029] EndCutscene     | Params: 

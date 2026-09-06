@@ -53,46 +53,20 @@ namespace FreedomEngine.Graphics
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tileset"/> class using a base <see cref="Texture2D"/>.
-        /// Parses the texture into a grid of tiles based on provided dimensions and margins.
-        /// </summary>
-        /// <param name="textureRegion">The texture region that contains the tiles for the tileset.</param>
-        /// <param name="tileWidth">The width of each tile in the tileset.</param>
-        /// <param name="tileHeight">The height of each tile in the tileset.</param>
-        /// <param name="xMargin">The horizontal margin in pixels between the edge of the texture and the first column of tiles.</param>
-        /// <param name="yMargin">The vertical margin in pixels between the edge of the texture and the first row of tiles.</param>
-        /// <param name="xSpacing">The horizontal spacing in pixels between adjacent tiles.</param>
-        /// <param name="ySpacing">The vertical spacing in pixels between adjacent tiles.</param>
-        public Tileset(Texture2D texture, ushort tileWidth, ushort tileHeight, ushort xMargin = 0, ushort yMargin = 0, ushort xSpacing = 0, ushort ySpacing = 0)
+        public Tileset(Texture2D texture, Rectangle[] tiles, Dictionary<ushort, TileAnimation> animations)
         {
-            Animations = [];
+            Texture = texture ?? throw new ArgumentNullException(nameof(texture), "Texture cannot be null.");
 
-            Texture = texture;
-            TileWidth = tileWidth;
-            TileHeight = tileHeight;
+            if (tiles == null || tiles.Length == 0)
+                throw new ArgumentException("Tiles collection cannot be null or empty.", nameof(tiles));
 
-            int availableWidth = texture.Width - (2 * xMargin);
-            int availableHeight = texture.Height - (2 * yMargin);
-
-            Columns = (ushort)((availableWidth + xSpacing) / (tileWidth + xSpacing));
-            Rows = (ushort)((availableHeight + ySpacing) / (tileHeight + ySpacing));
-            Count = (ushort)(Columns * Rows);
-
-            Tiles = new Rectangle[Count];
-
-            int index = 0;
-            for (int row = 0; row < Rows; row++)
-            {
-                for (int col = 0; col < Columns; col++)
-                {
-                    int x = xMargin + col * (tileWidth + xSpacing);
-                    int y = yMargin + row * (tileHeight + ySpacing);
-
-                    Tiles[index] = new Rectangle(x, y, tileWidth, tileHeight);
-                    index++;
-                }
-            }
+            Tiles = tiles;
+            TileWidth = (ushort)tiles[0].Width;
+            TileHeight = (ushort)tiles[0].Height;
+            Columns = (ushort)(texture.Width / TileWidth);
+            Rows = (ushort)(texture.Height / TileHeight);
+            Count = (ushort)tiles.Length;
+            Animations = animations;
         }
 
         #endregion
