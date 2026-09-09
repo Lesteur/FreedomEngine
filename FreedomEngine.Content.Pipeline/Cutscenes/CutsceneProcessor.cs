@@ -145,7 +145,7 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
 
             string textArg = parts[1];
             if (textArg.StartsWith('\"') && textArg.EndsWith('\"'))
-                textArg = textArg.Substring(1, textArg.Length - 2);
+                textArg = textArg[1..^2]; //textArg.Substring(1, textArg.Length - 2);
 
             body.Add(new Instruction
             {
@@ -184,7 +184,6 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
             {
                 byte varIdx = GetOrAddVariable(match.Groups[1].Value);
                 byte valIdx = GetLiteralRegister(int.Parse(match.Groups[3].Value), initBlock);
-                // int op = match.Groups[2].Value == ">" ? 0 : (match.Groups[2].Value == "<" ? 1 : 2);
 
                 switch (match.Groups[2].Value)
                 {
@@ -207,8 +206,6 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
                         body.Add(new Instruction { OpCode = OpCode.CheckVar, Parameters = [varIdx, 5, valIdx] });
                         break;
                 }
-
-                // body.Add(new Instruction { OpCode = OpCode.CheckVar, Parameters = [varIdx, op, valIdx] });
 
                 int jumpIdx = body.Count;
                 body.Add(new Instruction { OpCode = OpCode.JumpIfNot, Parameters = [-1] });
@@ -285,7 +282,7 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
 
         // --- Utilities ---
 
-        private string[] SplitLine(string line)
+        private static string[] SplitLine(string line)
         {
             var matches = Regex.Matches(line, @"[\""].+?[\""]|[^ ]+");
             var result = new string[matches.Count];
@@ -293,7 +290,7 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
             return result;
         }
 
-        private int GetOrAddString(List<string> table, string value)
+        private static int GetOrAddString(List<string> table, string value)
         {
             int index = table.IndexOf(value);
             if (index == -1)
