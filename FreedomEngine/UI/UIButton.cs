@@ -61,7 +61,7 @@ namespace FreedomEngine.UI
             // Ensure the text position always follows the button's position (useful for your hover Tween)
             if (_textComponent != null)
             {
-                _textComponent.Position = Position + PositionDraw + Parent.Position + Parent.PositionDraw + _textPadding;
+                _textComponent.Position = PositionTotalDraw + _textPadding;
             }
         }
 

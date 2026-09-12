@@ -5,10 +5,11 @@ using FreedomEngine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.UI
 {
-    public class UIElement : DrawableEntity
+    public abstract class UIElement : DrawableEntity, IUIElement
     {
         #region Properties
 
@@ -16,13 +17,17 @@ namespace FreedomEngine.UI
 
         public Vector2 PositionDraw { get; set; } = Vector2.Zero;
 
-        public bool IsFocused { get; set; } = false;
+        public Vector2 PositionTotal => Position + (Parent?.PositionTotal ?? Vector2.Zero);
 
-        public bool IsHovered { get; set; } = false;
+        public Vector2 PositionTotalDraw => PositionTotal + PositionDraw + (Parent?.PositionDraw ?? Vector2.Zero);
 
-        public bool IsEnabled { get; set; } = true;
+        public bool IsFocused { get; protected set; } = false;
 
-        public bool IsPressed { get; set; } = false;
+        public bool IsHovered { get; protected set; } = false;
+
+        public bool IsEnabled { get; protected set; } = true;
+
+        public bool IsPressed { get; protected set; } = false;
 
         #endregion
 
@@ -51,7 +56,7 @@ namespace FreedomEngine.UI
 
             var mouse = Application.Input.Mouse;
             var mousePosition = new Vector2(mouse.Position.X / mouse.UIScale.X, mouse.Position.Y / mouse.UIScale.Y);
-            var hoverRectangle = new Rectangle((int)(X + (Parent?.Position.X ?? 0)), (int)(Y + (Parent?.Position.Y ?? 0)), (int)Width, (int)Height);
+            var hoverRectangle = new Rectangle((int)(PositionTotal.X), (int)(PositionTotal.Y), (int)Width, (int)Height);
 
             if (hoverRectangle.Contains(mousePosition))
             {
@@ -80,7 +85,7 @@ namespace FreedomEngine.UI
                 return;
 
             var origin = Sprite.Origin;
-            var position = new Vector2(X + PositionDraw.X + (Parent?.Position.X ?? 0), Y + PositionDraw.Y + (Parent?.Position.Y ?? 0));
+            var position = PositionTotal + PositionDraw;
 
             spriteBatch.Draw(Sprite.Texture, position, Sprite.Frames[CurrentFrame], Color, Rotation, origin, Scale, Effects, LayerDepth);
         }
