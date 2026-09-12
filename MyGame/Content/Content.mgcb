@@ -111,6 +111,18 @@
 /processorParam:TextureFormat=Color
 /build:Assets/Textures/Jonathan.png;Assets/Textures/Jonathan
 
+#begin Assets/Textures/NineSlice.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Assets/Textures/NineSlice.png;Assets/Textures/NineSlice
+
 #begin Assets/Textures/Samus.png
 /importer:TextureImporter
 /processor:TextureProcessor

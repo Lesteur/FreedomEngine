@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using FreedomEngine.Core;
 
 using FreedomEngine.Collections;
+using FreedomEngine.Collections.Structures;
 using FreedomEngine.Collections.Utilities;
 using FreedomEngine.Collections.Tweens;
 using FreedomEngine.Collections.Coroutines;
@@ -25,6 +26,7 @@ namespace MyGame.Scripts.Scenes
     public class MyScene : Scene
     {
         private Texture2D _texture;
+        private Texture2D _texture2;
         private BitmapFont _font;
 
         private Sprite _animation;
@@ -35,6 +37,7 @@ namespace MyGame.Scripts.Scenes
         private Text _bitmapText;
         private UIList _uiElement;
         private ParticleEmitter<ParticleDefault> _particleEmitter;
+        private UINineSlice _nineSlice;
 
         private CollisionMask _collision1;
         private CollisionMask _collision2;
@@ -137,14 +140,18 @@ namespace MyGame.Scripts.Scenes
 
             _collision1 = new RectangleCollision(new Vector2(100, 100), 1, 50, 50);
             _collision2 = new RectangleCollision(new Vector2(200, 200), 1, 50, 50);
+
+            _nineSlice = new UINineSlice(_texture2, new Rectangle(0, 0, 15, 15), new Vector2(100, 100));
+            _nineSlice.Dimensions = new Vector2Int(200, 200);
         }
 
         public override void LoadContent()
         {
-            _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
+            _texture = Content.Load<Texture2D>("Assets/Textures/Jonathan");
+            _texture2 = Content.Load<Texture2D>("Assets/Textures/NineSlice");
             _tileset = Content.Load<Tileset>("Assets/Tilesets/TilesetMario");
             _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
-            _backgroundPattern = Content.Load<Texture2D>("Assets/Textures/background-pattern");
+            _backgroundPattern = Content.Load<Texture2D>("Assets/Textures/Background");
 
             base.LoadContent();
         }
@@ -248,6 +255,8 @@ namespace MyGame.Scripts.Scenes
 
             _collision1.Draw(spriteBatch);
             _collision2.Draw(spriteBatch);
+
+            _nineSlice.Draw(spriteBatch);
 
             spriteBatch.End();
         }
