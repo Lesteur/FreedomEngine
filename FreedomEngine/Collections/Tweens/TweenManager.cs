@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 
-using FreedomEngine.Components;
 using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Tweens
@@ -21,9 +20,10 @@ namespace FreedomEngine.Collections.Tweens
         private readonly List<Tween> _tweens;
 
         /// <summary>
-        /// Pending tweens to add, processed safely.
+        /// Pending tweens to add, processed at the end of the frame to avoid collection modification
+        /// during iteration.
         /// </summary>
-        private readonly List<Tween> _pendingTweens; 
+        private readonly List<Tween> _pendingTweens;
 
         #endregion
 
@@ -38,6 +38,11 @@ namespace FreedomEngine.Collections.Tweens
         /// Gets whether there are any active tweens.
         /// </summary>
         public bool HasActiveProcesses => _tweens.Count > 0;
+
+        /// <summary>
+        /// Gets a value indicating whether this manager has been disposed.
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         #endregion
 
@@ -60,8 +65,11 @@ namespace FreedomEngine.Collections.Tweens
         /// Updates the state of all active tweens, progressing their animations based on the elapsed time.
         /// </summary>
         /// <param name="gameTime">The time elapsed since the last update.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             if (_pendingTweens.Count > 0)
             {
                 _tweens.AddRange(_pendingTweens);
@@ -91,7 +99,7 @@ namespace FreedomEngine.Collections.Tweens
         #region Public Methods
 
         /// <summary>
-        /// Pauses all active tweens.
+        /// Pauses all running and pending tweens.
         /// </summary>
         public void PauseAll()
         {
@@ -99,10 +107,15 @@ namespace FreedomEngine.Collections.Tweens
             {
                 tween.Pause();
             }
+
+            foreach (var tween in _pendingTweens)
+            {
+                tween.Pause();
+            }
         }
 
         /// <summary>
-        /// Resumes all active tweens.
+        /// Resumes all running and pending tweens.
         /// </summary>
         public void ResumeAll()
         {
@@ -110,10 +123,15 @@ namespace FreedomEngine.Collections.Tweens
             {
                 tween.Resume();
             }
+
+            foreach (var tween in _pendingTweens)
+            {
+                tween.Resume();
+            }
         }
 
         /// <summary>
-        /// Stops all active tweens immediately.
+        /// Stops all running and pending tweens immediately, and clears them from this manager.
         /// </summary>
         public void StopAll()
         {
@@ -131,6 +149,7 @@ namespace FreedomEngine.Collections.Tweens
             _pendingTweens.Clear();
         }
 
+        /// <inheritdoc/>
         public void Clear()
         {
             StopAll();
@@ -140,8 +159,15 @@ namespace FreedomEngine.Collections.Tweens
 
         #region Internal Methods
 
+        /// <summary>
+        /// Queues a tween to be added to this manager on the next <see cref="Update"/> call.
+        /// </summary>
+        /// <param name="tween">The tween to add.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="tween"/> is <see langword="null"/>.</exception>
         internal void Add(Tween tween)
         {
+            ArgumentNullException.ThrowIfNull(tween);
+
             _pendingTweens.Add(tween);
         }
 
@@ -150,11 +176,17 @@ namespace FreedomEngine.Collections.Tweens
         #region IDisposable Implementation
 
         /// <summary>
-        /// Disposes of this tween manager and cleans up resources.
+        /// Disposes of this tween manager, stopping all tweens and cleaning up resources.
         /// </summary>
+        /// <remarks>Calling this method more than once has no additional effect.</remarks>
         public void Dispose()
         {
+            if (IsDisposed)
+                return;
+
             StopAll();
+
+            IsDisposed = true;
             GC.SuppressFinalize(this);
         }
 

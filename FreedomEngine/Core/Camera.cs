@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 
 namespace FreedomEngine.Core
 {
@@ -111,32 +113,41 @@ namespace FreedomEngine.Core
             get => _scale;
             set
             {
+                if (value <= 0f)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Scale must be greater than zero.");
+
                 _scale = value;
                 _dirty = true;
             }
         }
 
         /// <summary>
-        /// Gets or sets the width of the viewport.
+        /// Gets or sets the width of the viewport, in pixels.
         /// </summary>
         public int ViewportWidth
         {
             get => _viewportWidth;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Viewport width cannot be negative.");
+
                 _viewportWidth = value;
                 _dirty = true;
             }
         }
 
         /// <summary>
-        /// Gets or sets the height of the viewport.
+        /// Gets or sets the height of the viewport, in pixels.
         /// </summary>
         public int ViewportHeight
         {
             get => _viewportHeight;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Viewport height cannot be negative.");
+
                 _viewportHeight = value;
                 _dirty = true;
             }
@@ -164,19 +175,34 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
         /// </summary>
-        /// <param name="Position">The initial position of the camera.</param>
-        /// <param name="viewportWidth">The width of the viewport.</param>
-        /// <param name="viewportHeight">The height of the viewport.</param>
-        public Camera(Vector2 Position, int viewportWidth, int viewportHeight)
+        /// <param name="position">The initial position of the camera.</param>
+        /// <param name="viewportWidth">The width of the viewport, in pixels.</param>
+        /// <param name="viewportHeight">The height of the viewport, in pixels.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="viewportWidth"/> or <paramref name="viewportHeight"/> is negative.
+        /// </exception>
+        public Camera(Vector2 position, int viewportWidth, int viewportHeight)
         {
-            _position       = Position;
-            _rotation       = 0f;
-            _scale          = 1f;
-            _viewportWidth  = viewportWidth;
-            _viewportHeight = viewportHeight;
-            _dirty          = true;
+            _position = position;
+            _rotation = 0f;
+            _scale = 1f;
+
+            ViewportWidth = viewportWidth;
+            ViewportHeight = viewportHeight;
+
+            _dirty = true;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Camera"/> class.
+        /// </summary>
+        /// <param name="x">The initial X coordinate of the camera.</param>
+        /// <param name="y">The initial Y coordinate of the camera.</param>
+        /// <param name="viewportWidth">The width of the viewport, in pixels.</param>
+        /// <param name="viewportHeight">The height of the viewport, in pixels.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="viewportWidth"/> or <paramref name="viewportHeight"/> is negative.
+        /// </exception>
         public Camera(float x, float y, int viewportWidth, int viewportHeight)
             : this(new Vector2(x, y), viewportWidth, viewportHeight)
         {
@@ -186,15 +212,28 @@ namespace FreedomEngine.Core
 
         #region Public Methods
 
-        public bool IsInView(Vector2 Position, float width, float height)
+        /// <summary>
+        /// Determines whether an axis-aligned rectangle, given by its top-left corner and size, is
+        /// visible within this camera's viewport.
+        /// </summary>
+        /// <param name="position">The top-left corner of the rectangle to test.</param>
+        /// <param name="width">The width of the rectangle to test.</param>
+        /// <param name="height">The height of the rectangle to test.</param>
+        /// <returns><see langword="true"/> if the rectangle overlaps the viewport; otherwise, <see langword="false"/>.</returns>
+        /// <remarks>
+        /// This is a fast, axis-aligned overlap test. It does not account for <see cref="Rotation"/>
+        /// or <see cref="Scale"/>, so it may report false positives or negatives for a rotated or
+        /// zoomed camera.
+        /// </remarks>
+        public bool IsInView(Vector2 position, float width, float height)
         {
-            var _posX = _position.X - (_viewportWidth / 2f);
-            var _posY = _position.Y - (_viewportHeight / 2f);
+            float viewLeft = _position.X - (_viewportWidth / 2f);
+            float viewTop = _position.Y - (_viewportHeight / 2f);
 
-            return Position.X + width > _posX &&
-                   Position.X < _posX + _viewportWidth &&
-                   Position.Y + height > _posY &&
-                   Position.Y < _posY + _viewportHeight;
+            return position.X + width > viewLeft &&
+                   position.X < viewLeft + _viewportWidth &&
+                   position.Y + height > viewTop &&
+                   position.Y < viewTop + _viewportHeight;
         }
 
         #endregion

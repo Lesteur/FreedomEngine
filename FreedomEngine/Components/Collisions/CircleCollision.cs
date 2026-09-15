@@ -5,32 +5,73 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FreedomEngine.Components.Collisions
 {
+    /// <summary>
+    /// Represents a collision mask shaped as a circle, positioned by its center.
+    /// </summary>
     public class CircleCollision : CollisionMask
     {
+        #region Fields
+
+        /// <summary>
+        /// The number of line segments used to approximate the circle when drawing it for debugging.
+        /// </summary>
+        private const int DebugSegments = 32;
+
+        /// <summary>
+        /// The radius of the circle, in pixels.
+        /// </summary>
+        private float _radius;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// Gets the radius of the circle.
+        /// Gets or sets the radius of the circle, in pixels.
         /// </summary>
-        public float Radius { get; set; }
+        /// <exception cref="ArgumentOutOfRangeException">The value is negative.</exception>
+        public float Radius
+        {
+            get => _radius;
+            set
+            {
+                if (value < 0f)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, "Radius cannot be negative.");
+
+                _radius = value;
+            }
+        }
 
         /// <summary>
-        /// Gets the diameter of the circle (twice the radius).
+        /// Gets the diameter of the circle (twice the radius), in pixels.
         /// </summary>
         public float Diameter => Radius * 2f;
 
+        /// <inheritdoc/>
         public override float BBoxLeft => Position.X - Radius;
 
+        /// <inheritdoc/>
         public override float BBoxRight => Position.X + Radius;
 
+        /// <inheritdoc/>
         public override float BBoxTop => Position.Y - Radius;
 
+        /// <inheritdoc/>
         public override float BBoxBottom => Position.Y + Radius;
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CircleCollision"/> class.
+        /// </summary>
+        /// <param name="position">The position of the circle's center.</param>
+        /// <param name="tag">The tag bits identifying which category or categories this mask belongs to.</param>
+        /// <param name="radius">The radius of the circle, in pixels.</param>
+        /// <param name="oneWayCollision">The direction from which this mask may be collided with.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="radius"/> is negative.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="CollisionMask.Controller"/> has not been assigned.</exception>
         public CircleCollision(Vector2 position, uint tag, float radius, OneWayCollision oneWayCollision = OneWayCollision.None) : base(position, tag, oneWayCollision)
         {
             Radius = radius;
@@ -40,18 +81,22 @@ namespace FreedomEngine.Components.Collisions
 
         #region Lifecycle Methods
 
+        /// <summary>
+        /// Draws a debug visualization of this circle, approximated with line segments.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch used for rendering.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spriteBatch"/> is <see langword="null"/>.</exception>
         public override void Draw(SpriteBatch spriteBatch)
         {
             float centerX = Position.X;
             float centerY = Position.Y;
             float radius = Radius;
-            int segments = 32;
 
             // Draw circle using line segments
-            for (int i = 0; i < segments; i++)
+            for (int i = 0; i < DebugSegments; i++)
             {
-                float angle1 = (float)(2 * Math.PI * i / segments);
-                float angle2 = (float)(2 * Math.PI * (i + 1) / segments);
+                float angle1 = MathF.Tau * i / DebugSegments;
+                float angle2 = MathF.Tau * (i + 1) / DebugSegments;
 
                 float x1 = centerX + radius * MathF.Cos(angle1);
                 float y1 = centerY + radius * MathF.Sin(angle1);
@@ -66,60 +111,76 @@ namespace FreedomEngine.Components.Collisions
 
         #region Internal Methods
 
+        /// <inheritdoc/>
+        /// <remarks>The test is inclusive of the circle's edge.</remarks>
         internal override bool IntersectsPoint(PointCollision point, Vector2 thisPosition)
         {
-            float centerX = thisPosition.X + Position.X;
-            float centerY = thisPosition.Y + Position.Y;
-            float px = point.Position.X;
-            float py = point.Position.Y;
+            Vector2 center = Position + thisPosition;
 
-            float dx = px - centerX;
-            float dy = py - centerY;
+            float dx = point.Position.X - center.X;
+            float dy = point.Position.Y - center.Y;
             float distanceSquared = dx * dx + dy * dy;
 
             return distanceSquared <= Radius * Radius;
         }
 
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Finds the point on the segment closest to the circle's center and compares its distance
+        /// against the radius.
+        /// </remarks>
         internal override bool IntersectsLine(LineCollision line, Vector2 thisPosition)
         {
-            float centerX = thisPosition.X + Position.X;
-            float centerY = thisPosition.Y + Position.Y;
+            Vector2 center = Position + thisPosition;
 
-            float x1 = line.Position.X;
-            float y1 = line.Position.Y;
-            float x2 = x1 + line.PositionEnd.X;
-            float y2 = y1 + line.PositionEnd.Y;
-
-            // Vector from line start to circle center
-            float dx = centerX - x1;
-            float dy = centerY - y1;
+            Vector2 start = line.Position;
+            Vector2 end = line.PositionEnd;
 
             // Line direction vector
-            float ldx = x2 - x1;
-            float ldy = y2 - y1;
+            float ldx = end.X - start.X;
+            float ldy = end.Y - start.Y;
 
             // Line length squared
             float lineLengthSquared = ldx * ldx + ldy * ldy;
 
-            // Find closest point on line to circle center (clamped to segment)
-            float t = Math.Clamp((dx * ldx + dy * ldy) / lineLengthSquared, 0f, 1f);
+            float closestX;
+            float closestY;
 
-            // Closest point coordinates
-            float closestX = x1 + t * ldx;
-            float closestY = y1 + t * ldy;
+            if (lineLengthSquared < Epsilon)
+            {
+                // Degenerate segment: both endpoints coincide, so treat it as a single point.
+                closestX = start.X;
+                closestY = start.Y;
+            }
+            else
+            {
+                // Vector from line start to circle center
+                float dx = center.X - start.X;
+                float dy = center.Y - start.Y;
+
+                // Find closest point on line to circle center (clamped to segment)
+                float t = Math.Clamp((dx * ldx + dy * ldy) / lineLengthSquared, 0f, 1f);
+
+                closestX = start.X + t * ldx;
+                closestY = start.Y + t * ldy;
+            }
 
             // Distance from closest point to circle center
-            float distX = centerX - closestX;
-            float distY = centerY - closestY;
+            float distX = center.X - closestX;
+            float distY = center.Y - closestY;
             float distanceSquared = distX * distX + distY * distY;
 
             return distanceSquared <= Radius * Radius;
         }
 
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Clamps the circle's center to the rectangle to find the closest point, then compares its
+        /// distance against the radius.
+        /// </remarks>
         internal override bool IntersectsRectangle(RectangleCollision rectangle, Vector2 thisPosition)
         {
-            float centerX = thisPosition.X + Position.X;
-            float centerY = thisPosition.Y + Position.Y;
+            Vector2 center = Position + thisPosition;
 
             float left = rectangle.Position.X;
             float top = rectangle.Position.Y;
@@ -127,26 +188,26 @@ namespace FreedomEngine.Components.Collisions
             float bottom = top + rectangle.Height;
 
             // Find the closest point on the rectangle to the circle center
-            float closestX = Math.Clamp(centerX, left, right);
-            float closestY = Math.Clamp(centerY, top, bottom);
+            float closestX = Math.Clamp(center.X, left, right);
+            float closestY = Math.Clamp(center.Y, top, bottom);
 
             // Calculate distance from circle center to closest point
-            float dx = centerX - closestX;
-            float dy = centerY - closestY;
+            float dx = center.X - closestX;
+            float dy = center.Y - closestY;
             float distanceSquared = dx * dx + dy * dy;
 
             return distanceSquared <= Radius * Radius;
         }
 
+        /// <inheritdoc/>
+        /// <remarks>Two circles overlap when the distance between their centers is at most the sum of their radii.</remarks>
         internal override bool IntersectsCircle(CircleCollision circle, Vector2 thisPosition)
         {
-            float center1X = thisPosition.X + Position.X;
-            float center1Y = thisPosition.Y + Position.Y;
-            float center2X = circle.Position.X;
-            float center2Y = circle.Position.Y;
+            Vector2 center1 = Position + thisPosition;
+            Vector2 center2 = circle.Position;
 
-            float dx = center2X - center1X;
-            float dy = center2Y - center1Y;
+            float dx = center2.X - center1.X;
+            float dy = center2.Y - center1.Y;
             float distanceSquared = dx * dx + dy * dy;
 
             float radiusSum = Radius + circle.Radius;

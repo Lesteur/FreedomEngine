@@ -1,13 +1,15 @@
-﻿using FreedomEngine.Collections;
+﻿using System;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+
+using FreedomEngine.Collections;
 using FreedomEngine.Collections.Coroutines;
 using FreedomEngine.Collections.Interfaces;
 using FreedomEngine.Collections.Tweens;
 using FreedomEngine.Components;
 using FreedomEngine.Components.Collisions;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace FreedomEngine.Core
 {
@@ -15,6 +17,10 @@ namespace FreedomEngine.Core
     /// Represents a base scene or game state within the engine.
     /// Handles updates, rendering of the world and UI, and manages cameras.
     /// </summary>
+    /// <remarks>
+    /// A scene is expected to be constructed only after <see cref="Application"/> has been created,
+    /// since its constructor relies on the static <see cref="Application.Content"/> service provider.
+    /// </remarks>
     public abstract class Scene : IDisposable, IDraw
     {
         #region Fields
@@ -28,7 +34,7 @@ namespace FreedomEngine.Core
         /// Represents the height of the scene's world in pixels. This is used to constrain camera movement when following an entity.
         /// </summary>
         protected int _height;
-        
+
         /// <summary>
         /// Represents the entity that is currently being followed.
         /// </summary>
@@ -39,7 +45,16 @@ namespace FreedomEngine.Core
         /// </summary>
         protected Matrix _scalingMatrix;
 
+        /// <summary>
+        /// The minimum world position <see cref="WorldCamera"/> may be clamped to while following <see cref="_following"/>.
+        /// </summary>
+        /// <remarks>Must be component-wise less than or equal to <see cref="_cameraLimitsMax"/>.</remarks>
         protected Vector2 _cameraLimitsMin;
+
+        /// <summary>
+        /// The maximum world position <see cref="WorldCamera"/> may be clamped to while following <see cref="_following"/>.
+        /// </summary>
+        /// <remarks>Must be component-wise greater than or equal to <see cref="_cameraLimitsMin"/>.</remarks>
         protected Vector2 _cameraLimitsMax;
 
         #endregion
@@ -64,10 +79,19 @@ namespace FreedomEngine.Core
         /// </summary>
         public Camera UICamera { get; protected set; }
 
-        public CoroutineController Coroutines { get; protected set; }
+        /// <summary>
+        /// Gets the manager responsible for the coroutines started within this scene.
+        /// </summary>
+        public CoroutineManager Coroutines { get; protected set; }
 
+        /// <summary>
+        /// Gets the manager responsible for the tweens started within this scene.
+        /// </summary>
         public TweenManager Tweens { get; protected set; }
 
+        /// <summary>
+        /// Gets the manager responsible for collision detection within this scene.
+        /// </summary>
         public CollisionManager Collisions { get; protected set; }
 
         /// <summary>
@@ -119,7 +143,7 @@ namespace FreedomEngine.Core
 
             _following = null;
 
-            Coroutines = new CoroutineController();
+            Coroutines = new CoroutineManager();
             Tweens = new TweenManager();
             Collisions = new CollisionManager();
         }
@@ -151,8 +175,11 @@ namespace FreedomEngine.Core
         /// Updates this scene.
         /// </summary>
         /// <param name="gameTime">A snapshot of the timing values for the current frame.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public virtual void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             Coroutines.Update(gameTime);
             Tweens.Update(gameTime);
 
@@ -176,14 +203,19 @@ namespace FreedomEngine.Core
         }
 
         /// <summary>
-        /// Unloads scene-specific content.
+        /// Unloads scene-specific content: stops all audio, clears (but does not dispose) the
+        /// coroutine and tween managers, and unloads assets from <see cref="Content"/>.
         /// </summary>
+        /// <remarks>
+        /// This method is safe to call more than once; unlike <see cref="Dispose()"/>, it leaves
+        /// <see cref="Coroutines"/> and <see cref="Tweens"/> usable afterward.
+        /// </remarks>
         public virtual void UnloadContent()
         {
             Application.Audio.Clear();
 
-            Coroutines.Dispose();
-            Tweens.Dispose();
+            Coroutines.Clear();
+            Tweens.Clear();
 
             Content.Unload();
         }
@@ -196,7 +228,7 @@ namespace FreedomEngine.Core
         /// Override this to render all components composing your background and world entities.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used for rendering.</param>
-        public virtual void DrawWorld(SpriteBatch spriteBatch)
+        protected virtual void DrawWorld(SpriteBatch spriteBatch)
         {
         }
 
@@ -204,7 +236,7 @@ namespace FreedomEngine.Core
         /// Override this to render all canvas screens, HUD data, or purely screen-based UI coordinates.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used for rendering.</param>
-        public virtual void DrawUI(SpriteBatch spriteBatch)
+        protected virtual void DrawUI(SpriteBatch spriteBatch)
         {
         }
 
@@ -224,20 +256,21 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Disposes of this scene.
         /// </summary>
-        /// <param name="disposing">'
+        /// <param name="disposing">
         /// Indicates whether managed resources should be disposed. This value is only true when called from the main
         /// Dispose method. When called from the finalizer, this will be false.
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed)
-            {
                 return;
-            }
 
             if (disposing)
             {
                 UnloadContent();
+
+                Coroutines.Dispose();
+                Tweens.Dispose();
                 Content.Dispose();
             }
 

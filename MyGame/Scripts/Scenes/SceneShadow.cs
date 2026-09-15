@@ -52,7 +52,7 @@ namespace MyGame.Scripts.Scenes
             }
             _animation = new Sprite(_texture, frames, TimeSpan.FromSeconds(0.05));
 
-            _entity = new GameObject(_animation, Vector2.Zero);
+            _entity = new MyObject(_animation, Vector2.Zero);
 
             _following = _entity;
 
@@ -145,7 +145,7 @@ namespace MyGame.Scripts.Scenes
             base.Update(gameTime);
         }
 
-        public override void DrawWorld(SpriteBatch spriteBatch)
+        protected override void DrawWorld(SpriteBatch spriteBatch)
         {
             // Set the render target to draw our lights and shadows
             Application.GraphicsDevice.SetRenderTarget(_lightMap);
@@ -204,7 +204,7 @@ namespace MyGame.Scripts.Scenes
             spriteBatch.End();
         }
 
-        public override void DrawUI(SpriteBatch spriteBatch)
+        protected override void DrawUI(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,

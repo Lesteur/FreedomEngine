@@ -1,16 +1,16 @@
-﻿using FreedomEngine.Collections.Interfaces;
-using FreedomEngine.Collections.Tweens;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
+
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Coroutines
 {
     /// <summary>
     /// Manages the state and execution of all active coroutines.
     /// </summary>
-    public class CoroutineController : IProcessManager
+    public class CoroutineManager : IProcessManager
     {
         #region Fields
 
@@ -20,7 +20,8 @@ namespace FreedomEngine.Collections.Coroutines
         private readonly List<Coroutine> _coroutines;
 
         /// <summary>
-        /// Pending coroutines to add, processed at the end of the frame to avoid collection modification during iteration.
+        /// Pending coroutines to add, processed at the end of the frame to avoid collection
+        /// modification during iteration.
         /// </summary>
         private readonly List<Coroutine> _pendingCoroutines;
 
@@ -38,14 +39,19 @@ namespace FreedomEngine.Collections.Coroutines
         /// </summary>
         public bool HasActiveProcesses => _coroutines.Count > 0;
 
+        /// <summary>
+        /// Gets a value indicating whether this manager has been disposed.
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CoroutineController"/> class.
+        /// Initializes a new instance of the <see cref="CoroutineManager"/> class.
         /// </summary>
-        public CoroutineController()
+        public CoroutineManager()
         {
             _coroutines = [];
             _pendingCoroutines = [];
@@ -56,11 +62,15 @@ namespace FreedomEngine.Collections.Coroutines
         #region Lifecycle Methods
 
         /// <summary>
-        /// Updates all active coroutines.
+        /// Updates all active coroutines, adding any pending coroutines first.
         /// Called once per frame by the game loop.
         /// </summary>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             if (_pendingCoroutines.Count > 0)
             {
                 _coroutines.AddRange(_pendingCoroutines);
@@ -90,7 +100,7 @@ namespace FreedomEngine.Collections.Coroutines
         #region Public Methods
 
         /// <summary>
-        /// Pauses all running coroutines.
+        /// Pauses all running and pending coroutines.
         /// </summary>
         public void PauseAll()
         {
@@ -98,10 +108,15 @@ namespace FreedomEngine.Collections.Coroutines
             {
                 coroutine.Pause();
             }
+
+            foreach (var coroutine in _pendingCoroutines)
+            {
+                coroutine.Pause();
+            }
         }
 
         /// <summary>
-        /// Resumes all paused coroutines.
+        /// Resumes all running and pending coroutines.
         /// </summary>
         public void ResumeAll()
         {
@@ -109,10 +124,15 @@ namespace FreedomEngine.Collections.Coroutines
             {
                 coroutine.Resume();
             }
+
+            foreach (var coroutine in _pendingCoroutines)
+            {
+                coroutine.Resume();
+            }
         }
 
         /// <summary>
-        /// Stops all running coroutines immediately.
+        /// Stops all running and pending coroutines immediately, and clears them from this manager.
         /// </summary>
         public void StopAll()
         {
@@ -121,10 +141,16 @@ namespace FreedomEngine.Collections.Coroutines
                 coroutine.Stop();
             }
 
+            foreach (var coroutine in _pendingCoroutines)
+            {
+                coroutine.Stop();
+            }
+
             _coroutines.Clear();
             _pendingCoroutines.Clear();
         }
 
+        /// <inheritdoc/>
         public void Clear()
         {
             StopAll();
@@ -134,8 +160,15 @@ namespace FreedomEngine.Collections.Coroutines
 
         #region Internal Methods
 
+        /// <summary>
+        /// Queues a coroutine to be added to this manager on the next <see cref="Update"/> call.
+        /// </summary>
+        /// <param name="coroutine">The coroutine to add.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="coroutine"/> is <see langword="null"/>.</exception>
         internal void Add(Coroutine coroutine)
         {
+            ArgumentNullException.ThrowIfNull(coroutine);
+
             _pendingCoroutines.Add(coroutine);
         }
 
@@ -144,11 +177,17 @@ namespace FreedomEngine.Collections.Coroutines
         #region IDisposable Implementation
 
         /// <summary>
-        /// Disposes of this coroutine controller and cleans up resources.
+        /// Disposes of this coroutine manager, stopping all coroutines and cleaning up resources.
         /// </summary>
+        /// <remarks>Calling this method more than once has no additional effect.</remarks>
         public void Dispose()
         {
+            if (IsDisposed)
+                return;
+
             StopAll();
+
+            IsDisposed = true;
             GC.SuppressFinalize(this);
         }
 

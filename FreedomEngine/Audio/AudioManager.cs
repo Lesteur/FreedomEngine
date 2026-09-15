@@ -12,22 +12,22 @@ namespace FreedomEngine.Audio
     /// <summary>
     /// Manages audio playback for the engine, including background music and sound effects.
     /// </summary>
-    public class AudioController : IProcessManager
+    public class AudioManager : IProcessManager
     {
         #region Fields
 
         /// <summary>
-        /// Represents the collection of currently active sound effect instances.
+        /// The collection of currently active sound effect instances.
         /// </summary>
         private readonly List<SoundEffectInstance> _activeSoundEffectInstances;
 
         /// <summary>
-        /// Stores the previous volume levels for songs and sound effects to restore after unmuting.
+        /// Stores the previous song volume level to restore after unmuting.
         /// </summary>
         private float _previousSongVolume;
 
         /// <summary>
-        /// Stores the previous volume level for sound effects to restore after unmuting.
+        /// Stores the previous sound effect volume level to restore after unmuting.
         /// </summary>
         private float _previousSoundEffectVolume;
 
@@ -46,21 +46,21 @@ namespace FreedomEngine.Audio
         public bool HasActiveProcesses => _activeSoundEffectInstances.Count > 0;
 
         /// <summary>
-        /// Gets a value that indicates if audio is muted.
+        /// Gets a value indicating whether audio is currently muted.
         /// </summary>
         public bool IsMuted { get; private set; }
 
         /// <summary>
-        /// Gets a value that indicates if this audio controller has been disposed.
+        /// Gets a value indicating whether this audio manager has been disposed.
         /// </summary>
         public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// Gets or Sets the global volume of songs.
+        /// Gets or sets the global volume of songs, from 0.0 (silence) to 1.0 (full volume).
         /// </summary>
         /// <remarks>
-        /// If IsMuted is true, the getter will always return back 0.0f and the
-        /// setter will ignore setting the volume.
+        /// If <see cref="IsMuted"/> is <see langword="true"/>, the getter always returns 0.0f and the
+        /// setter is ignored.
         /// </remarks>
         public float SongVolume
         {
@@ -73,11 +73,11 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Gets or Sets the global volume of sound effects.
+        /// Gets or sets the global volume of sound effects, from 0.0 (silence) to 1.0 (full volume).
         /// </summary>
         /// <remarks>
-        /// If IsMuted is true, the getter will always return back 0.0f and the
-        /// setter will ignore setting the volume.
+        /// If <see cref="IsMuted"/> is <see langword="true"/>, the getter always returns 0.0f and the
+        /// setter is ignored.
         /// </remarks>
         public float SoundEffectVolume
         {
@@ -94,9 +94,9 @@ namespace FreedomEngine.Audio
         #region Constructors
 
         /// <summary>
-        /// Creates a new instance of the <see cref="AudioController"/> class, initializing the active sound effect instances list.
+        /// Initializes a new instance of the <see cref="AudioManager"/> class.
         /// </summary>
-        public AudioController()
+        public AudioManager()
         {
             _activeSoundEffectInstances = [];
         }
@@ -106,11 +106,15 @@ namespace FreedomEngine.Audio
         #region Lifecycle Methods
 
         /// <summary>
-        /// Updates the controller, cleaning up stopped sound instances to free memory.
+        /// Updates the manager, cleaning up stopped sound effect instances to free memory.
         /// </summary>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
-            // Iterate backwards to safely remove elements while looping
+            ArgumentNullException.ThrowIfNull(gameTime);
+
+            // Iterate backwards to safely remove elements while looping.
             for (int i = _activeSoundEffectInstances.Count - 1; i >= 0; i--)
             {
                 SoundEffectInstance instance = _activeSoundEffectInstances[i];
@@ -131,7 +135,7 @@ namespace FreedomEngine.Audio
         #region Public Methods
 
         /// <summary>
-        /// Pauses all audio.
+        /// Pauses all audio, including the current song and all active sound effects.
         /// </summary>
         public void PauseAll()
         {
@@ -142,7 +146,7 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Resumes play of all previous paused audio.
+        /// Resumes playback of all previously paused audio.
         /// </summary>
         public void ResumeAll()
         {
@@ -153,20 +157,22 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Stops all active audio immediately.
+        /// Stops all active audio immediately, including the current song and all active sound effects.
         /// </summary>
         public void StopAll()
         {
             MediaPlayer.Stop();
+
             foreach (var instance in _activeSoundEffectInstances)
                 instance.Stop();
         }
 
         /// <summary>
-        /// Plays the given sound effect.
+        /// Plays the given sound effect at full volume, centered, with no pitch adjustment, once.
         /// </summary>
         /// <param name="soundEffect">The sound effect to play.</param>
         /// <returns>The sound effect instance created by this method.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="soundEffect"/> is <see langword="null"/>.</exception>
         public SoundEffectInstance PlaySoundEffect(SoundEffect soundEffect)
         {
             return PlaySoundEffect(soundEffect, 1.0f, 0.0f, 0.0f, false);
@@ -178,12 +184,26 @@ namespace FreedomEngine.Audio
         /// <param name="soundEffect">The sound effect to play.</param>
         /// <param name="volume">The volume, ranging from 0.0 (silence) to 1.0 (full volume).</param>
         /// <param name="pitch">The pitch adjustment, ranging from -1.0 (down an octave) to 0.0 (no change) to 1.0 (up an octave).</param>
-        /// <param name="pan">The panning, ranging from -1.0 (left speaker) to 0.0 (centered), 1.0 (right speaker).</param>
-        /// <param name="isLooped">Whether the the sound effect should loop after playback.</param>
+        /// <param name="pan">The panning, ranging from -1.0 (left speaker) to 0.0 (centered) to 1.0 (right speaker).</param>
+        /// <param name="isLooped">Whether the sound effect should loop after playback.</param>
         /// <returns>The sound effect instance created by playing the sound effect.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="soundEffect"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="volume"/> is outside the range [0.0, 1.0], or <paramref name="pitch"/> or
+        /// <paramref name="pan"/> is outside the range [-1.0, 1.0].
+        /// </exception>
         public SoundEffectInstance PlaySoundEffect(SoundEffect soundEffect, float volume, float pitch, float pan, bool isLooped)
         {
             ArgumentNullException.ThrowIfNull(soundEffect);
+
+            if (volume < 0.0f || volume > 1.0f)
+                throw new ArgumentOutOfRangeException(nameof(volume), volume, "Volume must be between 0.0 and 1.0.");
+
+            if (pitch < -1.0f || pitch > 1.0f)
+                throw new ArgumentOutOfRangeException(nameof(pitch), pitch, "Pitch must be between -1.0 and 1.0.");
+
+            if (pan < -1.0f || pan > 1.0f)
+                throw new ArgumentOutOfRangeException(nameof(pan), pan, "Pan must be between -1.0 and 1.0.");
 
             SoundEffectInstance instance = soundEffect.CreateInstance();
 
@@ -199,12 +219,15 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Plays the given song.
+        /// Plays the given song, stopping any song that is currently playing.
         /// </summary>
         /// <param name="song">The song to play.</param>
-        /// <param name="isRepeating">Optionally specify if the song should repeat. Default is true.</param>
+        /// <param name="isRepeating">Whether the song should repeat. Defaults to <see langword="true"/>.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="song"/> is <see langword="null"/>.</exception>
         public void PlaySong(Song song, bool isRepeating = true)
         {
+            ArgumentNullException.ThrowIfNull(song);
+
             if (MediaPlayer.State == MediaState.Playing)
             {
                 MediaPlayer.Stop();
@@ -215,10 +238,15 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Mutes all audio.
+        /// Mutes all audio, remembering the current volume levels so they can be restored by
+        /// <see cref="UnmuteAudio"/>.
         /// </summary>
+        /// <remarks>Calling this method while already muted has no effect.</remarks>
         public void MuteAudio()
         {
+            if (IsMuted)
+                return;
+
             _previousSongVolume = MediaPlayer.Volume;
             _previousSoundEffectVolume = SoundEffect.MasterVolume;
 
@@ -229,10 +257,14 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Unmutes all audio to the volume level prior to muting.
+        /// Unmutes all audio, restoring the volume levels captured by <see cref="MuteAudio"/>.
         /// </summary>
+        /// <remarks>Calling this method while not muted has no effect.</remarks>
         public void UnmuteAudio()
         {
+            if (!IsMuted)
+                return;
+
             MediaPlayer.Volume = _previousSongVolume;
             SoundEffect.MasterVolume = _previousSoundEffectVolume;
 
@@ -240,7 +272,7 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Toggles the current audio mute state.
+        /// Toggles the current audio mute state, muting if currently unmuted and vice versa.
         /// </summary>
         public void ToggleMute()
         {
@@ -250,8 +282,13 @@ namespace FreedomEngine.Audio
                 MuteAudio();
         }
 
+        /// <summary>
+        /// Stops all audio and releases every active sound effect instance.
+        /// </summary>
         public void Clear()
         {
+            StopAll();
+
             foreach (var instance in _activeSoundEffectInstances)
             {
                 if (!instance.IsDisposed)
@@ -266,7 +303,7 @@ namespace FreedomEngine.Audio
         #region IDisposable Implementation
 
         /// <summary>
-        /// Disposes of this audio controller and cleans up resources.
+        /// Disposes of this audio manager and cleans up resources.
         /// </summary>
         public void Dispose()
         {
@@ -275,12 +312,13 @@ namespace FreedomEngine.Audio
         }
 
         /// <summary>
-        /// Disposes this audio controller and cleans up resources.
+        /// Disposes of this audio manager and cleans up resources.
         /// </summary>
         /// <param name="disposing">Indicates whether managed resources should be disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (IsDisposed) return;
+            if (IsDisposed)
+                return;
 
             if (disposing)
             {

@@ -101,7 +101,7 @@ namespace MyGame.Scripts.Scenes
             _uiElement.AddItem(_but3);
 
             RectangleCollision collision = new(new Vector2(0, 0), 1, 32, 32);
-            _entity = new GameObject(_animation, Vector2.Zero, collision);
+            _entity = new MyObject(_animation, Vector2.Zero, collision);
 
             _following = _entity;
 
@@ -125,8 +125,8 @@ namespace MyGame.Scripts.Scenes
             _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))
             {
-                VerticalAlignment = TextVerticalAlignment.Middle,
-                HorizontalAlignment = TextHorizontalAlignment.Center,
+                VerticalAlignment = TextVerticalAlignment.Bottom,
+                HorizontalAlignment = TextHorizontalAlignment.Left,
                 MaxWidth = 400,
                 JumpHeight = 25
             };
@@ -190,10 +190,10 @@ namespace MyGame.Scripts.Scenes
                     _tween.Stop();
                 }
 
-                //_tween = new TweenColor(Color.Blue, Color.Red, TimeSpan.FromSeconds(2), val => _entity.Color = val, EasingFunctions.BounceOut);
+                _tween = new TweenColor(Color.White, Color.Black, TimeSpan.FromSeconds(5), val => _entity.Color = val, EasingFunctions.BounceOut);
                 //_tween = new TweenVector2(Vector2.One, Vector2.One * 2, TimeSpan.FromSeconds(2), val => _entity.Scale = val, EasingFunctions.BounceOut);
                 //_tween = new TweenVector2(_entity.Position, _entity.Position + new Vector2(100, 0), TimeSpan.FromSeconds(0.5), val => _entity.Position = val, EasingFunctions.SineOut);
-                _tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(4), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
+                //_tween = new TweenFloat(0, MathHelper.ToRadians(360), TimeSpan.FromSeconds(4), val => _entity.Rotation = val, EasingFunctions.QuinticInOut);
 
                 Logger.Info("Coroutine");
 
@@ -232,7 +232,7 @@ namespace MyGame.Scripts.Scenes
             base.Update(gameTime);
         }
 
-        public override void DrawWorld(SpriteBatch spriteBatch)
+        protected override void DrawWorld(SpriteBatch spriteBatch)
         {
             // Draw the background pattern first using the PointWrap sampler state.
             spriteBatch.Begin(samplerState: SamplerState.PointWrap);
@@ -261,7 +261,7 @@ namespace MyGame.Scripts.Scenes
             spriteBatch.End();
         }
 
-        public override void DrawUI(SpriteBatch spriteBatch)
+        protected override void DrawUI(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,

@@ -64,7 +64,7 @@ namespace MyGame.Scripts.Scenes
             base.Update(gameTime);
         }
 
-        public override void DrawWorld(SpriteBatch spriteBatch)
+        protected override void DrawWorld(SpriteBatch spriteBatch)
         {
             spriteBatch.Begin(
                 sortMode: SpriteSortMode.Deferred,

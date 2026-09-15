@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -104,7 +104,7 @@ namespace FreedomEngine.Components
             public float WaveAmplitude;
 
             /// <summary>
-            /// Gets a value indicating whether the rainbow effect is enabled.
+            /// Indicates whether the animated rainbow colour effect is enabled.
             /// </summary>
             public bool Rainbow;
         }
@@ -182,6 +182,12 @@ namespace FreedomEngine.Components
         #region Fields
 
         /// <summary>
+        /// The phase offset, in radians, between consecutive colour channels of the rainbow effect.
+        /// Equal to a third of a full cycle, so red, green and blue sweep the hue evenly.
+        /// </summary>
+        private const double RainbowPhaseStep = Math.Tau / 3.0;
+
+        /// <summary>
         /// The list of text runs mapped during markup parsing.
         /// </summary>
         private readonly List<TextRun> _runs = new(32);
@@ -190,11 +196,6 @@ namespace FreedomEngine.Components
         /// The list of computed glyph data ready for rendering.
         /// </summary>
         private readonly List<GlyphRenderData> _glyphs = new(128);
-
-        /// <summary>
-        /// The random number generator used for calculating shake effects.
-        /// </summary>
-        private readonly Random _random = new();
 
         /// <summary>
         /// The font used to measure and render the text.
@@ -266,7 +267,7 @@ namespace FreedomEngine.Components
         #region Properties
 
         /// <summary>
-        /// Gets or Sets the font used by the text instance. Changing this invalidates the layout.
+        /// Gets or sets the font used by the text instance. Changing this invalidates the layout.
         /// </summary>
         public BitmapFont Font
         {
@@ -282,7 +283,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the raw text content. Changing this property invalidates parsed markup and cached layout.
+        /// Gets or sets the raw text content. Changing this property invalidates parsed markup and cached layout.
         /// </summary>
         public string TextString
         {
@@ -300,37 +301,48 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the global position of the text block.
+        /// Gets or sets the global position of the text block.
         /// </summary>
         public Vector2 Position { get; set; }
 
         /// <summary>
-        /// Gets or Sets the rotation applied to the full text block, in radians.
+        /// Gets or sets the rotation applied to the full text block, in radians.
         /// </summary>
         public float Rotation { get; set; } = 0f;
 
         /// <summary>
-        /// Gets or Sets the origin used by rotation, expressed in local text layout space.
+        /// Gets or sets the origin used by rotation, expressed in local text layout space.
         /// </summary>
         public Vector2 Origin { get; set; } = Vector2.Zero;
 
         /// <summary>
-        /// Gets or Sets the maximum amount of characters to be rendered, supporting typewriter-style animations.
+        /// Gets or sets the maximum number of laid-out glyphs to render, supporting typewriter-style animations.
         /// </summary>
+        /// <remarks>
+        /// The count covers every glyph produced by layout, whitespace included, and excludes markup
+        /// tags, which produce no glyphs. Setting this to zero or less renders nothing.
+        /// </remarks>
         public int LengthSeeing { get; set; } = int.MaxValue;
 
         /// <summary>
         /// Gets the total string length of the raw text, including all markup tags.
         /// </summary>
+        /// <remarks>Compare with <see cref="LengthWithoutMarkup"/>, which counts rendered characters only.</remarks>
         public int Length => _text.Length;
 
         /// <summary>
         /// Gets the total number of characters in the text ignoring the inner markup content.
         /// </summary>
+        /// <remarks>
+        /// Reading this property parses any pending markup, so it reflects the current
+        /// <see cref="TextString"/> even before the text has first been drawn.
+        /// </remarks>
         public int LengthWithoutMarkup
         {
             get
             {
+                EnsureLayout();
+
                 int length = 0;
                 foreach (TextRun run in _runs)
                     length += run.Length;
@@ -340,7 +352,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the default base color of the text. Changing this invalidates markup style data.
+        /// Gets or sets the default base color of the text. Changing this invalidates markup style data.
         /// </summary>
         public Color DefaultColor
         {
@@ -357,7 +369,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the default base scale of the text. Changing this invalidates markup style data.
+        /// Gets or sets the default base scale of the text. Changing this invalidates markup style data.
         /// </summary>
         public Vector2 DefaultScale
         {
@@ -410,7 +422,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the horizontal alignment of the text block.
+        /// Gets or sets the horizontal alignment of the text block.
         /// Changing this property invalidates the layout.
         /// </summary>
         public TextHorizontalAlignment HorizontalAlignment
@@ -427,7 +439,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the vertical alignment of the text block.
+        /// Gets or sets the vertical alignment of the text block.
         /// Changing this property invalidates the layout.
         /// </summary>
         public TextVerticalAlignment VerticalAlignment
@@ -444,9 +456,13 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the maximum line width before wrapping text into a new line.
-        /// Changing this property invalidates the layout.
+        /// Gets or sets the maximum line width, in pixels of local layout space, before a word wraps
+        /// onto a new line. Changing this property invalidates the layout.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="int.MaxValue"/>, which disables wrapping. Wrapping moves only whole
+        /// words, so a single word wider than this value still overflows.
+        /// </remarks>
         public int MaxWidth
         {
             get => _maxWidth;
@@ -461,7 +477,7 @@ namespace FreedomEngine.Components
         }
 
         /// <summary>
-        /// Gets or Sets the vertical block distance added for each new line break.
+        /// Gets or sets the vertical block distance added for each new line break.
         /// Changing this property invalidates the layout.
         /// </summary>
         public int JumpHeight
@@ -477,6 +493,14 @@ namespace FreedomEngine.Components
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this text has been marked as disposed.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Text"/> holds no unmanaged or disposable resources and does not implement
+        /// <see cref="IDisposable"/>, so nothing in this class reads or sets this flag. It exists only
+        /// as a marker for calling code.
+        /// </remarks>
         public bool IsDisposed { get; set; }
 
         #endregion
@@ -496,8 +520,11 @@ namespace FreedomEngine.Components
         /// <summary>
         /// Initializes a new instance of the <see cref="Text"/> class at the given position.
         /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
+        /// <param name="font">
+        /// The bitmap font used for rendering. May be <see langword="null"/>, in which case the text
+        /// renders nothing until a font is assigned to <see cref="Font"/>.
+        /// </param>
+        /// <param name="text">The raw text content, which may contain markup. Treated as empty when <see langword="null"/>.</param>
         /// <param name="position">The global position of the text.</param>
         public Text(BitmapFont font, string text, Vector2 position)
         {
@@ -516,8 +543,11 @@ namespace FreedomEngine.Components
         /// Updates the text logic, specifically processing time to drive animation effects.
         /// </summary>
         /// <param name="gameTime">The current game time.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             _time += gameTime.ElapsedGameTime;
         }
 
@@ -525,9 +555,13 @@ namespace FreedomEngine.Components
         /// Draws the cached layout of glyphs to the given SpriteBatch.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch instance used for rendering.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spriteBatch"/> is <see langword="null"/>.</exception>
+        /// <remarks>Nothing is drawn when no <see cref="Font"/> is assigned.</remarks>
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (spriteBatch == null || Font == null) return;
+            ArgumentNullException.ThrowIfNull(spriteBatch);
+
+            if (Font == null) return;
 
             EnsureLayout();
 
@@ -560,12 +594,15 @@ namespace FreedomEngine.Components
 
                 if (glyph.Rainbow)
                 {
-                    // Set a color from HSV
+                    // Cycle the channels through a sine wave, each offset by a third of the cycle,
+                    // so the hue sweeps evenly rather than favouring one channel.
+                    double phase = _time.TotalSeconds * 5f + i;
+
                     localColor = Color.FromNonPremultiplied(
-                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i)),
-                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i + 2)),
-                    (int)(128 + 127 * Math.Sin(_time.TotalSeconds * 5f + i + 4)),
-                    localColor.A);
+                        (int)(128 + 127 * Math.Sin(phase)),
+                        (int)(128 + 127 * Math.Sin(phase + RainbowPhaseStep)),
+                        (int)(128 + 127 * Math.Sin(phase + RainbowPhaseStep * 2.0)),
+                        localColor.A);
                 }
 
                 if (Rotation != 0f)
@@ -597,9 +634,10 @@ namespace FreedomEngine.Components
             {
                 _glyphs.Clear();
                 _layoutBounds = RectangleF.Empty;
-                _markupDirty = false;
-                _layoutDirty = false;
                 _fontRevision = -1;
+
+                // Leave _markupDirty and _layoutDirty untouched: the pending text has not been parsed
+                // or laid out, so both must still happen once a font is assigned.
                 return;
             }
 
@@ -692,8 +730,19 @@ namespace FreedomEngine.Components
         /// </summary>
         /// <param name="tag">The markup tag text encapsulated inside the brackets.</param>
         /// <param name="stack">The current style stack keeping track of document nested styling contexts.</param>
-        /// <param name="currentStyle">Throws out the updated text format style generated up to this tag's application.</param>
-        /// <returns>True if the markup tag was valid and successfully consumed, false otherwise.</returns>
+        /// <param name="currentStyle">
+        /// When this method returns, contains the style in effect after the tag has been applied. On
+        /// failure, contains the style that was already in effect.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the markup tag was recognized and consumed; otherwise,
+        /// <see langword="false"/>, in which case the caller renders the bracketed text literally.
+        /// </returns>
+        /// <remarks>
+        /// Recognized tags are <c>[color ...]</c>, <c>[scale ...]</c>, <c>[shake ...]</c>,
+        /// <c>[wave ...]</c> and <c>[rainbow]</c>, each closed by <c>[/name]</c> or a bare <c>[/]</c>.
+        /// <c>[reset]</c> unwinds the stack back to the default style.
+        /// </remarks>
         private static bool TryConsumeMarkupTag(string tag, Stack<StyleFrame> stack, out TextStyleState currentStyle)
         {
             currentStyle = stack.Peek().Style;
@@ -766,7 +815,7 @@ namespace FreedomEngine.Components
                     return true;
 
                 case "shake":
-                    if (!Parsing.TryParseFloat(parts[0], out float amplitude))
+                    if (parts.Length < 1 || !Parsing.TryParseFloat(parts[0], out float amplitude))
                         return false;
 
                     next.ShakeAmplitude = amplitude;
@@ -775,7 +824,7 @@ namespace FreedomEngine.Components
                     return true;
 
                 case "wave":
-                    if (!Parsing.TryParseFloat(parts[0], out float waveAmplitude))
+                    if (parts.Length < 1 || !Parsing.TryParseFloat(parts[0], out float waveAmplitude))
                         return false;
 
                     next.WaveAmplitude = waveAmplitude;
