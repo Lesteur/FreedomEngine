@@ -528,6 +528,8 @@ namespace FreedomEngine.Components
         /// <param name="position">The global position of the text.</param>
         public Text(BitmapFont font, string text, Vector2 position)
         {
+            ArgumentNullException.ThrowIfNull(font);
+
             _font = font;
             _text = text ?? string.Empty;
             Position = position;
