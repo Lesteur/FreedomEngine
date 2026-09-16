@@ -8,13 +8,17 @@ namespace FreedomEngine.Collections.Tweens
     /// Interpolates a <see cref="Color"/> value between a start and a target value over a fixed
     /// duration, applying each interpolated value through a caller-supplied setter.
     /// </summary>
-    public class TweenColor : Tween<Color>
+    /// <remarks>
+    /// The <see cref="Color"/> values are interpolated component-wise, with each component
+    /// (red, green, blue, alpha) being interpolated independently.
+    /// </remarks>
+    public class TweenColor : TweenGeneric<Color>
     {
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TweenColor"/> class and registers it with
-        /// <see cref="Tween.Controller"/>.
+        /// <see cref="TweenGeneric.Controller"/>.
         /// </summary>
         /// <param name="from">The starting value.</param>
         /// <param name="to">The target value.</param>
@@ -28,7 +32,7 @@ namespace FreedomEngine.Collections.Tweens
         /// <paramref name="setter"/> or <paramref name="func"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="duration"/> is negative.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="Tween.Controller"/> has not been assigned.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="TweenGeneric.Controller"/> has not been assigned.</exception>
         public TweenColor(Color from, Color to, TimeSpan duration, Action<Color> setter, Func<float, float> func) : base(from, to, duration, setter, func)
         {
         }

@@ -8,7 +8,7 @@ namespace FreedomEngine.Collections.Tweens
     /// Interpolates a <see cref="float"/> value between a start and a target value over a fixed
     /// duration, applying each interpolated value through a caller-supplied setter.
     /// </summary>
-    public class TweenFloat : Tween<float>
+    public class TweenFloat : TweenGeneric<float>
     {
         #region Constructors
 
@@ -28,7 +28,7 @@ namespace FreedomEngine.Collections.Tweens
         /// <paramref name="setter"/> or <paramref name="func"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="duration"/> is negative.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="Tween.Controller"/> has not been assigned.</exception>
+        /// <exception cref="InvalidOperationException"><see cref="TweenGeneric.Controller"/> has not been assigned.</exception>
         public TweenFloat(float from, float to, TimeSpan duration, Action<float> setter, Func<float, float> func) : base(from, to, duration, setter, func)
         {
         }

@@ -7,6 +7,10 @@ using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections
 {
+    /// <summary>
+    /// Manages a collection of processes, updating their state and controlling their execution over time.
+    /// </summary>
+    /// <typeparam name="TProcess">The type of the processes being managed.</typeparam>
     public class ProcessManager<TProcess> : IProcessManager where TProcess : IControllableProcess
     {
         #region Fields

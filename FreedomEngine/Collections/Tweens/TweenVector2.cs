@@ -8,7 +8,7 @@ namespace FreedomEngine.Collections.Tweens
     /// Interpolates a <see cref="Vector2"/> value between a start and a target value over a fixed
     /// duration, applying each interpolated value through a caller-supplied setter.
     /// </summary>
-    public class TweenVector2 : Tween<Vector2>
+    public class TweenVector2 : TweenGeneric<Vector2>
     {
         #region Constructors
 

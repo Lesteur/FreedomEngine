@@ -1,7 +1,8 @@
-﻿using FreedomEngine.Collections.Interfaces;
+﻿using System;
+
 using Microsoft.Xna.Framework;
-using System;
-using System.Diagnostics.Metrics;
+
+using FreedomEngine.Collections.Interfaces;
 
 namespace FreedomEngine.Collections.Tweens
 {
@@ -14,7 +15,7 @@ namespace FreedomEngine.Collections.Tweens
     /// <see cref="Update"/>, call the base implementation to advance <see cref="_progress"/>, and then
     /// apply its own interpolated value.
     /// </remarks>
-    public abstract class Tween<T> : ITween where T : struct
+    public abstract class Tween : IControllableProcess
     {
         #region Fields
 
@@ -34,14 +35,9 @@ namespace FreedomEngine.Collections.Tweens
         protected float _progress;
 
         /// <summary>
-        /// The action used to apply each interpolated value to the target property.
-        /// </summary>
-        protected readonly Action<T> _setter;
-
-        /// <summary>
         /// The easing function used to shape the normalized progress before interpolation.
         /// </summary>
-        protected readonly Func<float, float> _func;
+        protected Func<float, float> _func;
 
         #endregion
 
@@ -51,30 +47,20 @@ namespace FreedomEngine.Collections.Tweens
         /// Gets or sets the manager that newly created tweens are registered with.
         /// </summary>
         /// <remarks>
-        /// Must be assigned before constructing a <see cref="ITween"/>; the engine assigns this as
+        /// Must be assigned before constructing a <see cref="Tween"/>; the engine assigns this as
         /// part of a scene transition. See <see cref="Core.Application.ChangeScene"/>.
         /// </remarks>
-        public static ProcessManager<ITween> Controller { get; set; }
-
-        /// <summary>
-        /// Gets the value the tween interpolates from.
-        /// </summary>
-        public T From { get; }
-
-        /// <summary>
-        /// Gets the value the tween interpolates to.
-        /// </summary>
-        public T To { get; }
+        public static ProcessManager<Tween> Controller { get; set; }
 
         /// <summary>
         /// Gets the total duration of the tween.
         /// </summary>
-        public TimeSpan Duration { get; private set; }
+        public TimeSpan Duration { get; protected set; }
 
         /// <summary>
         /// Gets the amount of time that has elapsed since the tween started.
         /// </summary>
-        public TimeSpan Elapsed { get; private set; }
+        public TimeSpan Elapsed { get; protected set; }
 
         /// <summary>
         /// Gets whether this tween is currently paused.
@@ -91,52 +77,6 @@ namespace FreedomEngine.Collections.Tweens
         /// Gets whether this tween is currently running (not paused and not finished).
         /// </summary>
         public bool IsRunning => !_isFinished && !_isPaused;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T"/> class and registers it with
-        /// <see cref="Tween.Controller"/>.
-        /// </summary>
-        /// <param name="from">The starting value.</param>
-        /// <param name="to">The target value.</param>
-        /// <param name="duration">The total duration of the tween.</param>
-        /// <param name="setter">The action used to apply the interpolated value to the target property.</param>
-        /// <param name="func">
-        /// The easing function applied to the normalized progress before interpolation. It receives a
-        /// value in the range [0, 1] and is expected to return an eased value, typically also in [0, 1].
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="setter"/> or <paramref name="func"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="duration"/> is negative.</exception>
-        /// <exception cref="InvalidOperationException"><see cref="Tween.Controller"/> has not been assigned.</exception>
-        protected Tween(T from, T to, TimeSpan duration, Action<T> setter, Func<float, float> func)
-        {
-            ArgumentNullException.ThrowIfNull(setter);
-            ArgumentNullException.ThrowIfNull(func);
-
-            if (duration < TimeSpan.Zero)
-                throw new ArgumentOutOfRangeException(nameof(duration), duration, "Duration cannot be negative.");
-
-            if (Controller == null)
-                throw new InvalidOperationException($"{nameof(Tween<T>)}.{nameof(Controller)} must be assigned a {nameof(ProcessManager<ITween>)} before creating a tween.");
-
-            _progress = duration > TimeSpan.Zero ? 0f : 1f;
-
-            Duration = duration;
-            Elapsed = TimeSpan.Zero;
-
-            From = from;
-            To = to;
-
-            _setter = setter;
-            _func = func;
-
-            Controller.Add(this);
-        }
 
         #endregion
 
