@@ -1,11 +1,10 @@
-﻿using FreedomEngine.Components.Collisions;
-using FreedomEngine.Core;
-using FreedomEngine.Graphics;
-using FreedomEngine.Collections.Special.Metroidvania;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
+
+using FreedomEngine.Components.Collisions;
+using FreedomEngine.Core;
+using FreedomEngine.Collections.Special.Metroidvania;
 
 using MyGame.Scripts.Metroid;
 
@@ -38,7 +37,7 @@ namespace MyGame.Scripts.Scenes
 
             _collision1 = new RectangleCollision(new Vector2(220, 200), 1, 50, 50);
 
-            _collision2 = new RectangleCollision(Vector2.Zero, 1, 50, 50, OneWayCollision.Top);
+            _collision2 = new RectangleCollision(Vector2.Zero, 1, 50, 50, OneWayCollision.None);
             _movingPlatform = new MovingPlatform(null, new Vector2(220, 250), _collision2);
 
             _collision3 = new RectangleCollision(new Vector2(0, 350), 1, 700, 50);
@@ -78,6 +77,7 @@ namespace MyGame.Scripts.Scenes
             _entity.Draw(spriteBatch);
 
             _collision1.Draw(spriteBatch);
+            _collision2.Draw(spriteBatch);
             _collision3.Draw(spriteBatch);
 
             _movingPlatform.Draw(spriteBatch);

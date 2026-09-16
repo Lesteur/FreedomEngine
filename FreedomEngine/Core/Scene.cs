@@ -216,6 +216,7 @@ namespace FreedomEngine.Core
 
             Coroutines.Clear();
             Tweens.Clear();
+            Collisions.Clear();
 
             Content.Unload();
         }
