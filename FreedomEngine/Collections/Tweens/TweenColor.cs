@@ -8,36 +8,8 @@ namespace FreedomEngine.Collections.Tweens
     /// Interpolates a <see cref="Color"/> value between a start and a target value over a fixed
     /// duration, applying each interpolated value through a caller-supplied setter.
     /// </summary>
-    public sealed class TweenColor : Tween
+    public class TweenColor : Tween<Color>
     {
-        #region Fields
-
-        /// <summary>
-        /// The action used to apply each interpolated value to the target property.
-        /// </summary>
-        private readonly Action<Color> _setter;
-
-        /// <summary>
-        /// The easing function used to shape the normalized progress before interpolation.
-        /// </summary>
-        private readonly Func<float, float> _func;
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Gets the value the tween interpolates from.
-        /// </summary>
-        public Color From { get; }
-
-        /// <summary>
-        /// Gets the value the tween interpolates to.
-        /// </summary>
-        public Color To { get; }
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -57,16 +29,8 @@ namespace FreedomEngine.Collections.Tweens
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="duration"/> is negative.</exception>
         /// <exception cref="InvalidOperationException"><see cref="Tween.Controller"/> has not been assigned.</exception>
-        public TweenColor(Color from, Color to, TimeSpan duration, Action<Color> setter, Func<float, float> func) : base(duration)
+        public TweenColor(Color from, Color to, TimeSpan duration, Action<Color> setter, Func<float, float> func) : base(from, to, duration, setter, func)
         {
-            ArgumentNullException.ThrowIfNull(setter);
-            ArgumentNullException.ThrowIfNull(func);
-
-            From = from;
-            To = to;
-
-            _setter = setter;
-            _func = func;
         }
 
         #endregion
@@ -81,9 +45,6 @@ namespace FreedomEngine.Collections.Tweens
         /// <remarks>While the tween is paused, no value is applied.</remarks>
         public override void Update(GameTime gameTime)
         {
-            if (IsPaused)
-                return;
-
             base.Update(gameTime);
 
             // Calculate the eased progress using the specified easing function
