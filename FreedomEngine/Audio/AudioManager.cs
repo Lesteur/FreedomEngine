@@ -122,9 +122,8 @@ namespace FreedomEngine.Audio
                 if (instance.State == SoundState.Stopped)
                 {
                     if (!instance.IsDisposed)
-                    {
                         instance.Dispose();
-                    }
+
                     _activeSoundEffectInstances.RemoveAt(i);
                 }
             }

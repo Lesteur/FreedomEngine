@@ -45,7 +45,7 @@ namespace FreedomEngine.Collections.Coroutines
         /// Must be assigned before constructing a <see cref="Coroutine"/>; the engine assigns this
         /// as part of a scene transition. See <see cref="FreedomEngine.Core.Application.ChangeScene"/>.
         /// </remarks>
-        public static CoroutineManager Controller { get; set; }
+        public static ProcessManager<Coroutine> Controller { get; set; }
 
         /// <summary>
         /// Gets whether this coroutine is currently paused.
@@ -78,7 +78,7 @@ namespace FreedomEngine.Collections.Coroutines
             _enumerator = enumerator ?? throw new ArgumentNullException(nameof(enumerator));
 
             if (Controller == null)
-                throw new InvalidOperationException($"{nameof(Coroutine)}.{nameof(Controller)} must be assigned a {nameof(CoroutineManager)} before creating a coroutine.");
+                throw new InvalidOperationException($"{nameof(Coroutine)}.{nameof(Controller)} must be assigned a {nameof(ProcessManager<Coroutine>)} before creating a coroutine.");
 
             Controller.Add(this);
         }

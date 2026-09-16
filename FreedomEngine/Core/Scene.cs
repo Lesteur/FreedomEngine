@@ -82,12 +82,12 @@ namespace FreedomEngine.Core
         /// <summary>
         /// Gets the manager responsible for the coroutines started within this scene.
         /// </summary>
-        public CoroutineManager Coroutines { get; protected set; }
+        public ProcessManager<Coroutine> Coroutines { get; protected set; }
 
         /// <summary>
         /// Gets the manager responsible for the tweens started within this scene.
         /// </summary>
-        public TweenManager Tweens { get; protected set; }
+        public ProcessManager<Tween> Tweens { get; protected set; }
 
         /// <summary>
         /// Gets the manager responsible for collision detection within this scene.
@@ -143,8 +143,8 @@ namespace FreedomEngine.Core
 
             _following = null;
 
-            Coroutines = new CoroutineManager();
-            Tweens = new TweenManager();
+            Coroutines = new ProcessManager<Coroutine>();
+            Tweens = new ProcessManager<Tween>();
             Collisions = new CollisionManager();
         }
 

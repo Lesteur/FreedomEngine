@@ -45,7 +45,7 @@ namespace FreedomEngine.Collections.Tweens
         /// Must be assigned before constructing a <see cref="Tween"/>; the engine assigns this as
         /// part of a scene transition. See <see cref="FreedomEngine.Core.Application.ChangeScene"/>.
         /// </remarks>
-        public static TweenManager Controller { get; set; }
+        public static ProcessManager<Tween> Controller { get; set; }
 
         /// <summary>
         /// Gets the total duration of the tween.
@@ -100,7 +100,7 @@ namespace FreedomEngine.Collections.Tweens
             _progress = duration > TimeSpan.Zero ? 0f : 1f;
 
             if (Controller == null)
-                throw new InvalidOperationException($"{nameof(Tween)}.{nameof(Controller)} must be assigned a {nameof(TweenManager)} before creating a tween.");
+                throw new InvalidOperationException($"{nameof(Tween)}.{nameof(Controller)} must be assigned a {nameof(ProcessManager<Tween>)} before creating a tween.");
 
             Controller.Add(this);
         }
