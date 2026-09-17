@@ -1,8 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 using FreedomEngine.Collections;
 using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Core;
 
 namespace FreedomEngine.Input
 {
@@ -11,10 +14,19 @@ namespace FreedomEngine.Input
     /// </summary>
     public enum MouseButton
     {
+        /// <summary>The left mouse button.</summary>
         Left,
+
+        /// <summary>The middle mouse button, typically the scroll wheel click.</summary>
         Middle,
+
+        /// <summary>The right mouse button.</summary>
         Right,
+
+        /// <summary>The first extended (side) mouse button.</summary>
         XButton1,
+
+        /// <summary>The second extended (side) mouse button.</summary>
         XButton2
     }
 
@@ -24,27 +36,26 @@ namespace FreedomEngine.Input
     /// </summary>
     public class MouseInfo : IUpdate
     {
-        #region Fields
-
-        private Vector2 _uiScale = new((float)EngineConfig.WindowWidth / EngineConfig.UIRenderWidth, (float)EngineConfig.WindowHeight / EngineConfig.UIRenderHeight);
-
-        #endregion
-
         #region Properties
 
         /// <summary>
-        /// The state of mouse input during the previous update cycle.
+        /// Gets the state of mouse input during the previous update cycle.
         /// </summary>
         public MouseState PreviousState { get; private set; }
 
         /// <summary>
-        /// The state of mouse input during the current update cycle.
+        /// Gets the state of mouse input during the current update cycle.
         /// </summary>
         public MouseState CurrentState { get; private set; }
 
         /// <summary>
-        /// Gets or Sets the current position of the mouse cursor in screen space.
+        /// Gets or sets the current position of the mouse cursor in screen space.
         /// </summary>
+        /// <remarks>
+        /// Screen space here means actual window/back-buffer pixels. For the position in the
+        /// engine's virtual UI resolution — the space <c>UIElement</c> bounds are expressed in — use
+        /// <see cref="VirtualPosition"/> instead.
+        /// </remarks>
         public Point Position
         {
             get => CurrentState.Position;
@@ -52,7 +63,7 @@ namespace FreedomEngine.Input
         }
 
         /// <summary>
-        /// Gets or Sets the current x-coordinate position of the mouse cursor in screen space.
+        /// Gets or sets the current x-coordinate position of the mouse cursor in screen space.
         /// </summary>
         public int X
         {
@@ -61,7 +72,7 @@ namespace FreedomEngine.Input
         }
 
         /// <summary>
-        /// Gets or Sets the current y-coordinate position of the mouse cursor in screen space.
+        /// Gets or sets the current y-coordinate position of the mouse cursor in screen space.
         /// </summary>
         public int Y
         {
@@ -99,7 +110,46 @@ namespace FreedomEngine.Input
         /// </summary>
         public int ScrollWheelDelta => CurrentState.ScrollWheelValue - PreviousState.ScrollWheelValue;
 
-        public Vector2 UIScale => _uiScale;
+        /// <summary>
+        /// Gets the scale factor between the game's actual back buffer and its virtual resolution.
+        /// </summary>
+        /// <remarks>
+        /// Recomputed from the current back buffer size on every read, so it stays correct across
+        /// window resizes and fullscreen toggles — unlike a value cached once at startup. Uses a
+        /// single uniform factor, the smaller of the horizontal and vertical ratios, matching the
+        /// letterboxed scaling <c>Scene</c> uses when rendering, so UI hit-testing lines up with what
+        /// is actually drawn on screen.
+        /// </remarks>
+        public Vector2 UIScale
+        {
+            get
+            {
+                var viewport = Application.GraphicsDevice.Viewport;
+
+                float scaleX = (float)viewport.Width / EngineConfig.VirtualWidth;
+                float scaleY = (float)viewport.Height / EngineConfig.VirtualHeight;
+                float scale = MathHelper.Min(scaleX, scaleY);
+
+                return new Vector2(scale, scale);
+            }
+        }
+
+        /// <summary>
+        /// Gets the current mouse position converted into the engine's virtual UI resolution.
+        /// </summary>
+        /// <remarks>
+        /// Equivalent to dividing <see cref="Position"/> by <see cref="UIScale"/>. This is the
+        /// position to hit-test against <c>UIElement</c> bounds, which are expressed in virtual space.
+        /// Does not account for a letterbox centering offset; see the remarks on <see cref="UIScale"/>.
+        /// </remarks>
+        public Vector2 VirtualPosition
+        {
+            get
+            {
+                Vector2 scale = UIScale;
+                return new Vector2(CurrentState.X / scale.X, CurrentState.Y / scale.Y);
+            }
+        }
 
         #endregion
 
@@ -121,8 +171,12 @@ namespace FreedomEngine.Input
         /// <summary>
         /// Updates the state information about mouse input.
         /// </summary>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             PreviousState = CurrentState;
             CurrentState = Mouse.GetState();
         }

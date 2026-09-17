@@ -45,6 +45,12 @@ namespace FreedomEngine.Input
         public bool IsConnected => CurrentState.IsConnected;
 
         /// <summary>
+        /// Gets a value indicating whether a vibration effect started with <see cref="SetVibration(float, TimeSpan)"/>
+        /// is currently running on this gamepad.
+        /// </summary>
+        public bool IsVibrating => _vibrationTimeRemaining > TimeSpan.Zero;
+
+        /// <summary>
         /// Gets the value of the left thumbstick of this gamepad.
         /// </summary>
         public Vector2 LeftThumbStick => CurrentState.ThumbSticks.Left;
@@ -84,11 +90,14 @@ namespace FreedomEngine.Input
         #region Lifecycle Methods
 
         /// <summary>
-        /// Updates the state information for this gamepad input.
+        /// Updates the state information for this gamepad input, and counts down any active vibration effect.
         /// </summary>
-        /// <param name="gameTime"></param>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             PreviousState = CurrentState;
             CurrentState = GamePad.GetState(PlayerIndex);
 
@@ -97,9 +106,7 @@ namespace FreedomEngine.Input
                 _vibrationTimeRemaining -= gameTime.ElapsedGameTime;
 
                 if (_vibrationTimeRemaining <= TimeSpan.Zero)
-                {
                     StopVibration();
-                }
             }
         }
 
@@ -148,21 +155,50 @@ namespace FreedomEngine.Input
         }
 
         /// <summary>
-        /// Sets the vibration for all motors of this gamepad.
+        /// Sets the vibration for both motors of this gamepad to the same strength.
         /// </summary>
-        /// <param name="strength">The strength of the vibration from 0.0f (none) to 1.0f (full).</param>
-        /// <param name="time">The amount of time the vibration should occur.</param>
+        /// <param name="strength">The strength of the vibration, from 0.0f (none) to 1.0f (full).</param>
+        /// <param name="time">The amount of time the vibration should run for.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="strength"/> is outside the range [0.0, 1.0], or <paramref name="time"/> is negative.
+        /// </exception>
         public void SetVibration(float strength, TimeSpan time)
         {
+            SetVibration(strength, strength, time);
+        }
+
+        /// <summary>
+        /// Sets the vibration for this gamepad's low-frequency (left) and high-frequency (right) motors independently.
+        /// </summary>
+        /// <param name="leftMotor">The strength of the left, low-frequency motor, from 0.0f (none) to 1.0f (full).</param>
+        /// <param name="rightMotor">The strength of the right, high-frequency motor, from 0.0f (none) to 1.0f (full).</param>
+        /// <param name="time">The amount of time the vibration should run for.</param>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <paramref name="leftMotor"/> or <paramref name="rightMotor"/> is outside the range
+        /// [0.0, 1.0], or <paramref name="time"/> is negative.
+        /// </exception>
+        public void SetVibration(float leftMotor, float rightMotor, TimeSpan time)
+        {
+            if (leftMotor < 0.0f || leftMotor > 1.0f)
+                throw new ArgumentOutOfRangeException(nameof(leftMotor), leftMotor, "Motor strength must be between 0.0 and 1.0.");
+
+            if (rightMotor < 0.0f || rightMotor > 1.0f)
+                throw new ArgumentOutOfRangeException(nameof(rightMotor), rightMotor, "Motor strength must be between 0.0 and 1.0.");
+
+            if (time < TimeSpan.Zero)
+                throw new ArgumentOutOfRangeException(nameof(time), time, "Time cannot be negative.");
+
             _vibrationTimeRemaining = time;
-            GamePad.SetVibration(PlayerIndex, strength, strength);
+            GamePad.SetVibration(PlayerIndex, leftMotor, rightMotor);
         }
 
         /// <summary>
         /// Stops the vibration of all motors for this gamepad.
         /// </summary>
+        /// <remarks>Also cancels any vibration timer started by <see cref="SetVibration(float, TimeSpan)"/>.</remarks>
         public void StopVibration()
         {
+            _vibrationTimeRemaining = TimeSpan.Zero;
             GamePad.SetVibration(PlayerIndex, 0.0f, 0.0f);
         }
 

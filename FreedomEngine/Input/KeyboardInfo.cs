@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 using FreedomEngine.Collections.Interfaces;
@@ -43,8 +45,12 @@ namespace FreedomEngine.Input
         /// <summary>
         /// Updates the state information about keyboard input.
         /// </summary>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
         public void Update(GameTime gameTime)
         {
+            ArgumentNullException.ThrowIfNull(gameTime);
+
             PreviousState = CurrentState;
             CurrentState = Keyboard.GetState();
         }

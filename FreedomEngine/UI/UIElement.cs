@@ -1,11 +1,12 @@
-﻿using FreedomEngine.Collections.Interfaces;
+﻿using System;
+
+using Microsoft.Xna.Framework;
+
+using FreedomEngine.Collections.Interfaces;
 using FreedomEngine.Components;
 using FreedomEngine.Core;
 using FreedomEngine.Graphics;
 using FreedomEngine.Input;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace FreedomEngine.UI
 {
@@ -142,11 +143,8 @@ namespace FreedomEngine.UI
             base.Update(gameTime);
 
             var mouse = Application.Input.Mouse;
-            var mousePosition = new Vector2(mouse.Position.X / mouse.UIScale.X, mouse.Position.Y / mouse.UIScale.Y);
+            var mousePosition = mouse.VirtualPosition;
 
-            // Hit-test against the same position the element is actually rendered at, so the
-            // clickable area never drifts away from what the player sees (e.g. while PositionDraw is
-            // animating a hover slide or shake).
             var hitPosition = PositionTotal;
             var hitRectangle = new Rectangle((int)hitPosition.X, (int)hitPosition.Y, (int)Width, (int)Height);
 
