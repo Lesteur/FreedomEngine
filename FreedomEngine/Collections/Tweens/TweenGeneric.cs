@@ -35,7 +35,7 @@ namespace FreedomEngine.Collections.Tweens
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T"/> class and registers it with
+        /// Initializes a new instance of the <see cref="TweenGeneric{T}"/> class and registers it with
         /// <see cref="Tween.Controller"/>.
         /// </summary>
         /// <param name="from">The starting value.</param>

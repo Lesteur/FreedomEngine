@@ -17,7 +17,6 @@ namespace MyGame
             }
             catch (Exception ex)
             {
-                // Écrit l'erreur complète dans le dossier de l'exécutable
                 File.WriteAllText("AOT_CrashLog.txt", ex.ToString());
                 throw;
             }

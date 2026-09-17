@@ -1,54 +1,125 @@
-﻿using FreedomEngine.Collections.Structures;
+﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Collections.Structures;
 
 namespace FreedomEngine.UI
 {
-    public class UINineSlice
+    /// <summary>
+    /// Represents a nine-slice (also known as 9-patch) scalable graphic: a source texture region split
+    /// into a 3x3 grid whose corners stay fixed size, whose edges stretch along one axis, and whose
+    /// center stretches along both, allowing a small source image to scale to any size without
+    /// distorting its border.
+    /// </summary>
+    public class UINineSlice : IDraw
     {
         #region Fields
 
+        /// <summary>
+        /// The nine source regions of the slice, in row-major order (top-left, top, top-right,
+        /// left, center, right, bottom-left, bottom, bottom-right).
+        /// </summary>
         private readonly Rectangle[] _rectangles;
+
+        /// <summary>
+        /// The rendered size of the nine-slice. Backing field for <see cref="Dimensions"/>.
+        /// </summary>
+        private Vector2Int _dimensions;
 
         #endregion
 
         #region Properties
 
-        public Texture2D Texture;
+        /// <summary>
+        /// Gets the source texture the nine slices are drawn from.
+        /// </summary>
+        public Texture2D Texture { get; }
 
-        public Vector2 Position;
+        /// <summary>
+        /// Gets or sets the position of the nine-slice's top-left corner.
+        /// </summary>
+        public Vector2 Position { get; set; }
 
-        public Vector2Int Dimensions { get; set; }
+        /// <summary>
+        /// Gets or sets the color mask to apply when rendering every slice.
+        /// </summary>
+        /// <remarks>Default value is Color.White</remarks>
+        public Color Color { get; set; } = Color.White;
+
+        /// <summary>
+        /// Gets or sets the rendered size of the nine-slice.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// The value is smaller than the combined size of the fixed corner slices along either axis,
+        /// which would make the stretched edges and center collapse to a negative size.
+        /// </exception>
+        public Vector2Int Dimensions
+        {
+            get => _dimensions;
+            set
+            {
+                int minWidth = _rectangles[0].Width + _rectangles[2].Width;
+                int minHeight = _rectangles[0].Height + _rectangles[6].Height;
+
+                if (value.X < minWidth || value.Y < minHeight)
+                    throw new ArgumentOutOfRangeException(nameof(value), value, $"Dimensions must be at least ({minWidth}, {minHeight}) to fit the corner slices.");
+
+                _dimensions = value;
+            }
+        }
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UINineSlice"/> class.
+        /// </summary>
+        /// <param name="texture">The source texture the nine slices are drawn from.</param>
+        /// <param name="rectangle">
+        /// The region within <paramref name="texture"/> to split into a 3x3 grid. Its width and height
+        /// must each be evenly divisible by 3.
+        /// </param>
+        /// <param name="position">The initial position of the nine-slice's top-left corner.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="texture"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="rectangle"/> has a width or height that is not greater than zero, or is not
+        /// evenly divisible by 3.
+        /// </exception>
+        /// <remarks>
+        /// <see cref="Dimensions"/> starts equal to <paramref name="rectangle"/>'s own size, so the
+        /// nine-slice renders at its source size until <see cref="Dimensions"/> is changed.
+        /// </remarks>
         public UINineSlice(Texture2D texture, Rectangle rectangle, Vector2 position)
         {
-            ArgumentNullException.ThrowIfNull(texture, "Texture cannot be null.");
+            ArgumentNullException.ThrowIfNull(texture);
+
+            if (rectangle.Width <= 0 || rectangle.Height <= 0)
+                throw new ArgumentException("Rectangle width and height must be greater than zero.", nameof(rectangle));
 
             if (rectangle.Width % 3 != 0 || rectangle.Height % 3 != 0)
-                throw new ArgumentException("Rectangle width and height must be divisible by 3 for nine-slice scaling.");
+                throw new ArgumentException("Rectangle width and height must be divisible by 3 for nine-slice scaling.", nameof(rectangle));
 
             Texture = texture;
             Position = position;
 
             _rectangles = new Rectangle[9];
 
+            int cellWidth = rectangle.Width / 3;
+            int cellHeight = rectangle.Height / 3;
+
             for (int i = 0; i < 9; i++)
             {
-                int x = rectangle.X + (i % 3) * (rectangle.Width / 3);
-                int y = rectangle.Y + (i / 3) * (rectangle.Height / 3);
-                _rectangles[i] = new Rectangle(x, y, rectangle.Width / 3, rectangle.Height / 3);
+                int x = rectangle.X + (i % 3) * cellWidth;
+                int y = rectangle.Y + (i / 3) * cellHeight;
+                _rectangles[i] = new Rectangle(x, y, cellWidth, cellHeight);
             }
 
+            // Assigned last: the Dimensions setter validates against _rectangles, which must already
+            // be populated.
             Dimensions = new Vector2Int(rectangle.Width, rectangle.Height);
         }
 
@@ -56,51 +127,60 @@ namespace FreedomEngine.UI
 
         #region Lifecycle Methods
 
+        /// <summary>
+        /// Updates the nine-slice.
+        /// </summary>
+        /// <param name="gameTime">A snapshot of the game's timing values.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="gameTime"/> is <see langword="null"/>.</exception>
+        /// <remarks>
+        /// Currently a no-op: a plain nine-slice has no time-based state. It exists as a hook for a
+        /// derived class that animates its slices (a pulsing border, for instance).
+        /// </remarks>
         public void Update(GameTime gameTime)
         {
-            // Update logic if needed
+            ArgumentNullException.ThrowIfNull(gameTime);
         }
 
+        /// <summary>
+        /// Draws the nine slices, stretched to fit <see cref="Dimensions"/>.
+        /// </summary>
+        /// <param name="spriteBatch">The sprite batch used for rendering.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="spriteBatch"/> is <see langword="null"/>.</exception>
         public void Draw(SpriteBatch spriteBatch)
         {
-            var width = Dimensions.X - _rectangles[0].Width * 2;
-            var height = Dimensions.Y - _rectangles[0].Height * 2;
+            ArgumentNullException.ThrowIfNull(spriteBatch);
 
-            var rect1 = _rectangles[0];
-            var destRect1 = new Rectangle((int)Position.X, (int)Position.Y, rect1.Width, rect1.Height);
-            spriteBatch.Draw(Texture, destRect1, rect1, Color.White);
+            int leftWidth = _rectangles[0].Width;
+            int rightWidth = _rectangles[2].Width;
+            int topHeight = _rectangles[0].Height;
+            int bottomHeight = _rectangles[6].Height;
 
-            var rect2 = _rectangles[1];
-            var destRect2 = new Rectangle((int)Position.X + rect1.Width, (int)Position.Y, width, rect2.Height);
-            spriteBatch.Draw(Texture, destRect2, rect2, Color.White);
+            int middleWidth = Dimensions.X - leftWidth - rightWidth;
+            int middleHeight = Dimensions.Y - topHeight - bottomHeight;
 
-            var rect3 = _rectangles[2];
-            var destRect3 = new Rectangle((int)Position.X + rect1.Width + width, (int)Position.Y, rect3.Width, rect3.Height);
-            spriteBatch.Draw(Texture, destRect3, rect3, Color.White);
+            // Column widths and row heights, in the same left-to-right, top-to-bottom order as the
+            // 3x3 grid in _rectangles. The Dimensions setter guarantees these are never negative.
+            Span<int> columnWidths = [ leftWidth, middleWidth, rightWidth ];
+            Span<int> rowHeights = [ topHeight, middleHeight, bottomHeight ];
 
-            var rect4 = _rectangles[3];
-            var destRect4 = new Rectangle((int)Position.X, (int)Position.Y + rect1.Height, rect4.Width, height);
-            spriteBatch.Draw(Texture, destRect4, rect4, Color.White);
+            int destY = (int)Position.Y;
 
-            var rect5 = _rectangles[4];
-            var destRect5 = new Rectangle((int)Position.X + rect1.Width, (int)Position.Y + rect1.Height, width, height);
-            spriteBatch.Draw(Texture, destRect5, rect5, Color.White);
+            for (int row = 0; row < 3; row++)
+            {
+                int destX = (int)Position.X;
 
-            var rect6 = _rectangles[5];
-            var destRect6 = new Rectangle((int)Position.X + rect1.Width + width, (int)Position.Y + rect1.Height, rect6.Width, height);
-            spriteBatch.Draw(Texture, destRect6, rect6, Color.White);
+                for (int col = 0; col < 3; col++)
+                {
+                    Rectangle source = _rectangles[row * 3 + col];
+                    Rectangle destination = new(destX, destY, columnWidths[col], rowHeights[row]);
 
-            var rect7 = _rectangles[6];
-            var destRect7 = new Rectangle((int)Position.X, (int)Position.Y + rect1.Height + height, rect7.Width, rect7.Height);
-            spriteBatch.Draw(Texture, destRect7, rect7, Color.White);
+                    spriteBatch.Draw(Texture, destination, source, Color);
 
-            var rect8 = _rectangles[7];
-            var destRect8 = new Rectangle((int)Position.X + rect1.Width, (int)Position.Y + rect1.Height + height, width, rect8.Height);
-            spriteBatch.Draw(Texture, destRect8, rect8, Color.White);
+                    destX += columnWidths[col];
+                }
 
-            var rect9 = _rectangles[8];
-            var destRect9 = new Rectangle((int)Position.X + rect1.Width + width, (int)Position.Y + rect1.Height + height, rect9.Width, rect9.Height);
-            spriteBatch.Draw(Texture, destRect9, rect9, Color.White);
+                destY += rowHeights[row];
+            }
         }
 
         #endregion

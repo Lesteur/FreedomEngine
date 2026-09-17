@@ -17,6 +17,8 @@ namespace MyGame.Scripts
 
             ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.TilesetReader, FreedomEngine", () => new TilesetReader());
             ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.BitmapFontReader, FreedomEngine", () => new BitmapFontReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.TextureAtlasReader, FreedomEngine", () => new TextureAtlasReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.CutsceneReader, FreedomEngine", () => new CutsceneReader());
 
             // TODO: Add your initialization logic here
             ChangeScene(new Scene1());

@@ -224,8 +224,23 @@ namespace FreedomEngine.Components
             if (!Visible || _sprite == null)
                 return;
 
-            spriteBatch.Draw(_sprite.Texture, Position, _sprite.Frames[_currentFrame], Color, Rotation, _sprite.Origin, Scale, Effects, LayerDepth);
+            spriteBatch.Draw(_sprite.Texture, RenderPosition, _sprite.Frames[_currentFrame], Color, Rotation, _sprite.Origin, Scale, Effects, LayerDepth);
         }
+
+        #endregion
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Gets the position this entity is actually rendered at.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Position"/>. A derived class that renders somewhere other than its
+        /// logical position — for example applying a parent's position and a draw-only offset, as
+        /// <c>UIElement</c> does — overrides this instead of overriding <see cref="Draw"/>, so every
+        /// caller of <see cref="Draw"/> automatically renders at the right place.
+        /// </remarks>
+        protected virtual Vector2 RenderPosition => Position;
 
         #endregion
     }

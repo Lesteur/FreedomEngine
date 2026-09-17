@@ -7,6 +7,18 @@ using FreedomEngine.Collections.Interfaces;
 namespace FreedomEngine.Input
 {
     /// <summary>
+    /// Specifies the mouse buttons that can be used for user input or interaction.
+    /// </summary>
+    public enum MouseButton
+    {
+        Left,
+        Middle,
+        Right,
+        XButton1,
+        XButton2
+    }
+
+    /// <summary>
     /// Provides information about the current and previous state of mouse
     /// input, including position, button states, and scroll wheel values.
     /// </summary>
