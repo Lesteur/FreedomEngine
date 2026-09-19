@@ -74,7 +74,7 @@ namespace FreedomEngine.UI
                 VerticalAlignment = TextVerticalAlignment.Middle,
                 HorizontalAlignment = TextHorizontalAlignment.Center,
                 MaxWidth = (int)backgroundSprite.Width,
-                JumpHeight = 25
+                JumpHeight = 15
             };
 
             _textPadding = new Vector2(backgroundSprite.Width / 2f, backgroundSprite.Height / 2f);

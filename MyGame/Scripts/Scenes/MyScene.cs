@@ -256,8 +256,6 @@ namespace MyGame.Scripts.Scenes
             _collision1.Draw(spriteBatch);
             _collision2.Draw(spriteBatch);
 
-            _nineSlice.Draw(spriteBatch);
-
             spriteBatch.End();
         }
 
@@ -273,8 +271,8 @@ namespace MyGame.Scripts.Scenes
                 transformMatrix: UICamera.TransformMatrix * _scalingMatrix
             );
 
+            _nineSlice.Draw(spriteBatch);
             _bitmapText.Draw(spriteBatch);
-
             _uiElement.Draw(spriteBatch);
 
             spriteBatch.End();

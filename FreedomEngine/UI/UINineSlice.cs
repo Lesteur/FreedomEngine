@@ -14,7 +14,7 @@ namespace FreedomEngine.UI
     /// center stretches along both, allowing a small source image to scale to any size without
     /// distorting its border.
     /// </summary>
-    public class UINineSlice : IDraw
+    public class UINineSlice : IUIElement
     {
         #region Fields
 
@@ -39,9 +39,31 @@ namespace FreedomEngine.UI
         public Texture2D Texture { get; }
 
         /// <summary>
+        /// Gets the element this nine-slice is nested under, or <see langword="null"/> for none.
+        /// </summary>
+        public IUIElement Parent { get; }
+
+        /// <summary>
         /// Gets or sets the position of the nine-slice's top-left corner.
         /// </summary>
         public Vector2 Position { get; set; }
+
+        /// <summary>
+        /// Gets or sets the draw-only offset applied on top of <see cref="Position"/>.
+        /// </summary>
+        /// <remarks>
+        public Vector2 PositionDraw { get; set; } = Vector2.Zero;
+
+        /// <summary>
+        /// Gets the absolute position of this element, with every ancestor's
+        /// <see cref="Position"/> applied.
+        /// </summary>
+        public Vector2 PositionTotal => Position + (Parent?.PositionTotal ?? Vector2.Zero);
+
+        /// <summary>
+        /// Gets the absolute position this element is rendered at.
+        /// </summary>
+        public Vector2 PositionTotalDraw => PositionTotal + PositionDraw + (Parent?.PositionDraw ?? Vector2.Zero);
 
         /// <summary>
         /// Gets or sets the color mask to apply when rendering every slice.
@@ -70,6 +92,26 @@ namespace FreedomEngine.UI
                 _dimensions = value;
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this nine-slice currently has input focus.
+        /// </summary>
+        public bool IsFocused { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the pointer is currently over this nine-slice.
+        /// </summary>
+        public bool IsHovered { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this nine-slice accepts input.
+        /// </summary>
+        public bool IsEnabled { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this nine-slice is currently being pressed.
+        /// </summary>
+        public bool IsPressed { get; }
 
         #endregion
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 
-using FreedomEngine.UI;
-
 namespace FreedomEngine.Collections.Interfaces
 {
     /// <summary>
@@ -14,7 +12,7 @@ namespace FreedomEngine.Collections.Interfaces
         /// <summary>
         /// Gets the element this element is nested under, or <see langword="null"/> if it has none.
         /// </summary>
-        public UIElement Parent { get; }
+        public IUIElement Parent { get; }
 
         /// <summary>
         /// Gets the logical position of this element, relative to <see cref="Parent"/> if it has one.

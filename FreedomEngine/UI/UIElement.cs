@@ -21,7 +21,7 @@ namespace FreedomEngine.UI
         /// <summary>
         /// The element this element is nested under.
         /// </summary>
-        private UIElement _parent;
+        private IUIElement _parent;
 
         #endregion
 
@@ -34,7 +34,7 @@ namespace FreedomEngine.UI
         /// The assigned value is this element itself, or assigning it would create a cycle (an
         /// ancestor of the assigned value is this element).
         /// </exception>
-        public UIElement Parent
+        public IUIElement Parent
         {
             get => _parent;
             set
