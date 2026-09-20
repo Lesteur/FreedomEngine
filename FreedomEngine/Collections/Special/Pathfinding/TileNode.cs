@@ -6,13 +6,13 @@ namespace FreedomEngine.Collections.Special.Pathfinding
     {
         public T Tile { get; }
 
-        public int ID => Tile.ID;
-
         public int G { get; } // Cost from start
 
         public int H { get; } // Heuristic to target
 
         public int F => G + H; // Total estimated cost
+
+        public int ID => Tile.ID;
 
         public TileNode<T> Parent { get; }
 

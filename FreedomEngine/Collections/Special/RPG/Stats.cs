@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FreedomEngine.Collections.Special.RPG
+﻿namespace FreedomEngine.Collections.Special.RPG
 {
-    public struct Stats
+    public class Stats
     {
         public int HP { get; set; }
 

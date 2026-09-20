@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FreedomEngine.Collections.Special.Pathfinding
 {
-    public readonly struct PathResult<T> where T : Tile<T>
+    public class PathResult<T> where T : Tile<T>
     {
         public T Destination { get; }
 

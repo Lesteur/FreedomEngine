@@ -1,13 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FreedomEngine.Collections.Special.RPG
+﻿namespace FreedomEngine.Collections.Special.RPG
 {
     public class BattlerData
     {
-        public Stats BaseStats { get; set; }
+        #region Properties
+
+        public Stats BaseStats { get; }
+
+        public AffinityEffectEnum[] Affinities { get; }
+
+        #endregion
+
+        #region Public Methods
+
+        public AffinityEffectEnum GetAffinityEffect(AffinityEnum affinity)
+        {
+            return Affinities[(int)affinity];
+        }
+
+        #endregion
     }
 }

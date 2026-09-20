@@ -18,7 +18,7 @@ namespace FreedomEngine.Collections.Special.RPG.Items
 
         public ContextTypeEnum ContextType { get; set; }
 
-        public TargetTypeEnum TargetType { get; set; }
+        public RPGEnum TargetType { get; set; }
 
         public int Price { get; set; }
 

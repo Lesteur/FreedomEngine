@@ -1,9 +1,6 @@
-﻿using FreedomEngine.Collections.Cutscenes;
-using FreedomEngine.Graphics;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using Microsoft.Xna.Framework.Content;
+
+using FreedomEngine.Collections.Cutscenes;
 
 namespace FreedomEngine.Content
 {
