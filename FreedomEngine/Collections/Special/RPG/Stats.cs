@@ -2,9 +2,9 @@
 {
     public class Stats
     {
-        public int HP { get; set; }
+        public int HealthPoints { get; set; }
 
-        public int SP { get; set; }
+        public int SkillPoints { get; set; }
 
         public int Attack { get; set; }
 
