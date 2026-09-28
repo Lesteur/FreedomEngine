@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FreedomEngine.Collections.Special.RPG.Battle;
+using System;
 
 namespace FreedomEngine.Collections.Special.RPG.Items
 {
@@ -18,7 +15,7 @@ namespace FreedomEngine.Collections.Special.RPG.Items
 
         public ContextTypeEnum ContextType { get; set; }
 
-        public RPGEnum TargetType { get; set; }
+        public TargetTypeEnum TargetType { get; set; }
 
         public int Price { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FreedomEngine.Collections.Special.RPG.Battle;
+using System;
 
 namespace FreedomEngine.Collections.Special.RPG
 {
