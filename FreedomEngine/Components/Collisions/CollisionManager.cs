@@ -83,9 +83,7 @@ namespace FreedomEngine.Components.Collisions
             foreach (var otherMask in _collisionMasks)
             {
                 if (!ReferenceEquals(mask, otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset, ignoreOneWayCollisions))
-                {
                     return true;
-                }
             }
 
             return false;
@@ -112,9 +110,7 @@ namespace FreedomEngine.Components.Collisions
             foreach (var otherMask in _collisionMasks)
             {
                 if (!ReferenceEquals(mask, otherMask) && (otherMask.Tag & tag) != 0 && mask.Intersects(otherMask, offset, ignoreOneWayCollisions))
-                {
                     return otherMask;
-                }
             }
 
             return null;

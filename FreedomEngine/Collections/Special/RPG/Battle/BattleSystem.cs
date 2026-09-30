@@ -6,19 +6,23 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
     {
         #region Fields
 
+        private int _currentBattlerIndex;
+
+        private List<Battler> _turnOrder;
+
         #endregion
 
         #region Properties
 
-        public int CurrentTurn { get; }
+        public int CurrentTurn { get; private set; }
 
-        public Battler[] Battlers { get; }
+        public Battler[] Battlers { get; private set; }
 
-        public BattlerAlly[] Allies { get; }
+        public BattlerAlly[] Allies { get; private set; }
 
-        public BattlerEnemy[] Enemies { get; }
+        public BattlerEnemy[] Enemies { get; private set; }
 
-        public BattleParameters Parameters { get; }
+        public BattleParameters Parameters { get; private set; }
 
         #endregion
 
@@ -26,10 +30,14 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
 
         public BattleSystem(BattlerAlly[] allies, BattlerEnemy[] enemies, BattleParameters parameters)
         {
+            Battler.CurrentBattleSystem = this;
+
+            _currentBattlerIndex = 0;
+
             CurrentTurn = 0;
-            Battlers = new Battler[allies.Length + enemies.Length];
             Allies = allies;
             Enemies = enemies;
+            Battlers = new Battler[allies.Length + enemies.Length];
             Parameters = parameters;
 
             for (int i = 0; i < allies.Length; i++)
@@ -46,6 +54,45 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
         #endregion
 
         #region Private Methods
+
+        private void BeginTurn()
+        {
+            _currentBattlerIndex = 0;
+
+            _turnOrder = [..Battlers];
+            _turnOrder.Sort((a, b) => b.Data.BaseStats.Speed.CompareTo(a.Data.BaseStats.Speed));
+
+
+        }
+
+        private void ProcessTurn()
+        {
+            if (_currentBattlerIndex >= _turnOrder.Count)
+            {
+                EndTurn();
+                return;
+            }
+
+            Battler currentBattler = _turnOrder[_currentBattlerIndex];
+            while (!currentBattler.StartTurn())
+            {
+                _currentBattlerIndex++;
+                if (_currentBattlerIndex >= _turnOrder.Count)
+                {
+                    EndTurn();
+                    return;
+                }
+
+                currentBattler = _turnOrder[_currentBattlerIndex];
+            }
+
+            _currentBattlerIndex++;
+        }
+
+        private void EndTurn()
+        {
+            CurrentTurn++;
+        }
 
         #endregion
     }

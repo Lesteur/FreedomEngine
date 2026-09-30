@@ -59,10 +59,7 @@ namespace FreedomEngine.Components.Collisions
         /// </summary>
         /// <param name="spriteBatch">The sprite batch used for rendering.</param>
         /// <exception cref="ArgumentNullException"><paramref name="spriteBatch"/> is <see langword="null"/>.</exception>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            DrawDebugLine(spriteBatch, Position, PositionEnd);
-        }
+        public override void Draw(SpriteBatch spriteBatch) => DrawDebugLine(spriteBatch, Position, PositionEnd);
 
         #endregion
 
