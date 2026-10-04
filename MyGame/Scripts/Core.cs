@@ -21,7 +21,7 @@ namespace MyGame.Scripts
             ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.CutsceneReader, FreedomEngine", () => new CutsceneReader());
 
             // TODO: Add your initialization logic here
-            ChangeScene(new Scene1());
+            ChangeScene(new SceneRPG());
         }
 
         protected override void LoadContent()

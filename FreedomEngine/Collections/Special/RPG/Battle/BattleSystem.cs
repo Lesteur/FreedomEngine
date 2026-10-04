@@ -51,6 +51,16 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
 
         #region Public Methods
 
+        public void StartBattle()
+        {
+            BeginTurn();
+        }
+
+        public void FinishAction()
+        {
+            ProcessTurn();
+        }
+
         #endregion
 
         #region Private Methods
@@ -62,7 +72,7 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
             _turnOrder = [..Battlers];
             _turnOrder.Sort((a, b) => b.Data.BaseStats.Speed.CompareTo(a.Data.BaseStats.Speed));
 
-
+            ProcessTurn();
         }
 
         private void ProcessTurn()
