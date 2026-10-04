@@ -70,7 +70,7 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
             _currentBattlerIndex = 0;
 
             _turnOrder = [..Battlers];
-            _turnOrder.Sort((a, b) => b.Data.BaseStats.Speed.CompareTo(a.Data.BaseStats.Speed));
+            //_turnOrder.Sort((a, b) => b.Data.BaseStats.Speed.CompareTo(a.Data.BaseStats.Speed));
 
             ProcessTurn();
         }

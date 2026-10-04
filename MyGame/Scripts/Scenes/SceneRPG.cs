@@ -24,10 +24,12 @@ namespace MyGame.Scripts.Scenes
             _cameraLimitsMin = new Vector2(640 / 2f, 360 / 2f);
             _cameraLimitsMax = new Vector2(_width - 320, _height - 180);
 
-            _battlers = [new(null), new(null)];
+            _battlers = [new(null), new(null), new(null)];
             _enemies = [new(null), new(null)];
 
             _battleManager = new BattleSystem(_battlers, _enemies, null);
+
+            _battleManager.StartBattle();
         }
 
         public override void Update(GameTime gameTime)

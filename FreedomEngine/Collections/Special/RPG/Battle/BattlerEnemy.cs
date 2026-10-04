@@ -44,6 +44,8 @@ namespace FreedomEngine.Collections.Special.RPG.Battle
 
             Logger.Info("TestCoroutine completed after 2 seconds for the ally.");
 
+            FinishAction();
+
             yield return null;
         }
 
