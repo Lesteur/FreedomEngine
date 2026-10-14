@@ -4,47 +4,31 @@ using FreedomEngine.Collections.Coroutines;
 
 namespace FreedomEngine.Collections.Special.RPG.Battle
 {
+    /// <summary>
+    /// A battler controlled by the player's side.
+    /// </summary>
     public class BattlerAlly : Battler
     {
-        #region Fields
-
-        private Coroutine _coroutine;
-
-        #endregion
-
         #region Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BattlerAlly"/> class.
+        /// </summary>
+        /// <param name="data">The data describing this battler.</param>
         public BattlerAlly(BattlerData data) : base(data)
         {
         }
 
         #endregion
 
-        #region Public Methods
+        #region Protected Methods
 
-        public override bool StartTurn()
-        {
-            if (!base.StartTurn())
-                return false;
-
-            _coroutine = new Coroutine(TestCoroutine());
-
-            return true;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private static IEnumerator TestCoroutine()
+        /// <inheritdoc/>
+        protected override IEnumerator Act()
         {
             yield return new WaitForSeconds(2f);
 
-            Logger.Info("TestCoroutine completed after 2 seconds for the ally.");
-
-            FinishAction();
-
-            yield return null;
+            Logger.Info("Test action completed after 2 seconds for the ally.");
         }
 
         #endregion

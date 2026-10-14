@@ -2,6 +2,8 @@
 {
     public class Stats
     {
+        #region Properties
+
         public int HealthPoints { get; set; }
 
         public int SkillPoints { get; set; }
@@ -23,5 +25,7 @@
         public float CriticalRate { get; set; }
 
         public float CriticalPower { get; set; }
+
+        #endregion
     }
 }

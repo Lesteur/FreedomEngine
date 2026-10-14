@@ -10,6 +10,16 @@
 
         #endregion
 
+        #region Constructors
+
+        public BattlerData(Stats baseStats, AffinityEffectEnum[] affinities)
+        {
+            BaseStats = baseStats;
+            Affinities = affinities;
+        }
+
+        #endregion
+
         #region Public Methods
 
         public AffinityEffectEnum GetAffinityEffect(AffinityEnum affinity)
