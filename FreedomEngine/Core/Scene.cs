@@ -161,6 +161,11 @@ namespace FreedomEngine.Core
         /// </remarks>
         public virtual void Initialize()
         {
+            GameObject.Scene = this;
+            Coroutine.Controller = Coroutines;
+            Tween.Controller = Tweens;
+            CollisionMask.Controller = Collisions;
+
             LoadContent();
         }
 

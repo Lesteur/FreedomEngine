@@ -7,10 +7,6 @@ using Microsoft.Xna.Framework.Input;
 
 using FreedomEngine.Audio;
 using FreedomEngine.Collections;
-using FreedomEngine.Collections.Coroutines;
-using FreedomEngine.Collections.Tweens;
-using FreedomEngine.Components;
-using FreedomEngine.Components.Collisions;
 using FreedomEngine.Input;
 
 namespace FreedomEngine.Core
@@ -176,14 +172,6 @@ namespace FreedomEngine.Core
         /// </summary>
         /// <param name="next">The scene to transition to.</param>
         /// <exception cref="ArgumentNullException"><paramref name="next"/> is <see langword="null"/>.</exception>
-        /// <remarks>
-        /// The transition is deferred to the start of the next <see cref="Update"/> call, so the
-        /// current scene keeps receiving updates and draw calls until then. The scene-scoped static
-        /// controllers (<see cref="GameObject.Scene"/>, <see cref="Coroutine.Controller"/>,
-        /// <see cref="Tween.Controller"/>, and <see cref="CollisionMask.Controller"/>) are rebound to
-        /// <paramref name="next"/> only when the transition actually happens, not when this method is
-        /// called.
-        /// </remarks>
         public static void ChangeScene(Scene next)
         {
             ArgumentNullException.ThrowIfNull(next);
@@ -219,11 +207,6 @@ namespace FreedomEngine.Core
 
             CurrentScene = NextScene;
             NextScene = null;
-
-            GameObject.Scene = CurrentScene;
-            Coroutine.Controller = CurrentScene?.Coroutines;
-            Tween.Controller = CurrentScene?.Tweens;
-            CollisionMask.Controller = CurrentScene?.Collisions;
 
             // Note: avoid calling GC.Collect() here unless profiling proves it necessary.
 
