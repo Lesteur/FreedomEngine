@@ -79,7 +79,7 @@ namespace FreedomEngine.Content.Pipeline.Cutscenes
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "FreedomEngine.Content.CutsceneReader, FreedomEngine";
+            return "FreedomEngine.Readers.CutsceneReader, FreedomEngine";
         }
     }
 }

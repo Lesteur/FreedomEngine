@@ -65,7 +65,7 @@ namespace FreedomEngine.Content.Pipeline.Tiled.Tilesets
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "FreedomEngine.Content.TilesetReader, FreedomEngine";
+            return "FreedomEngine.Readers.TilesetReader, FreedomEngine";
         }
     }
 }

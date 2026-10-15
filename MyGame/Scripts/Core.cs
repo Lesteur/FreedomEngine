@@ -2,8 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 
 using FreedomEngine.Core;
-using FreedomEngine.Graphics;
-using FreedomEngine.Content;
+using FreedomEngine.Readers;
 
 using MyGame.Scripts.Scenes;
 
@@ -15,13 +14,13 @@ namespace MyGame.Scripts
         {
             base.Initialize();
 
-            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.TilesetReader, FreedomEngine", () => new TilesetReader());
-            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.BitmapFontReader, FreedomEngine", () => new BitmapFontReader());
-            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.TextureAtlasReader, FreedomEngine", () => new TextureAtlasReader());
-            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Content.CutsceneReader, FreedomEngine", () => new CutsceneReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Readers.TilesetReader, FreedomEngine", () => new TilesetReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Readers.BitmapFontReader, FreedomEngine", () => new BitmapFontReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Readers.TextureAtlasReader, FreedomEngine", () => new TextureAtlasReader());
+            ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Readers.CutsceneReader, FreedomEngine", () => new CutsceneReader());
 
             // TODO: Add your initialization logic here
-            ChangeScene(new SceneRPG());
+            ChangeScene(new Scene1());
         }
 
         protected override void LoadContent()

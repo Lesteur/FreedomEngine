@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 
 using FreedomEngine.Graphics;
 
-namespace FreedomEngine.Content
+namespace FreedomEngine.Readers
 {
     public class TextureAtlasReader : ContentTypeReader<TextureAtlas>
     {

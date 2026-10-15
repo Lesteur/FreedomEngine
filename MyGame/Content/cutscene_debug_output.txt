@@ -1,11 +1,11 @@
 === CUTSCENE DEBUG OUPUT ===
 
 --- String Table ---
-[0] "Hello World!"
-[1] "Salut. Tout va bien ?!"
-[2] "Enough gold."
-[3] "Not enough!"
-[4] "End condition."
+[0] "Hello World"
+[1] "Salut. Tout va bien ?"
+[2] "Enough gold"
+[3] "Not enough"
+[4] "End condition"
 
 --- Instructions ---
 [0000] SetVar          | Params: 2, 6

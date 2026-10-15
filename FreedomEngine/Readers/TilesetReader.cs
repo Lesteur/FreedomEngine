@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Graphics;
 
-namespace FreedomEngine.Content
+namespace FreedomEngine.Readers
 {
     public class TilesetReader : ContentTypeReader<Tileset>
     {

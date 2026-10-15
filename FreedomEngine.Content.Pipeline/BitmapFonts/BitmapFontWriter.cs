@@ -57,7 +57,7 @@ namespace FreedomEngine.Content.Pipeline.BitmapFonts
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "FreedomEngine.Content.BitmapFontReader, FreedomEngine";
+            return "FreedomEngine.Readers.BitmapFontReader, FreedomEngine";
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Graphics.BitmapFonts;
 
-namespace FreedomEngine.Content
+namespace FreedomEngine.Readers
 {
     public class BitmapFontReader : ContentTypeReader<BitmapFont>
     {

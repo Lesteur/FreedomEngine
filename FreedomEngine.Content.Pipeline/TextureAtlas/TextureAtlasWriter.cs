@@ -33,7 +33,7 @@ namespace FreedomEngine.Content.Pipeline.TextureAtlas
 
         public override string GetRuntimeReader(TargetPlatform targetPlatform)
         {
-            return "FreedomEngine.Content.TextureAtlasReader, FreedomEngine";
+            return "FreedomEngine.Readers.TextureAtlasReader, FreedomEngine";
         }
     }
 }

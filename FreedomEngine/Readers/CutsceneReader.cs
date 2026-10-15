@@ -2,7 +2,7 @@
 
 using FreedomEngine.Collections.Cutscenes;
 
-namespace FreedomEngine.Content
+namespace FreedomEngine.Readers
 {
     public class CutsceneReader : ContentTypeReader<Cutscene>
     {
