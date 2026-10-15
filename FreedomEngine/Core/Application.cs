@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using FreedomEngine.Audio;
+using FreedomEngine.Graphics.BitmapFonts;
 using FreedomEngine.Collections;
 using FreedomEngine.Input;
 
@@ -17,6 +18,12 @@ namespace FreedomEngine.Core
     /// </summary>
     public class Application : Game
     {
+        #region Fields
+
+        protected string _pathDefaultFont = null;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -83,6 +90,11 @@ namespace FreedomEngine.Core
         /// </summary>
         public static Texture2D PixelTexture { get; private set; }
 
+        /// <summary>
+        /// Gets the default bitmap font used for rendering text when no other font is specified.
+        /// </summary>
+        public static BitmapFont DefaultFont { get; private set; } = null;
+
         #endregion
 
         #region Constructors
@@ -126,6 +138,9 @@ namespace FreedomEngine.Core
 
             PixelTexture = new Texture2D(GraphicsDevice, 1, 1);
             PixelTexture.SetData([Color.White]);
+
+            if (_pathDefaultFont != null)
+                DefaultFont = Content.Load<BitmapFont>(_pathDefaultFont);
         }
 
         /// <inheritdoc/>

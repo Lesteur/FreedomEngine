@@ -12,6 +12,8 @@ namespace MyGame.Scripts
     {
         protected override void Initialize()
         {
+            _pathDefaultFont = "Assets/Fonts/Pixeloid";
+
             base.Initialize();
 
             ContentTypeReaderManager.AddTypeCreator("FreedomEngine.Readers.TilesetReader, FreedomEngine", () => new TilesetReader());

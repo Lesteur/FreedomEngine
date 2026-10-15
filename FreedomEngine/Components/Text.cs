@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using FreedomEngine.Collections;
 using FreedomEngine.Collections.Interfaces;
+using FreedomEngine.Core;
 using FreedomEngine.Graphics.BitmapFonts;
 
 using RectangleF = System.Drawing.RectangleF;
@@ -508,16 +509,6 @@ namespace FreedomEngine.Components
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class with a font and a text content.
-        /// </summary>
-        /// <param name="font">The bitmap font used for rendering.</param>
-        /// <param name="text">The raw text content, which may contain markup.</param>
-        public Text(BitmapFont font, string text)
-            : this(font, text, Vector2.Zero)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Text"/> class at the given position.
         /// </summary>
         /// <param name="font">
@@ -526,9 +517,15 @@ namespace FreedomEngine.Components
         /// </param>
         /// <param name="text">The raw text content, which may contain markup. Treated as empty when <see langword="null"/>.</param>
         /// <param name="position">The global position of the text.</param>
-        public Text(BitmapFont font, string text, Vector2 position)
+        public Text(string text, Vector2 position = new Vector2(), BitmapFont font = null)
         {
-            ArgumentNullException.ThrowIfNull(font);
+            if (font == null)
+            {
+                if (Application.DefaultFont == null)
+                    throw new InvalidOperationException("No font was provided and no default font is available. Assign a default font to Application.DefaultFont or provide a font to the constructor.");
+                
+                font = Application.DefaultFont;
+            }
 
             _font = font;
             _text = text ?? string.Empty;

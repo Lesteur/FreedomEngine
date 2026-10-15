@@ -19,7 +19,6 @@ namespace MyGame.Scripts.Scenes
     {
         private Texture2D _texture;
         //private Texture2D _textureTileset;
-        private BitmapFont _font;
 
         private Sprite _animation;
         private Tileset _tileset;
@@ -73,7 +72,7 @@ namespace MyGame.Scripts.Scenes
             Tilemap.Camera = WorldCamera;
             GameObject.Camera = WorldCamera;
 
-            _bitmapText = new(_font, "Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
+            _bitmapText = new("Ê Salut, [color red][shake 0.5]tout le monde[\\shake][\\color] !\nJe suis un énorme optimiste qui adore les [color blue]jeux vidéo[\\color] et qui adore en créer. Héhéhéhéhéhéhéhé héhéhéhéhé héhéhhéhéhéhéhhéh " +
                 "Je pense également que les chats sont de [rainbow][wave 2]merveilleuses créatures[\\wave][\\rainbow] mais les [rainbow]chiens[\\rainbow] sont également des êtres fabuleux !", new Vector2(400, 150))
             {
                 VerticalAlignment = TextVerticalAlignment.Middle,
@@ -101,7 +100,6 @@ namespace MyGame.Scripts.Scenes
             _texture = Content.Load<Texture2D>("Assets/Textures/spr_jonathan");
             _tileset = Content.Load<Tileset>("Assets/Tilesets/TilesetMario");
             _soundEffect = Content.Load<SoundEffect>("Assets/Audio/sfx_chest");
-            _font = Content.Load<BitmapFont>("Assets/Fonts/Pixeloid");
 
             base.LoadContent();
         }

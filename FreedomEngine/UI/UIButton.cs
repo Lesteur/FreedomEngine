@@ -69,7 +69,7 @@ namespace FreedomEngine.UI
         {
             ArgumentNullException.ThrowIfNull(backgroundSprite);
 
-            _textComponent = new(font, text, Vector2.Zero)
+            _textComponent = new(text, Vector2.Zero, font)
             {
                 VerticalAlignment = TextVerticalAlignment.Middle,
                 HorizontalAlignment = TextHorizontalAlignment.Center,
